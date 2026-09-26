@@ -1,0 +1,19 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Home{% endblock %}{% block heading %}Namaste, {{ request.user.display_name }}{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:orders' %}?status=open">Open orders ({{ open_orders }})</a>{% endblock %}
+{% block content %}
+<div class="kpis">
+  <div class="kpi"><small>Orders today</small><b>{{ t.orders }}</b><span class="delta {% if t.orders >= y.orders %}delta--up{% else %}delta--down{% endif %}">{{ y.orders }} by this time yesterday</span></div>
+  {% if is_manager %}<div class="kpi"><small>Sales today</small><b>{{ t.revenue|rupee }}</b><span class="delta {% if t.revenue >= y.revenue %}delta--up{% else %}delta--down{% endif %}">{{ y.revenue|rupee }} by this time yesterday</span></div>
+  <div class="kpi"><small>Average order</small><b>{{ t.aov|rupee }}</b><span class="delta">yesterday {{ y.aov|rupee }}</span></div>{% endif %}
+  <div class="kpi"><small>Open orders</small><b>{{ open_orders }}</b><span class="delta">{{ open_tickets }} open help request(s)</span></div>
+</div>
+<div class="dash-grid dash-grid--2">
+  <section class="panel-box"><h2>Needs attention</h2>
+    {% if alerts %}<ul class="alert-list">{% for tone, text, url, qs in alerts %}<li class="{{ tone }}"><a href="{% url url %}{{ qs }}">{{ text }} →</a></li>{% endfor %}</ul>{% else %}<ul class="alert-list"><li class="good">All good. Nothing is waiting on you.</li></ul>{% endif %}
+  </section>
+  <section class="panel-box"><h2>Latest orders</h2><div class="tbl-wrap" id="recent-orders"><table class="tbl"><tbody>
+    {% for o in recent %}<tr><td><a class="link" href="{% url 'dashboard:order' o.number %}">{{ o.number }}</a></td><td>{{ o.ship_name }}</td><td><span class="chip {{ o.status|status_chip }}">{{ o.get_status_display }}</span></td><td class="num">{{ o.total|rupee }}</td><td class="muted">{{ o.placed_at|timesince }} ago</td></tr>
+    {% empty %}<tr><td class="muted">No orders yet.</td></tr>{% endfor %}</tbody></table></div></section>
+</div>
+{% endblock %}

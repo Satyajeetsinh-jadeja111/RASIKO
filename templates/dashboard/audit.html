@@ -1,0 +1,7 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Audit log{% endblock %}{% block heading %}Audit log{% endblock %}
+{% block content %}<p class="muted">Every sign in, setting change, refund and price change. API keys are never written here.</p>
+<form class="toolbar" method="get"><input class="input" name="q" value="{{ q }}" placeholder="Search action, text or email" aria-label="Search"><button class="btn btn--ghost btn--sm">Search</button></form>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th>Who</th><th>What</th><th>Details</th><th>IP</th></tr></thead><tbody>
+{% for a in page %}<tr><td>{{ a.created_at|date:"d M Y, H:i" }}</td><td>{{ a.user.email|default:"System" }}</td><td><code>{{ a.action }}</code></td><td>{{ a.summary }}{% if a.changes %}<br><span class="muted" style="font-size:12px">{% for k, v in a.changes.items %}{{ k }}: {{ v }}{% if not forloop.last %} · {% endif %}{% endfor %}</span>{% endif %}</td><td class="muted">{{ a.ip|default:"" }}</td></tr>
+{% empty %}<tr><td colspan="5" class="muted">Nothing logged yet.</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

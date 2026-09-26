@@ -1,0 +1,12 @@
+{% load rasiko %}Refund completed
+
+Hi {{ order.ship_name|default:order.user.display_name }},
+
+Your refund of {{ refund.amount|rupee }} for order {{ order.number }} is done.{% if refund.reference %} Reference: {{ refund.reference }}.{% endif %}
+
+{% for l in order.lines.all %}- {{ l.product_name }} {{ l.variant_label }} x {{ l.qty }}: {{ l.line_total|rupee }}
+{% endfor %}Total: {{ order.total|rupee }} ({{ order.get_payment_method_display }})
+
+View your order: {{ SITE_URL }}{{ order.get_absolute_url }}
+
+{{ store.name }} · {{ store.phone }}

@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Insights{% endblock %}{% block heading %}Insights{% endblock %}
+{% block actions %}<form method="post" action="{% url 'dashboard:insights_refresh' %}" style="display:flex;gap:6px">{% csrf_token %}<select class="input" name="days" aria-label="Period" style="width:auto"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select><button class="btn btn--buy btn--sm">Refresh now</button></form>{% endblock %}
+{% block content %}
+{% if report %}<p class="muted">Made {{ report.generated_at|date:"d M Y, H:i" }} from the last {{ report.period_days }} days. A new report is made every morning.</p>
+{% if report.ai_summary %}<section class="panel-box" style="margin-bottom:16px"><h2>Summary</h2><p style="white-space:pre-wrap">{{ report.ai_summary }}</p></section>{% endif %}
+<div class="dash-grid dash-grid--3">
+  <section class="panel-box"><h2>Going well</h2><ul class="alert-list">{% for i in report.going_well %}<li class="good">{{ i }}</li>{% empty %}<li>Not enough sales yet to tell.</li>{% endfor %}</ul></section>
+  <section class="panel-box"><h2>Can be better</h2><ul class="alert-list">{% for i in report.can_be_better %}<li class="bad">{{ i }}</li>{% empty %}<li class="good">Nothing stands out.</li>{% endfor %}</ul></section>
+  <section class="panel-box"><h2>What to do next</h2><ul class="alert-list">{% for i in report.actions %}<li>{{ i }}</li>{% empty %}<li class="good">Keep going!</li>{% endfor %}</ul></section>
+</div>
+{% if history %}<section class="panel-box" style="margin-top:16px"><h2>Earlier reports</h2><ul class="plain">{% for h in history %}<li>{{ h.generated_at|date:"d M Y" }}: {{ h.actions|first|default:"No actions" }}</li>{% endfor %}</ul></section>{% endif %}
+{% else %}<p class="muted">No report yet. Press “Refresh now” to make the first one.</p>{% endif %}
+{% endblock %}

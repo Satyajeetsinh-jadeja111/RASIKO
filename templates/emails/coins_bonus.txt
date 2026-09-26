@@ -1,0 +1,1 @@
+{% load rasiko %}Hi {{ user.display_name }}, you got {{ coins }} bonus Rasiko Coins{% if reason %} for {{ reason }}{% endif %}.

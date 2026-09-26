@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Two-factor sign in" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Enter your 6-digit code" %}</h1>
+<p class="page-sub">{% trans "Open your authenticator app and type the current code for Rasiko." %}</p>
+<form method="post" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% for f in form %}{% include "partials/field.html" %}{% endfor %}
+<button class="btn btn--buy btn--block">{% trans "Continue" %}</button></form></div></div>{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Hero slider{% endblock %}{% block heading %}Home page slider{% endblock %}
+{% block actions %}<a class="btn btn--buy btn--sm" href="{% url 'dashboard:hero_new' %}">+ Add slide</a>{% endblock %}
+{% block content %}
+<p class="muted">Drag slides to change their order. Slides with dates show only between those dates. Without a photo, a slide shows drink illustrations on the chosen colour.</p>
+<div class="dash-grid" data-sortable-post="{% url 'dashboard:hero' %}">{% for s in slides %}
+<section class="panel-box sortable-item" draggable="true" data-id="{{ s.pk }}" style="display:grid;grid-template-columns:auto 200px 1fr auto;gap:14px;align-items:center">
+  <span class="drag-handle" aria-hidden="true">⠿</span>
+  <div class="hero-preview" style="aspect-ratio:16/6{% if s.blur_color %};background:{{ s.blur_color }}{% endif %}">{% if s.image %}<img src="{{ s.image.url }}" alt="" style="object-fit:{% if s.fit == 'cover' %}cover{% else %}contain{% endif %};object-position:{{ s.focal_x }}% {{ s.focal_y }}%">{% endif %}</div>
+  <div><b>{{ s.heading }}</b> {{ s.heading_accent }}<br><span class="muted">{{ s.subtext }}</span><br>{% if s.is_active %}<span class="chip chip--green">On</span>{% else %}<span class="chip">Off</span>{% endif %}{% if s.starts_at or s.ends_at %} <span class="chip chip--gold">{{ s.starts_at|date:"d M"|default:"now" }} → {{ s.ends_at|date:"d M"|default:"always" }}</span>{% endif %}</div>
+  <a class="btn btn--ghost btn--sm" href="{% url 'dashboard:hero_edit' s.pk %}">Edit</a>
+</section>{% empty %}<p class="muted">No slides yet. The home page shows the built-in welcome slide.</p>{% endfor %}</div>
+{% endblock %}

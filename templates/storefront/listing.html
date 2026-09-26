@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{{ title }} · {{ store.name }} Rajkot{% endblock %}
+{% block meta_description %}{% if category.seo_description %}{{ category.seo_description }}{% elif brand %}{{ brand.name }} drinks delivered chilled across Rajkot by {{ store.name }}.{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="crumbs"><a href="{% url 'storefront:home' %}">{% trans "Home" %}</a> / {{ title }}</div>
+  <h1 class="page-title">{{ title }}</h1>
+  {% if brand.description %}<p class="page-sub">{{ brand.description }}</p>{% endif %}
+  {% if children %}<div class="btns" style="margin-bottom:14px">{% for c in children %}<a class="btn btn--ghost btn--sm" href="{{ c.get_absolute_url }}">{{ c.local_name }}</a>{% endfor %}</div>{% endif %}
+  <div class="listing">
+    {# West (Varun): filters #}
+    <form class="filters box" method="get" hx-get="{{ request.path }}" hx-target="#results" hx-trigger="change" hx-push-url="true" aria-label="{% trans 'Filters' %}">
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      <input type="hidden" name="sort" value="{{ sort }}">
+      <h2 style="margin:0">{% trans "Filters" %}</h2>
+      <h3>{% trans "Availability" %}</h3>
+      <label><input type="checkbox" name="instock" value="1" {% if request.GET.instock %}checked{% endif %}> {% trans "In stock only" %}</label>
+      <label><input type="checkbox" name="veg" value="1" {% if request.GET.veg %}checked{% endif %}> {% trans "Veg only" %}</label>
+      {% if facet_brands %}<h3>{% trans "Brand" %}</h3>{% for b in facet_brands %}<label><input type="checkbox" name="brand" value="{{ b.slug }}" {% if b.slug in sel_brands %}checked{% endif %}> {{ b.name }}</label>{% endfor %}{% endif %}
+      {% if facet_sizes %}<h3>{% trans "Size" %}</h3>{% for s in facet_sizes %}<label><input type="checkbox" name="size" value="{{ s }}" {% if s in sel_sizes %}checked{% endif %}> {{ s }}</label>{% endfor %}{% endif %}
+      <h3>{% trans "Price" %}</h3>
+      <div style="display:flex;gap:8px"><input class="input" type="number" name="min" min="0" placeholder="{% trans 'Min' %} {{ prices.lo|default:0|floatformat:0 }}" value="{{ request.GET.min }}" aria-label="{% trans 'Minimum price' %}"><input class="input" type="number" name="max" min="0" placeholder="{% trans 'Max' %} {{ prices.hi|default:0|floatformat:0 }}" value="{{ request.GET.max }}" aria-label="{% trans 'Maximum price' %}"></div>
+      <h3>{% trans "Rating" %}</h3>
+      {% for r in "43" %}<label><input type="radio" name="rating" value="{{ r }}" {% if request.GET.rating == r %}checked{% endif %}> {{ r }}★ &amp; {% trans "above" %}</label>{% endfor %}
+      <noscript><button class="btn btn--buy btn--sm" style="margin-top:12px">{% trans "Apply" %}</button></noscript>
+      <p style="margin-top:12px"><a class="link" href="{{ request.path }}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Clear filters" %}</a></p>
+    </form>
+    <div id="results">{% include "storefront/_results.html" %}</div>
+  </div>
+</div>
+{% endblock %}

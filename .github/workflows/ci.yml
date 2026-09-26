@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: rasiko
+          POSTGRES_PASSWORD: rasiko
+          POSTGRES_DB: rasiko
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rasiko" --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://rasiko:rasiko@localhost:5432/rasiko
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: System packages
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gettext
+      - name: Install
+        run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Migrations are complete
+        run: python manage.py makemigrations --check --dry-run --settings=config.settings.test
+      - name: Tests
+        run: pytest --create-db --cov=apps --cov-report=term-missing:skip-covered
+      - name: Deploy checks
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.prod
+          ALLOWED_HOSTS: rasiko.example
+          SITE_URL: https://rasiko.example
+        run: |
+          export DJANGO_SECRET_KEY="$(python -c 'import secrets;print(secrets.token_urlsafe(64))')"
+          export FIELD_ENCRYPTION_KEY="$(python -c 'from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())')"
+          python manage.py check --deploy --fail-level WARNING
+          python manage.py compilemessages
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install bandit[toml] pip-audit
+      - name: Bandit
+        run: bandit -c pyproject.toml -r apps config -q
+      - name: Dependency audit
+        run: pip-audit -r requirements.txt
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t rasiko:ci .

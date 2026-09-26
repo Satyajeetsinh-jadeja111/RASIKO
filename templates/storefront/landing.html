@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{{ data.title }} · {{ store.name }}{% endblock %}
+{% block meta_description %}{{ data.intro }}{% endblock %}
+{% block content %}<div class="page">
+  <h1 class="page-title">{{ data.title }}</h1><p class="page-sub">{{ data.intro }}</p>
+  <div class="grid-products">{% for p in products %}{% include "partials/product_card.html" %}{% endfor %}</div>
+  <div class="box box--mitti" style="margin-top:22px"><h2>{% trans "Why Rajkot orders from Rasiko" %}</h2><ul><li>{% trans "Chilled drinks in 30–60 minutes across Rajkot" %}</li><li>{% trans "Cash on Delivery and UPI" %}</li><li>{% trans "FSSAI licensed, GST invoice on every order" %}</li></ul></div>
+</div>{% endblock %}

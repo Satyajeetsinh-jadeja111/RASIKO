@@ -1,0 +1,5 @@
+{% load rasiko %}Welcome to Rasiko!
+
+Hi {{ user.display_name }}, confirm your email: {{ verify_url }}
+
+This link works for 3 days.

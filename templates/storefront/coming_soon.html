@@ -1,0 +1,8 @@
+{% load static i18n %}<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ store.name }} · {% trans "Coming soon" %}</title><link rel="stylesheet" href="{% static 'css/app.css' %}"><link rel="icon" href="{% static 'brand/rasiko-icon.svg' %}"></head>
+<body><main class="soon"><div>
+  <img src="{% static 'brand/rasiko-logo.svg' %}" alt="{{ store.name }}" width="260" style="margin:0 auto 18px">
+  {% if store.auspicious_mark == "shubh_labh" %}<p class="shubh" style="display:inline-block;font-size:20px">शुभ लाभ</p>{% elif store.auspicious_mark == "om" %}<p class="shubh" style="display:inline-block;font-size:24px">ॐ</p>{% endif %}
+  <h1 class="hero" style="box-shadow:none;background:none;font:700 44px var(--font-head);color:var(--sindoor);margin:14px 0 8px">{% trans "Coming soon" %}</h1>
+  <p style="font-size:19px">{{ store.launch_message }}{% if store.launch_at %}: <b>{{ store.launch_at|date:"l, d F Y, g:i A" }}</b>{% endif %}</p>
+  <p class="muted">{{ store.tagline }}</p>
+</div></main></body></html>

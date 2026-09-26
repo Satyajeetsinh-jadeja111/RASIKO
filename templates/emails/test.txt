@@ -1,0 +1,1 @@
+{% load rasiko %}This is a test email from your Rasiko dashboard. Your email settings are working.

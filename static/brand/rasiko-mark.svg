@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120"><g transform="translate(0 2) scale(1)">
+  <defs>
+    <linearGradient id="bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E53935"/><stop offset="1" stop-color="#B71C2C"/></linearGradient>
+    <linearGradient id="leaf" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1B6E42"/><stop offset="1" stop-color="#2FA05A"/></linearGradient>
+  </defs>
+  <path d="M44 46 V34 a16 16 0 0 1 32 0 V46" fill="none" stroke="#B71C2C" stroke-width="7" stroke-linecap="round"/>
+  <path d="M26 46 Q26 42 30 42 H90 Q94 42 94 46 L89 103 Q88 110 81 110 H39 Q32 110 31 103 Z" fill="url(#bag)"/>
+  <path d="M60 56 C54 64 43 75 43 85 A17 17 0 0 0 77 85 C77 75 66 64 60 56 Z" fill="#FFF7E8"/>
+  <ellipse cx="52" cy="86" rx="3.2" ry="6" fill="#FFFFFF" opacity=".9" transform="rotate(20 52 86)"/>
+  <path d="M61 57 C62 44 73 35 88 34 C87 48 76 57 61 57 Z" fill="url(#leaf)"/>
+  <path d="M63 55 C69 48 76 42 84 38" fill="none" stroke="#BFF0CF" stroke-width="1.6" stroke-linecap="round"/>
+</g></svg>

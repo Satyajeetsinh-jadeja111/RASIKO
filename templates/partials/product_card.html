@@ -1,0 +1,30 @@
+{% load rasiko i18n %}{% with v=p.default_variant %}
+<article class="card{% if not p.in_stock %} card--oos{% endif %}">
+  <a class="card__well" href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+    {% if not p.in_stock %}<span class="tag tag--oos">{% trans "Out of stock" %}</span>
+    {% elif v.price_dropped %}<span class="tag tag--drop">{% trans "Price drop" %}</span>
+    {% elif v.discount_percent >= 10 %}<span class="tag tag--sale">−{{ v.discount_percent }}%</span>
+    {% elif p.is_bestseller %}<span class="tag">{% trans "Bestseller" %}</span>
+    {% elif p.is_new %}<span class="tag tag--new">{% trans "New" %}</span>{% endif %}
+    {% veg_mark p.diet %}
+    {% if p.primary_image %}<img src="{{ p.primary_image.image.url }}" alt="{{ p.primary_image.alt|default:p.name }}" loading="lazy" width="300" height="300">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
+  </a>
+  <h3><a href="{{ p.get_absolute_url }}">{{ p.local_name }}</a></h3>
+  <div class="meta">{{ p.brand.name }}{% if p.rating_count %} · <span class="star" aria-hidden="true">★</span> {{ p.rating_avg|floatformat:1 }}{% endif %}</div>
+  {% if v %}
+  {% with vs=p.active_variants %}{% if vs|length > 1 %}
+  <label class="sr-only" for="vs-{{ p.pk }}">{% trans "Size" %}</label>
+  <select class="variant-select" id="vs-{{ p.pk }}" data-variant-select>
+    {% for x in vs %}<option value="{{ x.pk }}" data-price="{{ x.price|rupee }}" data-mrp="{% if x.mrp > x.price %}{{ x.mrp|rupee }}{% endif %}" data-stock="{{ x.in_stock|yesno:'1,0' }}" {% if x.pk == v.pk %}selected{% endif %}>{{ x.label }}</option>{% endfor %}
+  </select>
+  {% else %}<div class="meta">{{ v.label }}</div>{% endif %}{% endwith %}
+  <div class="save">{% if v.savings %}{% blocktrans with s=v.savings|rupee %}You save {{ s }}{% endblocktrans %}{% endif %}</div>
+  <div class="buy">
+    <div><span class="price" data-price>{{ v.price|rupee }}</span>{% if v.mrp > v.price %}<span class="mrp" data-mrp>{{ v.mrp|rupee }}</span>{% endif %}</div>
+    <div class="buy__ctl" data-key="v:{{ v.pk }}" data-name="{{ p.local_name }}">
+      {% if p.in_stock %}<button class="add" type="button" aria-label="{% blocktrans with n=p.local_name %}Add {{ n }} to cart{% endblocktrans %}">{% trans "Add" %}</button>
+      {% else %}<a class="add" style="background:var(--kajal-soft);box-shadow:none;display:inline-grid;place-items:center;font-size:13px" href="{{ p.get_absolute_url }}">{% trans "Notify me" %}</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</article>{% endwith %}

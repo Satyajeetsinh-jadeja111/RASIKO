@@ -1,0 +1,1 @@
+{% load rasiko %}{{ product.name }} ({{ variant.label }}) is back in stock at {{ variant.price|rupee }}: {{ SITE_URL }}{{ product.get_absolute_url }}

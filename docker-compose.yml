@@ -1,0 +1,94 @@
+# Production stack: docker compose up -d --build
+# Needs a filled .env (copy .env.example) and DOMAIN set for Nginx, e.g. DOMAIN=rasiko.in docker compose up -d
+x-app: &app
+  build: .
+  image: rasiko:latest
+  env_file: .env
+  restart: unless-stopped
+  depends_on:
+    db: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  volumes:
+    - media:/app/media
+
+services:
+  web:
+    <<: *app
+    command: ["web"]
+    expose: ["8000"]
+
+  worker:
+    <<: *app
+    command: ["worker"]
+    healthcheck: { disable: true }
+
+  beat:
+    <<: *app
+    command: ["beat"]
+    healthcheck: { disable: true }
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rasiko}
+      POSTGRES_USER: ${POSTGRES_USER:-rasiko}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}", "--appendonly", "yes"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 10s
+      retries: 10
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on: [web]
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      NGINX_ENVSUBST_FILTER: DOMAIN
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - ./docker/proxy_common.conf:/etc/nginx/proxy_common.conf:ro
+      - media:/app/media:ro
+      - certbot-www:/var/www/certbot:ro
+      - letsencrypt:/etc/letsencrypt:ro
+
+  certbot:
+    image: certbot/certbot:latest
+    profiles: ["tls"]
+    volumes:
+      - certbot-www:/var/www/certbot
+      - letsencrypt:/etc/letsencrypt
+    entrypoint: ["/bin/sh", "-c", "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h; done"]
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+    env_file: .env
+    entrypoint: ["/bin/sh", "/backup.sh"]
+    volumes:
+      - ./docker/backup.sh:/backup.sh:ro
+      - ./backups:/backups
+
+volumes:
+  pgdata:
+  redisdata:
+  media:
+  certbot-www:
+  letsencrypt:

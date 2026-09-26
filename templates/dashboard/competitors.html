@@ -1,0 +1,13 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Competitor watch{% endblock %}{% block heading %}Competitor watch{% endblock %}
+{% block content %}
+<p class="muted">Note prices you see at nearby shops or apps. Green means you are cheaper.</p>
+<form class="panel-box toolbar" method="post">{% csrf_token %}
+  <label class="sr-only" for="cv">Item</label><select class="input" id="cv" name="variant" required>{% for v in variants %}<option value="{{ v.pk }}">{{ v.product.name }} {{ v.label }} ({{ v.price|rupee }})</option>{% endfor %}</select>
+  <label class="sr-only" for="cc">Competitor</label><input class="input" id="cc" name="competitor" placeholder="Shop or app name" required>
+  <label class="sr-only" for="cp">Price</label><input class="input qty-input" id="cp" name="price" inputmode="decimal" placeholder="₹" required>
+  <label class="sr-only" for="cn">Note</label><input class="input" id="cn" name="note" placeholder="Note (optional)">
+  <button class="btn btn--buy btn--sm">Add</button></form>
+<div class="panel-box tbl-wrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Item</th><th>Competitor</th><th class="num">Their price</th><th class="num">Our price</th><th class="num">Difference</th><th>Noted</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.variant }}</td><td>{{ r.competitor }}</td><td class="num">{{ r.price|rupee }}</td><td class="num">{{ r.variant.price|rupee }}</td><td class="num {% if r.diff <= 0 %}delta--up{% else %}delta--down{% endif %}">{% if r.diff > 0 %}+{% endif %}{{ r.diff|rupee }}</td><td>{{ r.noted_at|date:"d M" }}</td></tr>
+{% empty %}<tr><td colspan="6" class="muted">No prices noted yet.</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

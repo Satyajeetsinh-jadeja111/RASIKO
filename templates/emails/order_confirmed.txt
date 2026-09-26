@@ -1,0 +1,12 @@
+{% load rasiko %}Order {{ order.number }} confirmed
+
+Hi {{ order.ship_name|default:order.user.display_name }},
+
+Your order is confirmed. Expected delivery: {{ order.slot_label|default:'within the hour' }}.
+
+{% for l in order.lines.all %}- {{ l.product_name }} {{ l.variant_label }} x {{ l.qty }}: {{ l.line_total|rupee }}
+{% endfor %}Total: {{ order.total|rupee }} ({{ order.get_payment_method_display }})
+
+View your order: {{ SITE_URL }}{{ order.get_absolute_url }}
+
+{{ store.name }} · {{ store.phone }}

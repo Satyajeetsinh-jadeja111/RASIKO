@@ -1,0 +1,16 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Delivery economics{% endblock %}{% block heading %}Delivery economics{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:delivery_settings' %}">Delivery settings</a><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:analytics' %}">← Analytics</a>{% endblock %}
+{% block content %}
+<p class="muted">Cost per delivery = rider pay {{ cfg.rider_pay_per_order|rupee }} + packaging {{ cfg.packaging_per_order|rupee }} + fuel {{ cfg.fuel_cost_per_km|rupee }} per km there and back. Change these in Delivery settings.</p>
+<div class="kpis"><div class="kpi"><small>Orders (last {{ days }} days)</small><b>{{ orders }}</b></div><div class="kpi"><small>Delivery fees collected</small><b>{{ actual_fees|rupee }}</b></div><div class="kpi"><small>Estimated delivery cost</small><b>{{ cost|rupee }}</b></div><div class="kpi"><small>Result</small><b class="{% if net < 0 %}delta--down{% else %}delta--up{% endif %}">{{ net|rupee }}</b></div></div>
+<div class="dash-grid dash-grid--2">
+<section class="panel-box"><h2>Cost by distance</h2><table class="tbl"><thead><tr><th>Distance</th><th class="num">Fee charged</th><th class="num">Cost to you</th></tr></thead><tbody>{% for r in per_slab %}<tr><td>{{ r.slab.min_km }}–{{ r.slab.max_km }} km</td><td class="num">{{ r.slab.fee|rupee }}</td><td class="num {% if r.cost > r.slab.fee %}delta--down{% endif %}">{{ r.cost|rupee }}</td></tr>{% endfor %}</tbody></table>
+<p class="muted" style="font-size:13px">Free-delivery orders pay no fee, so the fee column is the most you can collect.</p></section>
+<form class="panel-box" method="get"><h2>What if?</h2><p class="muted" style="font-size:14px">Try new rules on your last {{ days }} days of real orders. Nothing is saved.</p>
+  <div class="form-grid form-grid--2">{% for k, label, val, current in fields %}<div class="field"><label class="label" for="{{ k }}">{{ label }}</label><input class="input" id="{{ k }}" name="{{ k }}" value="{{ val }}" placeholder="now {{ current }}" inputmode="decimal"></div>{% endfor %}
+  {% for s, val in slab_inputs %}<div class="field"><label class="label" for="slab_{{ s.pk }}">Fee {{ s.min_km }}–{{ s.max_km }} km ₹</label><input class="input" id="slab_{{ s.pk }}" name="slab_{{ s.pk }}" value="{{ val }}" placeholder="now {{ s.fee }}" inputmode="decimal"></div>{% endfor %}</div>
+  <button class="btn btn--buy btn--sm">Calculate</button>
+  {% if changed %}<div class="box box--cream" style="margin-top:12px"><p>With these rules, fees would have been <b>{{ trial_fees|rupee }}</b> instead of {{ actual_fees|rupee }}, so delivery would end at <b class="{% if trial_net < 0 %}delta--down{% else %}delta--up{% endif %}">{{ trial_net|rupee }}</b>.</p>{% if lost %}<p class="err">{{ lost }} of these orders would have been below the new minimum order.</p>{% endif %}<p class="muted" style="font-size:13px">Assumes customers order the same way; higher fees can mean fewer orders.</p></div>{% endif %}
+</form></div>
+{% endblock %}

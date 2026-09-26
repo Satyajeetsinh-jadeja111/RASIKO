@@ -1,0 +1,48 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{% trans "Order" %} {{ order.number }} · {{ store.name }}{% endblock %}
+{% block content %}
+<div class="page" {% if order.is_open or order.status == "pending_payment" %}data-autorefresh="30"{% endif %}>
+  <div class="crumbs"><a href="{% url 'accounts:home' %}">{% trans "My account" %}</a> / {{ order.number }}</div>
+  <div class="checkout">
+    <div>
+      {% include "orders/_track_card.html" %}
+      {% if order.status == "pending_payment" %}<div class="box" style="margin-top:16px"><p>{% trans "This order is waiting for payment." %}</p><a class="btn btn--buy" href="{% url 'payments:pay' order.public_id %}">{% trans "Pay now" %}</a></div>{% endif %}
+      <section class="box" style="margin-top:16px">
+        <h2>{% trans "Items" %}</h2>
+        {% for line in order.lines.all %}
+        <div class="sumrow" style="align-items:center;gap:10px"><span>{{ line.qty }} × {{ line.product_name }} <span class="muted">{{ line.variant_label }}</span>{% if line.combo_name %} <span class="chip">{{ line.combo_name }}</span>{% endif %}{% if line.refunded_qty %} <span class="chip chip--maroon">{% blocktrans with n=line.refunded_qty %}{{ n }} refunded{% endblocktrans %}</span>{% endif %}</span>
+          <span style="white-space:nowrap">{{ line.line_total|rupee }}
+          {% if order.status == "delivered" and line.pk not in reviewed %}<a class="btn btn--ghost btn--sm" href="{% url 'reviews:write' line.pk %}">{% trans "Rate" %}</a>{% endif %}</span></div>
+        {% endfor %}
+      </section>
+      {% if thandu_form and not complaint %}
+      <details class="box box--cream" style="margin-top:16px"><summary style="cursor:pointer;font:600 17px var(--font-head)"><svg class="icon" style="width:18px;height:18px;display:inline;vertical-align:-3px;color:var(--tulsi-deep)"><use href="#i-snow"/></svg> {% trans "Not chilled? Thandu guarantee" %}</summary>
+        <form method="post" enctype="multipart/form-data" action="{% url 'orders:thandu' order.public_id %}" style="margin-top:10px">{% csrf_token %}
+          {% for f in thandu_form %}<div class="field"><label class="label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</div>{% endfor %}
+          <button class="btn btn--buy btn--sm">{% trans "Send complaint" %}</button></form></details>
+      {% elif complaint %}<div class="flash flash--info" style="margin-top:16px">{% trans "Thandu guarantee" %}: {{ complaint.get_state_display }}{% if complaint.coupon %}: <b>{{ complaint.coupon.code }}</b>{% endif %}</div>{% endif %}
+      <div class="btns" style="margin-top:16px">
+        {% if order.status not in "pending_payment payment_failed" %}<a class="btn btn--ghost btn--sm" href="{% url 'orders:invoice' order.public_id %}">{% trans "Download GST invoice" %}</a>{% endif %}
+        <form method="post" action="{% url 'orders:reorder' order.public_id %}">{% csrf_token %}<button class="btn btn--buy btn--sm"><svg class="icon" style="width:16px;height:16px"><use href="#i-repeat"/></svg>{% trans "Buy again" %}</button></form>
+        {% if order.can_cancel_by_customer %}<form method="post" action="{% url 'orders:cancel' order.public_id %}" data-confirm="{% trans 'Cancel this order?' %}">{% csrf_token %}<button class="btn btn--danger btn--sm">{% trans "Cancel order" %}</button></form>{% endif %}
+      </div>
+    </div>
+    <aside class="checkout__summary box">
+      <h2>{% trans "Bill" %}</h2>
+      <div class="sumrow"><span>{% trans "Item total" %}</span><span>{{ order.subtotal|rupee }}</span></div>
+      {% if order.discount %}<div class="sumrow"><span>{% trans "Coupon" %} {{ order.coupon_code }}</span><span>−{{ order.discount|rupee }}</span></div>{% endif %}
+      {% if order.coins_value %}<div class="sumrow"><span>{% trans "Rasiko Coins" %}</span><span>−{{ order.coins_value|rupee }}</span></div>{% endif %}
+      <div class="sumrow"><span>{% trans "Delivery" %}</span><span>{% if order.delivery_fee %}{{ order.delivery_fee|rupee }}{% else %}{% trans "FREE" %}{% endif %}</span></div>
+      {% if order.small_order_fee %}<div class="sumrow"><span>{% trans "Small order fee" %}</span><span>{{ order.small_order_fee|rupee }}</span></div>{% endif %}
+      {% for label, amount in order.surcharges %}<div class="sumrow"><span>{{ label }}</span><span>{{ amount|rupee }}</span></div>{% endfor %}
+      <div class="sumrow sumrow--total"><span>{% trans "Total" %}</span><span>{{ order.total|rupee }}</span></div>
+      {% if order.refunded_total %}<div class="sumrow" style="color:var(--maroon)"><span>{% trans "Refunded" %}</span><span>−{{ order.refunded_total|rupee }}</span></div>{% endif %}
+      {% if order.savings %}<div class="saved-banner">{% blocktrans with s=order.savings|rupee %}You saved {{ s }}{% endblocktrans %}</div>{% endif %}
+      <p class="muted" style="font-size:14px">{{ order.get_payment_method_display }} · <span class="chip {{ order.payment_status|status_chip }}">{{ order.get_payment_status_display }}</span></p>
+      {% if order.coins_earned %}<p class="muted" style="font-size:14px">{% blocktrans with n=order.coins_earned %}You earned {{ n }} Rasiko Coins{% endblocktrans %}</p>{% endif %}
+      <p style="font-size:14px"><b>{{ order.ship_name }}</b><br>{{ order.ship_address }}<br>{{ order.ship_phone }}</p>
+      <a class="link" href="{% url 'support:help' %}">{% trans "Need help with this order?" %}</a>
+    </aside>
+  </div>
+</div>
+{% endblock %}

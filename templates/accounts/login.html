@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Sign in" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Sign in" %}</h1>
+<form method="post" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+{% include "partials/form_errors.html" %}
+{% for f in form %}{% include "partials/field.html" %}{% endfor %}
+<button class="btn btn--buy btn--block">{% trans "Sign in" %}</button></form>
+<p style="margin-top:14px"><a class="link" href="{% url 'accounts:password_reset' %}">{% trans "Forgot password?" %}</a></p>
+<p>{% trans "New to Rasiko?" %} <a class="link" href="{% url 'accounts:signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">{% trans "Create an account" %}</a></p></div></div>{% endblock %}

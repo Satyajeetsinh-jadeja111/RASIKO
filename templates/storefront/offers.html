@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{% trans "Offers" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page">
+  <h1 class="page-title">{% trans "Offers & coupons" %}</h1>
+  <div class="grid-products" style="margin-bottom:22px">{% for c in coupons %}
+    <div class="offer"><h2 style="font-size:22px">{{ c.label }}</h2><p>{{ c.description }}{% if c.min_order %}<br><small class="muted">{% blocktrans with m=c.min_order|rupee %}On orders above {{ m }}{% endblocktrans %}</small>{% endif %}</p><button class="coupon" type="button" data-copy="{{ c.code }}">{{ c.code }} <small>{% trans "Tap to copy" %}</small></button></div>
+  {% empty %}<p class="muted">{% trans "No coupons right now. Check back soon!" %}</p>{% endfor %}</div>
+  {% if combos %}<h2 class="page-title" style="font-size:24px">{% trans "Combo packs" %}</h2>
+  <div class="grid-products" style="margin-bottom:22px">{% for c in combos %}
+    <article class="card"><div class="card__well">{% for i in c.items.all|slice:":2" %}{% drink i.variant.product.illustration i.variant.product.illustration_color %}{% endfor %}</div><h3>{{ c.name }}</h3><div class="meta">{{ c.description }}</div><div class="save"></div>
+    <div class="buy"><div><span class="price">{{ c.price|rupee }}</span>{% if c.mrp_total > c.price %}<span class="mrp">{{ c.mrp_total|rupee }}</span>{% endif %}</div><div class="buy__ctl" data-key="c:{{ c.pk }}" data-name="{{ c.name }}"><button class="add" type="button">{% trans "Add" %}</button></div></div></article>{% endfor %}</div>{% endif %}
+  <h2 class="page-title" style="font-size:24px">{% trans "Best prices today" %}</h2>
+  <div class="grid-products">{% for p in deals %}{% include "partials/product_card.html" %}{% endfor %}</div>
+</div>{% endblock %}

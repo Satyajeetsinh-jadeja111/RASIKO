@@ -1,0 +1,7 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Subscriptions{% endblock %}{% block heading %}Subscriptions{% endblock %}
+{% block content %}<p class="muted">Orders are created automatically each morning for active subscriptions and paid by Cash on Delivery.</p>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>Customer</th><th>Item</th><th>Qty</th><th>How often</th><th>Time</th><th>Next</th><th>Status</th><th></th></tr></thead><tbody>
+{% for s in page %}<tr><td>{{ s.user.email }}</td><td>{{ s.variant }}</td><td>{{ s.qty }}</td><td>{{ s.get_frequency_display }}</td><td>{{ s.delivery_time|time:"h:i A" }}</td><td>{{ s.next_run|date:"d M" }}</td><td>{{ s.get_state_display }}</td>
+<td class="actions"><form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="id" value="{{ s.pk }}">{% if s.state == "active" %}<button class="btn btn--ghost btn--sm" name="action" value="paused">Pause</button>{% elif s.state == "paused" %}<button class="btn btn--ghost btn--sm" name="action" value="active">Resume</button>{% endif %}{% if s.state != "cancelled" %}<button class="btn btn--danger btn--sm" name="action" value="cancelled">Cancel</button>{% endif %}</form></td></tr>
+{% empty %}<tr><td colspan="8" class="muted">No subscriptions yet.</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

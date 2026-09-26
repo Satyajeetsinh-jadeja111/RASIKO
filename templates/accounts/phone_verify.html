@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Verify mobile" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Verify your mobile" %}</h1>
+<p class="page-sub">{% blocktrans with p=user.phone %}We'll send a 6-digit code for {{ p }}. You need this once before your first Cash on Delivery order.{% endblocktrans %}</p>
+<form method="post" style="margin-bottom:14px">{% csrf_token %}<input type="hidden" name="action" value="send"><button class="btn btn--gold btn--sm">{% trans "Send code" %}</button></form>
+<form method="post" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ request.GET.next }}">
+{% for f in form %}{% include "partials/field.html" %}{% endfor %}
+<button class="btn btn--buy btn--block">{% trans "Verify" %}</button></form></div></div>{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}{% load rasiko i18n static %}
+{% block content %}
+{# Centre (Brahmasthan): open hero slider, generous cream space #}
+<section class="hero" aria-roledescription="carousel" aria-label="{% trans 'Offers' %}" data-slider>
+  <div class="hero__track">
+    {% for s in slides %}
+    {% if s.image %}
+    <div class="slide slide--image" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} / {{ slides|length }}">
+      <div class="slide__blur" style="background-image:url('{{ s.image.url }}');{% if s.blur_color %}background-color:{{ s.blur_color }}{% endif %}"></div>
+      <picture>
+        {% if s.mobile_image %}<source media="(max-width: 719px)" srcset="{{ s.mobile_image.url }}">{% endif %}
+        <img src="{{ s.image.url }}" alt="{{ s.heading }} {{ s.heading_accent }}" style="object-fit:{{ s.fit }};object-position:{{ s.focal_x }}% {{ s.focal_y }}%" {% if not forloop.first %}loading="lazy"{% else %}fetchpriority="high"{% endif %} width="{{ s.image_width|default:1920 }}" height="{{ s.image_height|default:720 }}">
+      </picture>
+      <div class="slide__text">
+        {% if s.badge %}<span class="pill">{{ s.badge }}</span>{% endif %}
+        <h2>{{ s.heading }} {{ s.heading_accent }}</h2>
+        <a class="btn btn--buy" href="{{ s.button_link }}">{{ s.button_text }}</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="slide{% if s.theme == 'green' %} slide--green{% elif s.theme == 'pink' %} slide--pink{% endif %}" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} / {{ slides|length }}">
+      <div>
+        {% if s.badge %}<span class="pill{% if s.theme == 'green' %} pill--green{% endif %}">{% if forloop.first %}<svg class="icon" style="width:15px;height:15px"><use href="#i-bolt"/></svg>{% endif %}{{ s.badge }}</span>{% endif %}
+        {% if forloop.first %}<h1>{% else %}<h2>{% endif %}{{ s.heading }}{% if s.heading_accent %}<br><span class="accent{% if s.theme == 'green' %} accent--green{% endif %}">{{ s.heading_accent }}</span>{% endif %}{% if forloop.first %}</h1>{% else %}</h2>{% endif %}
+        {% if s.subtext %}<p>{{ s.subtext }}</p>{% endif %}
+        <div class="btns"><a class="btn btn--buy" href="{{ s.button_link }}">{{ s.button_text }}</a><a class="btn btn--outline" href="{% url 'storefront:offers' %}">{% trans "View offers" %}</a></div>
+      </div>
+      <div class="hero__art">{% for k in s.art|split:"," %}{% drink k %}{% endfor %}</div>
+    </div>
+    {% endif %}
+    {% empty %}
+    <div class="slide"><div><h1>{% trans "Thandu thandu," %}<br><span class="accent">{% trans "tamare ghare!" %}</span></h1></div></div>
+    {% endfor %}
+  </div>
+  {% if slides|length > 1 %}
+  <button class="hero__arrow hero__arrow--prev" type="button" aria-label="{% trans 'Previous slide' %}"><svg class="icon"><use href="#i-left"/></svg></button>
+  <button class="hero__arrow hero__arrow--next" type="button" aria-label="{% trans 'Next slide' %}"><svg class="icon"><use href="#i-right"/></svg></button>
+  <div class="hero__dots" role="tablist" aria-label="{% trans 'Choose slide' %}"></div>
+  {% endif %}
+</section>
+
+{% if campaign %}
+<div class="campaign-banner"><div><b>{{ campaign.banner_title }}</b><div>{{ campaign.banner_text }}</div></div>{% if campaign.coupon %}<button class="coupon" type="button" data-copy="{{ campaign.coupon.code }}">{{ campaign.coupon.code }} <small>{% trans "Tap to copy" %}</small></button>{% endif %}</div>
+{% endif %}
+
+<nav class="tiles reveal" aria-label="{% trans 'Shop by category' %}">
+  {% for c in tiles %}<a class="tile" href="{{ c.get_absolute_url }}"><div class="tile__img t-{{ c.tile_color }}">{% if c.image %}<img src="{{ c.image.url }}" alt="" loading="lazy" style="height:62px;width:auto">{% else %}{% drink c.icon %}{% endif %}</div>{{ c.local_name }}</a>{% endfor %}
+</nav>
+
+{# West: Best Sellers (Varun, gains) | East: Fresh Picks (Surya, growth) #}
+<div class="duo">
+  <section class="panel panel--west reveal" aria-labelledby="best-h">
+    <div class="panel__head"><h2 id="best-h">{% trans "Best Sellers" %}</h2><a href="{% url 'storefront:search' %}?sort=popular">{% trans "See all" %} →</a></div>
+    <div class="row">{% for p in best %}{% include "partials/product_card.html" %}{% endfor %}</div>
+  </section>
+  <section class="panel panel--east reveal" aria-labelledby="fresh-h">
+    <div class="panel__head"><h2 id="fresh-h">{% trans "Fresh Picks" %}</h2><a href="{% url 'storefront:search' %}?sort=new">{% trans "New this week" %}</a></div>
+    <div class="row">{% for p in fresh|slice:":4" %}{% include "partials/product_card.html" %}{% endfor %}</div>
+  </section>
+</div>
+
+{% if combos %}
+<section class="panel reveal" style="margin-top:22px" aria-labelledby="combo-h">
+  <div class="panel__head"><h2 id="combo-h">{% trans "Combo packs" %}</h2><a href="{% url 'storefront:offers' %}">{% trans "All offers" %} →</a></div>
+  <div class="row">{% for c in combos %}
+    <article class="card"><div class="card__well">{% if c.regular_total > c.price %}<span class="tag tag--sale">{% trans "Save" %} {{ c.regular_total|add:0|floatformat:0 }}</span>{% endif %}{% for i in c.items.all|slice:":2" %}{% drink i.variant.product.illustration i.variant.product.illustration_color %}{% endfor %}</div>
+      <h3>{{ c.name }}</h3><div class="meta">{{ c.description }}</div><div class="save"></div>
+      <div class="buy"><div><span class="price">{{ c.price|rupee }}</span>{% if c.mrp_total > c.price %}<span class="mrp">{{ c.mrp_total|rupee }}</span>{% endif %}</div>
+      <div class="buy__ctl" data-key="c:{{ c.pk }}" data-name="{{ c.name }}"><button class="add" type="button">{% trans "Add" %}</button></div></div>
+    </article>{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if recent %}
+<section class="panel reveal" style="margin-top:22px" aria-labelledby="recent-h">
+  <div class="panel__head"><h2 id="recent-h">{% trans "Recently viewed" %}</h2></div>
+  <div class="row">{% for p in recent|slice:":6" %}{% include "partials/product_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if brands %}
+<section class="reveal" style="margin-top:22px" aria-labelledby="brands-h">
+  <div class="panel__head"><h2 id="brands-h" style="font-size:22px">{% trans "Shop by brand" %}</h2><a class="link" href="{% url 'storefront:brands' %}">{% trans "All brands" %} →</a></div>
+  <div class="row" style="grid-auto-columns:150px">{% for b in brands %}<a class="tile" href="{{ b.get_absolute_url }}"><div class="tile__img t-white" style="padding:8px">{% if b.logo %}<img src="{{ b.logo.url }}" alt="{{ b.name }}" loading="lazy" style="max-height:60px">{% else %}<span style="font:600 16px var(--font-head);color:var(--maroon)">{{ b.name }}</span>{% endif %}</div></a>{% endfor %}</div>
+</section>
+{% endif %}
+
+{# South-West (Nairutya): About + trust | offer #}
+<div class="south">
+  <section class="about reveal" aria-labelledby="about-h">
+    <h2 id="about-h">{% trans "About Rasiko" %}</h2>
+    <p>{% trans "A family-run Rajkot business bringing you genuine brands at honest prices, delivered fresh to your door." %}</p>
+    <ul class="trust">
+      <li><svg class="icon"><use href="#i-check"/></svg>{% trans "FSSAI Licensed" %}</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>{% trans "GST Invoice" %}</li>
+      <li><svg class="icon"><use href="#i-lock"/></svg>{% trans "Secure payments" %}</li>
+      <li><svg class="icon"><use href="#i-snow"/></svg>{% trans "Thandu guarantee" %}</li>
+      <li><svg class="icon icon--gold"><use href="#i-star"/></svg>{% trans "Verified reviews" %}</li>
+    </ul>
+  </section>
+  {% if home_coupon %}
+  <section class="offer reveal" aria-labelledby="offer-h">
+    <svg class="offer__toran" viewBox="0 0 150 40" aria-hidden="true"><path d="M0 6 Q75 30 150 6" fill="none" stroke="#FB8C00" stroke-width="2"/><g fill="#F4B400"><path d="M20 12 l6 10 -6 8 -6-8Z"/><path d="M75 18 l6 10 -6 8 -6-8Z"/><path d="M130 12 l6 10 -6 8 -6-8Z"/></g><g fill="#2FA05A"><path d="M47 16 l5 9 -5 7 -5-7Z"/><path d="M103 16 l5 9 -5 7 -5-7Z"/></g></svg>
+    <h2 id="offer-h">{% trans "Festive offer" %} <svg class="diya" viewBox="0 0 34 26" aria-hidden="true"><path d="M17 1c3 4 3 8 0 10-3-2-3-6 0-10Z" fill="#FB8C00"/><path d="M17 4c1.4 2.3 1.4 4.5 0 5.6-1.4-1.1-1.4-3.3 0-5.6Z" fill="#F4B400"/><path d="M2 13h30c-1.5 7-7 11-15 11S3.5 20 2 13Z" fill="#B71C2C"/><path d="M5 14h24" stroke="#F4B400" stroke-width="2" stroke-linecap="round"/></svg></h2>
+    <p>{{ home_coupon.description }}</p>
+    <button class="coupon" type="button" data-copy="{{ home_coupon.code }}">{{ home_coupon.code }} <small>{% trans "Tap to copy" %}</small></button>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% load rasiko %}Payment didn't go through
+
+Hi {{ order.ship_name|default:order.user.display_name }},
+
+The payment for order {{ order.number }} failed and no money was taken. You can try again from your order page.
+
+{% for l in order.lines.all %}- {{ l.product_name }} {{ l.variant_label }} x {{ l.qty }}: {{ l.line_total|rupee }}
+{% endfor %}Total: {{ order.total|rupee }} ({{ order.get_payment_method_display }})
+
+View your order: {{ SITE_URL }}{{ order.get_absolute_url }}
+
+{{ store.name }} · {{ store.phone }}

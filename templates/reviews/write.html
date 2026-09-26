@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% load i18n rasiko %}
+{% block title %}{% trans "Write a review" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Rate" %} {{ line.product_name }}</h1><p class="page-sub">{{ line.variant_label }} · {% trans "Order" %} {{ line.order.number }}</p>
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}{% include "partials/form_errors.html" %}
+<fieldset class="field stars-input"><legend class="label">{{ form.stars.label }}</legend>{% for r in form.stars %}<label>{{ r.tag }}<span>{{ r.choice_label }}</span></label>{% endfor %}{{ form.stars.errors }}</fieldset>
+{% with f=form.title %}{% include "partials/field.html" %}{% endwith %}{% with f=form.body %}{% include "partials/field.html" %}{% endwith %}{% with f=form.photos %}{% include "partials/field.html" %}{% endwith %}
+<button class="btn btn--buy btn--block">{% trans "Submit review" %}</button></form></div></div>{% endblock %}

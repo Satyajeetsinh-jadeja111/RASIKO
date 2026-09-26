@@ -1,0 +1,11 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ t.subject }}{% endblock %}{% block heading %}{{ t.subject|truncatechars:60 }}{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:support' %}">← Inbox</a>{% endblock %}
+{% block content %}
+<div class="dash-grid dash-grid--2">
+<section class="panel-box"><div class="chatbox__msgs" style="border-radius:14px;max-height:60vh" data-autoscroll>{% for m in msgs %}<div class="bubble bubble--{{ m.role }}">{% if m.role == "staff" %}<b>{{ m.staff.display_name|default:"Team" }}:</b> {% endif %}{{ m.text }}<br><small class="muted">{{ m.created_at|date:"d M, H:i" }}</small></div>{% empty %}<p class="muted">No messages.</p>{% endfor %}</div>
+<form method="post" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="action" value="reply"><label class="label" for="text">Reply (also emailed to {{ t.email }})</label><textarea class="input" id="text" name="text" rows="3" required></textarea><button class="btn btn--buy btn--sm" style="margin-top:8px">Send reply</button></form></section>
+<section class="panel-box"><h2>About</h2><p>{{ t.name }} · {{ t.email }}{% if t.user %}{% if is_manager %} · <a class="link" href="{% url 'dashboard:customer' t.user.pk %}">Customer page</a>{% endif %}{% endif %}</p>
+{% if t.order %}<p>Order <a class="link" href="{% url 'dashboard:order' t.order.number %}">{{ t.order.number }}</a></p>{% endif %}
+<p>Status: <b>{{ t.get_state_display }}</b></p><form method="post" class="btns">{% csrf_token %}{% for v, l in states %}{% if v != t.state %}<button class="btn btn--ghost btn--sm" name="action" value="{{ v }}">Mark {{ l|lower }}</button>{% endif %}{% endfor %}</form></section>
+</div>{% endblock %}

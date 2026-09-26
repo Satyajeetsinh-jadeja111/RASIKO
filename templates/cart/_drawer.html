@@ -1,0 +1,10 @@
+{% load rasiko i18n %}
+<div class="drawer-backdrop" data-close-drawer></div>
+<aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-h">
+  <div class="drawer__head"><h2 id="drawer-h" style="font:600 22px var(--font-head);margin:0">{% trans "Your cart" %} ({{ cart.count }})</h2><button class="round" type="button" data-close-drawer aria-label="{% trans 'Close' %}"><svg class="icon"><use href="#i-x"/></svg></button></div>
+  <div class="drawer__body">{% if cart.lines %}{% include "cart/_lines.html" %}{% else %}<p class="muted">{% trans "Your cart is empty." %}</p>{% endif %}</div>
+  {% if cart.lines %}<div class="drawer__foot">
+    {% include "cart/_summary.html" %}
+    <div class="btns" style="margin-top:10px"><a class="btn btn--ghost" href="{% url 'cart:detail' %}">{% trans "View cart" %}</a><a class="btn btn--buy" style="flex:1" href="{% url 'orders:checkout' %}">{% trans "Checkout" %}</a></div>
+  </div>{% endif %}
+</aside>

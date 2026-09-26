@@ -1,0 +1,19 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Slide{% endblock %}{% block heading %}{% if slide %}Edit slide{% else %}New slide{% endif %}{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:hero' %}">← Slides</a>{% endblock %}
+{% block content %}
+<div class="dash-grid dash-grid--2">
+<form class="panel-box" method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+  <div class="flash flash--info" style="font-weight:500">Best sizes: <b>desktop 1920 × 720</b> (wide, 8:3) and <b>mobile 1080 × 1350</b> (tall, 4:5). Keep faces and text near the centre. JPG, PNG or WebP up to 5 MB; we convert to WebP and remove location data.</div>
+  {% include "dashboard/_form_fields.html" %}
+  <div class="btns"><button class="btn btn--buy">Save slide</button></div>
+</form>
+<section class="panel-box"><h2>Preview</h2>
+  <p class="muted" style="font-size:14px">Desktop</p>
+  <div class="hero-preview" data-preview-box="desktop" style="{% if slide.blur_color %}background:{{ slide.blur_color }}{% endif %}">{% if slide.image %}<img src="{{ slide.image.url }}" alt="" data-fit="{{ slide.fit }}" style="object-fit:{% if slide.fit == 'cover' %}cover{% else %}contain{% endif %};object-position:{{ slide.focal_x }}% {{ slide.focal_y }}%">{% endif %}</div>
+  <p class="muted" style="font-size:14px;margin-top:12px">Phone</p>
+  <div class="hero-preview hero-preview--mobile" data-preview-box="mobile">{% if slide.mobile_image %}<img src="{{ slide.mobile_image.url }}" alt="" style="object-fit:cover">{% elif slide.image %}<img src="{{ slide.image.url }}" alt="" style="object-fit:{% if slide.fit == 'cover' %}cover{% else %}contain{% endif %};object-position:{{ slide.focal_x }}% {{ slide.focal_y }}%">{% endif %}</div>
+  <p class="muted" style="font-size:13px">“Show whole image” never cuts the photo; empty space is filled with its main colour. “Fill” fills the space and uses the focal point sliders.</p>
+  {% if slide %}<form method="post" action="{% url 'dashboard:hero_delete' slide.pk %}" data-confirm="Delete this slide?">{% csrf_token %}<button class="btn btn--danger btn--sm">Delete slide</button></form>{% endif %}
+</section></div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{% trans "Checkout" %} · {{ store.name }}{% endblock %}
+{% block content %}
+<div class="page">
+  <h1 class="page-title">{% trans "Checkout" %}</h1>
+  <form method="post" class="checkout" data-checkout>{% csrf_token %}
+    <input type="hidden" name="checkout_token" value="{{ checkout_token }}">
+    <input type="hidden" name="address" value="{{ address.public_id }}">
+    <div>
+      <section class="box" style="margin-bottom:16px">
+        <h2><span class="step-no">1</span>{% trans "Deliver to" %}</h2>
+        <div style="display:grid;gap:10px">
+          {% for a in addresses %}
+          <a class="choice" href="?address={{ a.public_id }}" {% if a.pk == address.pk %}style="border-color:var(--tulsi);background:var(--tulsi-light)"{% endif %}>
+            <svg class="icon" style="flex:0 0 auto;color:var(--kumkum)"><use href="#i-pin"/></svg>
+            <span><b>{{ a.label }}</b> · {{ a.name }} · {{ a.phone }}<br><span class="muted">{{ a.as_text }}</span></span>
+          </a>{% endfor %}
+        </div>
+        <p style="margin:10px 0 0"><a class="link" href="{% url 'accounts:address_new' %}?next={% url 'orders:checkout' %}">+ {% trans "Add a new address" %}</a></p>
+        {% if totals.delivery and totals.delivery.ok %}<p class="eta" style="margin-top:12px"><svg class="icon" style="width:18px;height:18px"><use href="#i-bolt"/></svg>{% blocktrans with e=totals.delivery.eta_text %}ASAP delivery {{ e }}{% endblocktrans %}{% if totals.delivery.fast %} · {% trans "Rajkot's fastest" %}{% endif %}</p>{% endif %}
+      </section>
+
+      <section class="box" style="margin-bottom:16px">
+        <h2><span class="step-no">2</span>{% trans "When" %}</h2>
+        <label class="label" for="slot">{% trans "Delivery time" %}</label>
+        <select class="input" id="slot" name="slot">
+          <option value="asap">{% trans "As soon as possible" %}{% if totals.delivery.ok %} ({{ totals.delivery.eta_text }}){% endif %}</option>
+          {% for value, label in slots %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+        <label class="label" for="note" style="margin-top:12px">{% trans "Note for the rider (optional)" %}</label>
+        <input class="input" id="note" name="note" maxlength="300" placeholder="{% trans 'e.g. Ring the bell twice' %}">
+      </section>
+
+      <section class="box" style="margin-bottom:16px">
+        <h2><span class="step-no">3</span>{% trans "Pay with" %}</h2>
+        <div style="display:grid;gap:10px">
+        {% for value, label, available, reason in methods %}
+          <label class="choice{% if not available %} choice--off{% endif %}">
+            <input type="radio" name="payment_method" value="{{ value }}" {% if not available %}disabled{% elif forloop.first %}checked{% endif %} required>
+            <span><b>{{ label }}</b>{% if reason %}<br><span class="muted">{{ reason }}</span>{% elif value == "cod" and needs_phone %}<br><span class="muted">{% trans "We'll verify your mobile number once before your first COD order." %} <a class="link" href="{% url 'accounts:phone_verify' %}?next={% url 'orders:checkout' %}">{% trans "Verify now" %}</a></span>{% endif %}</span>
+          </label>
+        {% endfor %}
+        </div>
+      </section>
+      {# South-West: trust badges #}
+      <ul class="trust" aria-label="{% trans 'Why shop with us' %}">
+        <li><svg class="icon"><use href="#i-lock"/></svg>{% trans "Secure payments" %}</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>FSSAI {{ store.fssai_number }}</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>{% trans "GST invoice" %}</li>
+        <li><svg class="icon"><use href="#i-snow"/></svg>{% trans "Thandu guarantee" %}</li>
+      </ul>
+    </div>
+
+    {# East: order summary #}
+    <aside class="checkout__summary box">
+      <h2>{% trans "Order summary" %}</h2>
+      <div style="max-height:260px;overflow:auto">{% for line in cart.lines %}<div class="sumrow"><span>{{ line.qty }} × {{ line.name }} <span class="muted">{{ line.label }}</span></span><span>{{ line.line_total|rupee }}</span></div>{% endfor %}</div>
+      <hr style="border:0;border-top:1px solid var(--line)">
+      {% include "cart/_summary.html" %}
+      {% if totals.coupon_error %}<div class="flash flash--error">{{ totals.coupon_error }}</div>{% endif %}
+      {% for p in totals.problems %}<div class="flash flash--error">{{ p }}</div>{% endfor %}
+      <button class="btn btn--buy btn--block" style="margin-top:12px" type="submit" {% if not totals.ok %}disabled{% endif %} data-once>{% trans "Place order" %} · {{ totals.total|rupee }}</button>
+      <p class="muted" style="font-size:13px;text-align:center">{% trans "Prices, delivery fee and discounts are checked again on our server when you place the order." %}</p>
+      <p style="text-align:center;font-size:13px"><a class="link" href="{% url 'storefront:page' 'refund-policy' %}">{% trans "Refund & cancellation policy" %}</a></p>
+    </aside>
+  </form>
+</div>
+{% endblock %}

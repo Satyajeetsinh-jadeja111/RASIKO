@@ -1,0 +1,6 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Customers{% endblock %}{% block heading %}Customers{% endblock %}
+{% block content %}<form class="toolbar" method="get"><input class="input" name="q" value="{{ q }}" placeholder="Email, phone or name" aria-label="Search"><button class="btn btn--ghost btn--sm">Search</button></form>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>Customer</th><th>Phone</th><th>Joined</th><th class="num">Delivered orders</th><th class="num">Spent</th><th>Last order</th><th>COD</th></tr></thead><tbody>
+{% for c in page %}<tr><td><a class="link" href="{% url 'dashboard:customer' c.pk %}">{{ c.display_name }}</a><br><span class="muted">{{ c.email }}</span></td><td>{{ c.phone }}{% if c.phone_verified %} ✓{% endif %}</td><td>{{ c.date_joined|date:"d M Y" }}</td><td class="num">{{ c.n_orders }}</td><td class="num">{{ c.spent|default:0|rupee }}</td><td>{{ c.last_order|date:"d M Y"|default:"—" }}</td><td>{% if c.cod_blocked %}<span class="chip chip--red">Blocked</span>{% else %}<span class="chip chip--green">Allowed</span>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">No customers yet.</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

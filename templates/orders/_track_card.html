@@ -1,0 +1,16 @@
+{% load rasiko i18n %}
+<div class="box">
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
+    <h2 style="margin:0">{% trans "Order" %} {{ order.number }}</h2>
+    <span class="chip {{ order.status|status_chip }}">{{ order.get_status_display }}</span>
+  </div>
+  <p class="muted" style="margin:4px 0 14px">{{ order.placed_at|default:order.created_at|date:"d M Y, g:i A" }} · {{ order.slot_label }}</p>
+  {% if order.status in "cancelled payment_failed refunded" %}
+    <div class="flash flash--error">{{ order.get_status_display }}{% if order.cancel_reason %}: {{ order.cancel_reason }}{% endif %}</div>
+  {% else %}
+  <ol class="timeline">{% for label, ev, state in order.timeline %}<li class="{{ state }}"><span class="dot"></span><b>{{ label }}</b>{% if ev %}<br><small class="muted">{{ ev.at|date:"g:i A" }}</small>{% endif %}</li>{% endfor %}</ol>
+  {% if eta %}<p class="eta">{% blocktrans with t=eta|time:"g:i A" %}Expected by {{ t }}{% endblocktrans %}</p>{% endif %}
+  {% if order.rider_name %}<p><b>{% trans "Rider" %}:</b> {{ order.rider_name }} · <a class="link" href="tel:{{ order.rider_phone }}">{{ order.rider_phone }}</a></p>{% endif %}
+  {% if order.is_open %}<p>{% trans "Delivery code" %}: <span class="otp-box">{{ order.delivery_otp }}</span></p>{% endif %}
+  {% endif %}
+</div>
