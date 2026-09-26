@@ -1,0 +1,36 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Django
+/media/
+/staticfiles/
+*.sqlite3
+/backups/
+
+# Frontend
+frontend/node_modules/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Local runtime
+dump.rdb
+.ccr-ca.crt
+*.mo
