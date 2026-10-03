@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Analytics{% endblock %}{% block heading %}Analytics{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:delivery_economics' %}">Delivery economics</a><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:insights' %}">Insights</a>{% endblock %}
+{% block content %}
+<form class="toolbar" method="get">
+  <select class="input" name="range" aria-label="Period" data-autosubmit>{% for v, l in ranges %}<option value="{{ v }}" {% if v == rng %}selected{% endif %}>{{ l }}</option>{% endfor %}{% if rng == "custom" %}<option value="custom" selected>Custom</option>{% endif %}</select>
+  <label class="label" for="from" style="margin:0 0 0 8px">or from</label><input class="input" type="date" id="from" name="from" value="{{ request.GET.from }}"><label class="label" for="to" style="margin:0">to</label><input class="input" type="date" id="to" name="to" value="{{ request.GET.to }}"><button class="btn btn--ghost btn--sm">Show</button>
+</form>
+<p class="muted" style="margin-top:-6px">{{ p.start|date:"d M Y" }} – {{ p.end|date:"d M Y" }} · compared with the same number of days before. Revenue includes GST and delivery fees.</p>
+<div class="kpis kpis--6">
+  {% with x=k.revenue %}<div class="kpi"><small>Sales</small><b>{{ x.value|rupee }}</b>{% include "dashboard/_delta.html" %}</div>{% endwith %}
+  {% with x=k.orders %}<div class="kpi"><small>Orders</small><b>{{ x.value }}</b>{% include "dashboard/_delta.html" %}</div>{% endwith %}
+  {% with x=k.aov %}<div class="kpi"><small>Average order</small><b>{{ x.value|rupee }}</b>{% include "dashboard/_delta.html" %}</div>{% endwith %}
+  {% with x=k.gross_margin %}<div class="kpi"><small>Gross profit (items with cost)</small><b>{{ x.value|rupee }}</b>{% include "dashboard/_delta.html" %}</div>{% endwith %}
+  {% with x=k.new_customers %}<div class="kpi"><small>New customers</small><b>{{ x.value }}</b>{% include "dashboard/_delta.html" %}</div>{% endwith %}
+  <div class="kpi"><small>Repeat customers</small><b>{{ k.repeat_rate.value }}%</b><span class="delta">before {{ k.repeat_rate.before }}%</span></div>
+  <div class="kpi"><small>Cancelled</small><b>{{ k.cancel_rate.value }}%</b><span class="delta">{{ k.cancelled.value }} orders</span></div>
+  <div class="kpi"><small>Refunds</small><b>{{ k.refunds.value|rupee }}</b></div>
+  <div class="kpi"><small>Discounts and coins</small><b>{{ k.discounts.value|rupee }}</b></div>
+  <div class="kpi"><small>Delivery fees − cost</small><b class="{% if k.delivery_net.value < 0 %}delta--down{% endif %}">{{ k.delivery_net.value|rupee }}</b></div>
+  <div class="kpi"><small>GST collected</small><b>{{ k.gst.value|rupee }}</b></div>
+  <div class="kpi"><small>Customers</small><b>{{ k.customers.value }}</b></div>
+</div>
+{{ chart|json_script:"chart-data" }}
+<div class="dash-grid dash-grid--2">
+  <section class="panel-box" style="grid-column:1/-1"><h2>Sales and orders by day</h2><div class="chart-box"><canvas data-chart="daily" aria-label="Sales by day chart" role="img"></canvas></div></section>
+  <section class="panel-box"><h2>Top products</h2><div class="chart-box"><canvas data-chart="top" aria-label="Top products chart" role="img"></canvas></div></section>
+  <section class="panel-box"><h2>By category</h2><div class="chart-box"><canvas data-chart="cats" aria-label="Category chart" role="img"></canvas></div></section>
+  <section class="panel-box" style="grid-column:1/-1"><h2>When people order</h2><div class="tbl-wrap"><div class="heat" style="min-width:640px"><span></span>{% for h in "x"|rjust:24|make_list %}<small style="text-align:center">{% if forloop.counter0|divisibleby:3 %}{{ forloop.counter0 }}{% endif %}</small>{% endfor %}
+    {% for day, cells in heat %}<small>{{ day }}</small>{% for n, a in cells %}<span title="{{ day }} {{ forloop.counter0 }}:00 · {{ n }} orders" style="background:rgba(229,57,53,{{ a|default:0 }});{% if not n %}background:var(--chandan){% endif %}"></span>{% endfor %}{% endfor %}</div></div></section>
+  <section class="panel-box"><h2>Shopping funnel</h2><table class="tbl"><tbody>{% for f in funnel %}<tr><td>{{ f.step }}</td><td class="num">{{ f.sessions }}</td><td style="width:45%"><div style="background:var(--tulsi-light);border-radius:6px"><div style="width:{{ f.pct }}%;background:var(--tulsi);height:10px;border-radius:6px"></div></div></td><td class="num">{{ f.pct }}%</td></tr>{% endfor %}</tbody></table></section>
+  <section class="panel-box"><h2>Payment methods</h2><table class="tbl"><tbody>{% for r in payments %}<tr><td>{{ r.payment_method|capfirst }}</td><td class="num">{{ r.orders }}</td><td class="num">{{ r.revenue|rupee }}</td></tr>{% empty %}<tr><td class="muted">No sales.</td></tr>{% endfor %}</tbody></table></section>
+  <section class="panel-box"><h2>Areas</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pincode</th><th>Area</th><th class="num">Orders</th><th class="num">Sales</th><th class="num">Fees − cost</th></tr></thead><tbody>{% for a in areas %}<tr><td>{{ a.ship_pincode }}</td><td>{{ a.ship_area }}</td><td class="num">{{ a.orders }}</td><td class="num">{{ a.revenue|rupee }}</td><td class="num">{{ a.fees|default:0|rupee }} − {{ a.cost|default:0|rupee }}</td></tr>{% empty %}<tr><td class="muted">No sales.</td></tr>{% endfor %}</tbody></table></div></section>
+  <section class="panel-box"><h2>Coupons</h2><table class="tbl"><thead><tr><th>Code</th><th class="num">Uses</th><th class="num">Discount</th><th class="num">Sales</th></tr></thead><tbody>{% for c in coupons %}<tr><td>{{ c.coupon__code }}</td><td class="num">{{ c.uses }}</td><td class="num">{{ c.discount|rupee }}</td><td class="num">{{ c.sales|rupee }}</td></tr>{% empty %}<tr><td class="muted" colspan="4">No coupons used.</td></tr>{% endfor %}</tbody></table></section>
+  <section class="panel-box"><h2>May run out soon</h2><ul class="plain">{% for v, d, r in risks %}<li>{{ v.product.name }} {{ v.label }}: {{ v.available_qty }} left, about {{ d }} days</li>{% empty %}<li class="muted">Nothing at risk.</li>{% endfor %}</ul>
+    <h2 style="margin-top:14px">Not selling</h2><ul class="plain">{% for v in idle %}<li>{{ v.product.name }} {{ v.label }} ({{ v.stock_qty }} in stock)</li>{% empty %}<li class="muted">Everything sold at least once.</li>{% endfor %}</ul></section>
+  <section class="panel-box"><h2>Download reports</h2><table class="tbl"><tbody>{% for key, title in reports %}<tr><td>{{ title }}</td><td class="actions"><a class="link" href="?{{ qs }}&report={{ key }}&export=csv">CSV</a> · <a class="link" href="?{{ qs }}&report={{ key }}&export=xlsx">Excel</a> · <a class="link" href="?{{ qs }}&report={{ key }}&export=pdf">PDF</a></td></tr>{% endfor %}</tbody></table></section>
+</div>
+{% endblock %}
+{% block scripts %}{% load static %}<script src="{% static 'vendor/chart.umd.min.js' %}" defer></script>{% endblock %}

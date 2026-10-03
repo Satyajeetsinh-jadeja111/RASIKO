@@ -1,0 +1,6 @@
+{% load i18n %}<section id="chatbox" class="chatbox" hidden aria-label="{% trans 'Help chat' %}" data-email="{{ user.email|default:'' }}">
+  <div class="chatbox__head"><b>{% trans "Rasiko Help · 24×7" %}</b><button type="button" class="round" data-chat-close aria-label="{% trans 'Close chat' %}" style="width:34px;height:34px;background:rgba(255,255,255,.2);color:#fff">×</button></div>
+  <div class="chatbox__msgs" aria-live="polite"><div class="bubble bubble--assistant">{% trans "Namaste! Ask me about delivery areas, timings, payments, refunds or your order." %}</div></div>
+  <div class="chatbox__tools"><button type="button" data-chat-verify>{% trans "My order" %}</button><button type="button" data-chat-human>{% trans "Talk to a person" %}</button>{% if store.whatsapp_link %}<a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener" class="chip">WhatsApp</a>{% endif %}</div>
+  <form class="chatbox__form"><label class="sr-only" for="chat-text">{% trans "Message" %}</label><input class="input" id="chat-text" name="text" maxlength="500" autocomplete="off" placeholder="{% trans 'Type your question…' %}"><button class="btn btn--buy btn--sm">{% trans "Send" %}</button></form>
+</section>

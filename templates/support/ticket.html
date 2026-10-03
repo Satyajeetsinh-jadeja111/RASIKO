@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{{ ticket.subject }} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><p class="crumbs"><a href="{% url 'support:tickets' %}">{% trans "My help requests" %}</a></p>
+<h1 class="page-title">{{ ticket.subject }}</h1><p class="page-sub">{{ ticket.get_state_display }}{% if ticket.order %} · {{ ticket.order.number }}{% endif %}</p>
+<div class="box chatbox__msgs" style="border-radius:18px">{% for m in msgs %}<div class="bubble bubble--{{ m.role }}">{{ m.text }}</div>{% empty %}<p class="muted">{% trans "No messages yet." %}</p>{% endfor %}</div>
+<p style="margin-top:12px"><button class="btn btn--buy btn--sm" type="button" data-chat-open>{% trans "Continue in chat" %}</button></p></div>{% endblock %}

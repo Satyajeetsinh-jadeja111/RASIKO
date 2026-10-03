@@ -1,0 +1,12 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Staff{% endblock %}{% block heading %}Staff and roles{% endblock %}
+{% block content %}
+<div class="dash-grid dash-grid--2">
+<section class="panel-box"><h2>People with dashboard access</h2>
+<p class="muted" style="font-size:14px"><b>Staff</b>: orders, stock, products, reviews and help chat. <b>Manager</b>: also money, refunds, analytics, offers and delivery. <b>Owner</b>: everything, including API keys and staff. Owners and managers must use two-factor sign in.</p>
+<div class="tbl-wrap"><table class="tbl"><tbody>{% for p in people %}<tr><td>{{ p.display_name }}<br><span class="muted">{{ p.email }}</span></td><td>
+{% if p == request.user %}{{ p.get_role_display }} (you){% else %}<form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="id" value="{{ p.pk }}"><input type="hidden" name="action" value="role"><select class="input" name="role" aria-label="Role for {{ p.email }}" style="width:auto">{% for v, l in p.Role.choices %}{% if v != "customer" %}<option value="{{ v }}" {% if v == p.role %}selected{% endif %}>{{ l }}</option>{% endif %}{% endfor %}</select><button class="btn btn--ghost btn--sm">Change</button></form>{% endif %}</td>
+<td class="actions">{% if p != request.user %}<form method="post" style="display:inline" data-confirm="Reset two-factor for {{ p.email }}? They set it up again at next sign in.">{% csrf_token %}<input type="hidden" name="id" value="{{ p.pk }}"><button class="btn btn--ghost btn--sm" name="action" value="reset_2fa">Reset 2FA</button></form><form method="post" style="display:inline" data-confirm="Remove {{ p.email }} from the dashboard?">{% csrf_token %}<input type="hidden" name="id" value="{{ p.pk }}"><button class="btn btn--danger btn--sm" name="action" value="deactivate">Remove</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></div></section>
+<form class="panel-box" method="post" novalidate autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="create"><h2>Add a person</h2>{% include "dashboard/_form_fields.html" %}<button class="btn btn--buy btn--sm">Give access</button></form>
+</div>
+{% endblock %}

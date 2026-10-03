@@ -1,0 +1,2405 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 21:28+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/accounts/forms.py:20 templates/storefront/product.html:51
+msgid "Email"
+msgstr "ईमेल"
+
+#: apps/accounts/forms.py:22 apps/accounts/forms.py:27
+msgid "Password"
+msgstr "पासवर्ड"
+
+#: apps/accounts/forms.py:28
+msgid "Referral code (optional)"
+msgstr ""
+
+#: apps/accounts/forms.py:33
+msgid "Your name"
+msgstr "आपका नाम"
+
+#: apps/accounts/forms.py:38
+msgid "An account with this email already exists."
+msgstr ""
+
+#: apps/accounts/forms.py:44
+msgid "Enter a 10-digit mobile number."
+msgstr ""
+
+#: apps/accounts/forms.py:87
+msgid "6-digit code"
+msgstr "6 अंकों का कोड"
+
+#: apps/accounts/models.py:36 apps/support/models.py:78
+msgid "Customer"
+msgstr ""
+
+#: apps/accounts/models.py:37
+msgid "Staff"
+msgstr ""
+
+#: apps/accounts/models.py:38
+msgid "Manager"
+msgstr ""
+
+#: apps/accounts/models.py:39
+msgid "Owner"
+msgstr ""
+
+#: apps/accounts/models.py:42
+msgid "email"
+msgstr ""
+
+#: apps/accounts/models.py:99
+msgid "House / flat, building"
+msgstr "मकान / फ्लैट, बिल्डिंग"
+
+#: apps/accounts/models.py:100
+msgid "Area, street, landmark"
+msgstr "इलाका, गली, लैंडमार्क"
+
+#: apps/accounts/views.py:54
+msgid "Email or password is incorrect."
+msgstr ""
+
+#: apps/accounts/views.py:73
+msgid "Welcome to Rasiko! Please check your email to verify your address."
+msgstr ""
+
+#: apps/accounts/views.py:82
+msgid "This verification link is invalid or has expired."
+msgstr ""
+
+#: apps/accounts/views.py:85
+msgid "Your email is verified. Thank you!"
+msgstr ""
+
+#: apps/accounts/views.py:111
+msgid "Profile saved."
+msgstr "प्रोफ़ाइल सेव हो गई।"
+
+#: apps/accounts/views.py:126
+msgid "Address saved."
+msgstr "पता सेव हो गया।"
+
+#: apps/accounts/views.py:135
+msgid "Address removed."
+msgstr "पता हटा दिया गया।"
+
+#: apps/accounts/views.py:145
+msgid "Add your mobile number first."
+msgstr ""
+
+#: apps/accounts/views.py:152
+msgid "We sent a code by SMS to your mobile."
+msgstr ""
+
+#: apps/accounts/views.py:155
+msgid "We emailed you a 6-digit code."
+msgstr ""
+
+#: apps/accounts/views.py:161
+msgid "Mobile number verified."
+msgstr "मोबाइल नंबर सत्यापित हो गया।"
+
+#: apps/accounts/views.py:163 apps/orders/views.py:207
+msgid "That code is not right or has expired."
+msgstr ""
+
+#: apps/accounts/views.py:184
+msgid "Two-factor authentication is on."
+msgstr ""
+
+#: apps/accounts/views.py:186
+msgid "That code did not match. Try the newest code in your app."
+msgstr ""
+
+#: apps/accounts/views.py:205
+msgid "That code did not match."
+msgstr "कोड मेल नहीं खाया।"
+
+#: apps/cart/views.py:51
+msgid "Sorry, this is out of stock."
+msgstr "माफ़ कीजिए, यह स्टॉक में नहीं है।"
+
+#: apps/cart/views.py:66
+#, python-format
+msgid "%(name)s added to cart"
+msgstr ""
+
+#: apps/cart/views.py:66
+msgid "Cart updated"
+msgstr "कार्ट अपडेट हुआ"
+
+#: apps/cart/views.py:68
+#, python-format
+msgid "Only %(n)s available"
+msgstr ""
+
+#: apps/cart/views.py:91
+#, python-format
+msgid "Coupon %(c)s applied: you save ₹%(d)s"
+msgstr ""
+
+#: apps/catalog/models.py:52
+msgid "Illustration used when there is no image"
+msgstr ""
+
+#: apps/catalog/models.py:125
+msgid "Veg"
+msgstr "शाकाहारी"
+
+#: apps/catalog/models.py:126
+msgid "Non-veg"
+msgstr "मांसाहारी"
+
+#: apps/catalog/models.py:129
+msgid "Name in Gujarati"
+msgstr ""
+
+#: apps/catalog/models.py:130
+msgid "Name in Hindi"
+msgstr ""
+
+#: apps/catalog/models.py:139
+msgid "e.g. {\"Energy\": \"45 kcal\", \"Sugar\": \"10 g\"}"
+msgstr ""
+
+#: apps/catalog/models.py:145
+msgid "Flexible, e.g. {\"sugar_free\": true}"
+msgstr ""
+
+#: apps/catalog/models.py:147
+msgid "Drink illustration used until a photo is uploaded"
+msgstr ""
+
+#: apps/catalog/models.py:152
+msgid "Shown in Fresh Picks"
+msgstr ""
+
+#: apps/catalog/models.py:217
+msgid "e.g. 250 ml, 1 L, Pack of 6"
+msgstr ""
+
+#: apps/catalog/models.py:229
+msgid "Total quantity"
+msgstr ""
+
+#: apps/catalog/models.py:233
+msgid "Force 'Out of stock' even with quantity"
+msgstr ""
+
+#: apps/catalog/seo.py:5
+msgid "Cold drinks delivery in Rajkot"
+msgstr ""
+
+#: apps/catalog/seo.py:7
+msgid ""
+"Chilled soft drinks, soda and energy drinks delivered across Rajkot in 30 to"
+" 60 minutes. Cash on Delivery available, free delivery above ₹499."
+msgstr ""
+
+#: apps/catalog/seo.py:13
+msgid "Juice home delivery in Rajkot"
+msgstr ""
+
+#: apps/catalog/seo.py:14
+msgid ""
+"Mango ras, kokum, orange and more juices delivered chilled to your door "
+"anywhere in Rajkot."
+msgstr ""
+
+#: apps/catalog/seo.py:18
+msgid "Lassi & chaas delivery in Rajkot"
+msgstr ""
+
+#: apps/catalog/seo.py:19
+msgid ""
+"Fresh lassi, chaas and flavoured milk from trusted brands, delivered in "
+"under an hour."
+msgstr ""
+
+#: apps/catalog/seo.py:23
+msgid "Party & wedding drinks supply in Rajkot"
+msgstr ""
+
+#: apps/catalog/seo.py:24
+msgid ""
+"Crates and cases for weddings, functions, offices and shops with bulk "
+"prices."
+msgstr ""
+
+#: apps/catalog/views.py:154
+#, python-format
+msgid "Results for “%(q)s”"
+msgstr ""
+
+#: apps/catalog/views.py:154
+msgid "All products"
+msgstr "सभी प्रोडक्ट"
+
+#: apps/catalog/views.py:283
+msgid "We'll email you when it's back in stock."
+msgstr ""
+
+#: apps/catalog/views.py:285
+msgid "Enter a valid email."
+msgstr "सही ईमेल डालें।"
+
+#: apps/catalog/views.py:365
+#, python-format
+msgid "Cold drinks & juice delivery in %(a)s, Rajkot"
+msgstr ""
+
+#: apps/catalog/views.py:366
+#, python-format
+msgid "Chilled beverages delivered to %(a)s (%(c)s) in 30 to 60 minutes."
+msgstr ""
+
+#: apps/core/models.py:50
+msgid "Off"
+msgstr ""
+
+#: apps/core/models.py:55
+msgid "None (Cash on Delivery only)"
+msgstr ""
+
+#: apps/core/models.py:63
+msgid "Shop WhatsApp number with country code, digits only, e.g. 919800000000"
+msgstr ""
+
+#: apps/core/models.py:69
+msgid "GST state code (Gujarat = 24)"
+msgstr ""
+
+#: apps/core/models.py:79
+msgid "Muhurat go-live. Before this time visitors see the coming soon page."
+msgstr ""
+
+#: apps/core/models.py:100
+msgid "Store settings"
+msgstr ""
+
+#: apps/core/models.py:177
+msgid "Plain text. Blank lines start new paragraphs."
+msgstr ""
+
+#: apps/delivery/models.py:18
+msgid "Optional service boundary: list of [lat, lng] points"
+msgstr ""
+
+#: apps/delivery/models.py:36
+msgid "Switch on during rain or peak hours"
+msgstr ""
+
+#: apps/delivery/models.py:55
+msgid "Delivery settings"
+msgstr ""
+
+#: apps/delivery/models.py:77
+msgid "Eligible for the 30-minute promise"
+msgstr ""
+
+#: apps/delivery/services.py:85 apps/delivery/services.py:87
+msgid "Please drop a pin on the map."
+msgstr ""
+
+#: apps/delivery/services.py:139
+#, python-format
+msgid "Minimum order is ₹%(v)s."
+msgstr ""
+
+#: apps/delivery/services.py:145
+#, python-format
+msgid "Free delivery on orders above ₹%(v)s"
+msgstr ""
+
+#: apps/delivery/services.py:147
+#, python-format
+msgid "Free delivery above ₹%(v)s nearby"
+msgstr ""
+
+#: apps/delivery/services.py:156
+msgid "Late-night delivery"
+msgstr ""
+
+#: apps/delivery/services.py:158
+msgid "Rain / peak hours"
+msgstr ""
+
+#: apps/delivery/services.py:182
+#, python-format
+msgid "in %(m)s min"
+msgstr ""
+
+#: apps/delivery/services.py:183
+#, python-format
+msgid "in %(a)s–%(b)s min"
+msgstr ""
+
+#: apps/delivery/services.py:223
+msgid "Today"
+msgstr "आज"
+
+#: apps/delivery/services.py:223
+msgid "Tomorrow"
+msgstr "कल"
+
+#: apps/notifications/models.py:7
+msgid "New order"
+msgstr ""
+
+#: apps/notifications/models.py:8
+msgid "Payment success"
+msgstr ""
+
+#: apps/notifications/models.py:9
+msgid "Payment failure"
+msgstr ""
+
+#: apps/notifications/models.py:10 apps/notifications/models.py:38
+msgid "Order cancelled"
+msgstr ""
+
+#: apps/notifications/models.py:11
+msgid "Product out of stock"
+msgstr ""
+
+#: apps/notifications/models.py:12
+msgid "Low stock"
+msgstr ""
+
+#: apps/notifications/models.py:13
+msgid "Product added"
+msgstr ""
+
+#: apps/notifications/models.py:14
+msgid "Product updated"
+msgstr ""
+
+#: apps/notifications/models.py:15
+msgid "Product removed"
+msgstr ""
+
+#: apps/notifications/models.py:16
+msgid "Price changed"
+msgstr ""
+
+#: apps/notifications/models.py:17
+msgid "Refund issued"
+msgstr ""
+
+#: apps/notifications/models.py:18
+msgid "New review"
+msgstr ""
+
+#: apps/notifications/models.py:19
+msgid "New support ticket"
+msgstr ""
+
+#: apps/notifications/models.py:20
+msgid "New party / bulk order request"
+msgstr ""
+
+#: apps/notifications/models.py:21
+msgid "Thandu guarantee complaint"
+msgstr ""
+
+#: apps/notifications/models.py:22
+msgid "Daily sales summary"
+msgstr ""
+
+#: apps/notifications/models.py:23
+msgid "Weekly / monthly summary"
+msgstr ""
+
+#: apps/notifications/models.py:24
+msgid "New admin login"
+msgstr ""
+
+#: apps/notifications/models.py:25
+msgid "Failed logins"
+msgstr ""
+
+#: apps/notifications/models.py:26
+msgid "Settings changed"
+msgstr ""
+
+#: apps/notifications/models.py:30
+msgid "Welcome + email verification"
+msgstr ""
+
+#: apps/notifications/models.py:31
+msgid "Order placed"
+msgstr ""
+
+#: apps/notifications/models.py:32
+msgid "Payment received"
+msgstr ""
+
+#: apps/notifications/models.py:33 apps/orders/models.py:25
+msgid "Payment failed"
+msgstr ""
+
+#: apps/notifications/models.py:34
+msgid "Order confirmed"
+msgstr ""
+
+#: apps/notifications/models.py:35
+msgid "Order packed"
+msgstr ""
+
+#: apps/notifications/models.py:36 apps/orders/models.py:22
+msgid "Out for delivery"
+msgstr "डिलीवरी के लिए निकला"
+
+#: apps/notifications/models.py:37
+msgid "Delivered + invoice"
+msgstr ""
+
+#: apps/notifications/models.py:39
+msgid "Refund initiated"
+msgstr ""
+
+#: apps/notifications/models.py:40
+msgid "Refund completed"
+msgstr ""
+
+#: apps/notifications/models.py:41
+msgid "Rate your order"
+msgstr ""
+
+#: apps/notifications/models.py:42
+msgid "Back in stock"
+msgstr ""
+
+#: apps/notifications/models.py:51
+msgid "One email per line"
+msgstr ""
+
+#: apps/notifications/models.py:65
+msgid "Queued"
+msgstr ""
+
+#: apps/notifications/models.py:66
+msgid "Sent"
+msgstr ""
+
+#: apps/notifications/models.py:67 apps/orders/models.py:36
+#: apps/payments/models.py:15 apps/payments/models.py:37
+msgid "Failed"
+msgstr ""
+
+#: apps/notifications/models.py:68
+msgid "Not sent (email not set up)"
+msgstr ""
+
+#: apps/notifications/services.py:107
+#, python-format
+msgid "%(n)s failed logins from %(ip)s"
+msgstr ""
+
+#: apps/orders/forms.py:13
+msgid "Order number"
+msgstr "ऑर्डर नंबर"
+
+#: apps/orders/forms.py:15
+msgid "Registered mobile or email"
+msgstr "रजिस्टर्ड मोबाइल या ईमेल"
+
+#: apps/orders/forms.py:19
+msgid "Photo of the drink"
+msgstr ""
+
+#: apps/orders/forms.py:20
+msgid "What happened? (optional)"
+msgstr ""
+
+#: apps/orders/forms.py:40
+msgid "Choose a future date."
+msgstr ""
+
+#: apps/orders/forms.py:62 templates/orders/bulk.html:13
+msgid "Product"
+msgstr ""
+
+#: apps/orders/forms.py:62
+msgid "Quantity each time"
+msgstr ""
+
+#: apps/orders/forms.py:62
+msgid "Day (weekly only)"
+msgstr ""
+
+#: apps/orders/forms.py:75
+msgid "Choose a day for weekly delivery."
+msgstr ""
+
+#: apps/orders/forms.py:77
+msgid "Choose 1 to 50."
+msgstr ""
+
+#: apps/orders/models.py:18
+msgid "Awaiting payment"
+msgstr "भुगतान बाकी"
+
+#: apps/orders/models.py:19
+msgid "Placed"
+msgstr "ऑर्डर हुआ"
+
+#: apps/orders/models.py:20 apps/orders/models.py:233
+msgid "Confirmed"
+msgstr "कन्फ़र्म"
+
+#: apps/orders/models.py:21
+msgid "Packed"
+msgstr "पैक हुआ"
+
+#: apps/orders/models.py:23
+msgid "Delivered"
+msgstr "डिलीवर हुआ"
+
+#: apps/orders/models.py:24 apps/orders/models.py:207
+#: apps/payments/models.py:16
+msgid "Cancelled"
+msgstr "रद्द"
+
+#: apps/orders/models.py:26 apps/orders/models.py:40
+#: templates/orders/detail.html:39
+msgid "Refunded"
+msgstr "रिफ़ंड हुआ"
+
+#: apps/orders/models.py:29
+msgid "Cash on Delivery"
+msgstr "कैश ऑन डिलीवरी"
+
+#: apps/orders/models.py:30
+msgid "Razorpay (UPI / cards / netbanking)"
+msgstr ""
+
+#: apps/orders/models.py:31
+msgid "Card (Stripe)"
+msgstr ""
+
+#: apps/orders/models.py:34 apps/payments/models.py:35
+msgid "Pending"
+msgstr "बाकी"
+
+#: apps/orders/models.py:35
+msgid "Paid"
+msgstr "भुगतान हुआ"
+
+#: apps/orders/models.py:37
+msgid "Cash due on delivery"
+msgstr ""
+
+#: apps/orders/models.py:38
+msgid "Cash collected"
+msgstr ""
+
+#: apps/orders/models.py:39
+msgid "Partially refunded"
+msgstr ""
+
+#: apps/orders/models.py:201
+msgid "Every day"
+msgstr "हर दिन"
+
+#: apps/orders/models.py:202
+msgid "Every week"
+msgstr "हर हफ़्ते"
+
+#: apps/orders/models.py:205
+msgid "Active"
+msgstr "चालू"
+
+#: apps/orders/models.py:206
+msgid "Paused"
+msgstr "रुका हुआ"
+
+#: apps/orders/models.py:225
+msgid "Wedding / function"
+msgstr ""
+
+#: apps/orders/models.py:226
+msgid "Office"
+msgstr ""
+
+#: apps/orders/models.py:227
+msgid "Shop / resale"
+msgstr ""
+
+#: apps/orders/models.py:228
+msgid "Other"
+msgstr ""
+
+#: apps/orders/models.py:231 templates/partials/product_card.html:8
+msgid "New"
+msgstr ""
+
+#: apps/orders/models.py:232
+msgid "Quoted"
+msgstr ""
+
+#: apps/orders/models.py:234 apps/support/models.py:41
+#: apps/support/models.py:62
+msgid "Closed"
+msgstr ""
+
+#: apps/orders/models.py:243
+msgid "What do you need? e.g. 20 crates of soft drinks, 300 lassi"
+msgstr ""
+
+#: apps/orders/models.py:254
+msgid "Pending review"
+msgstr ""
+
+#: apps/orders/models.py:255
+msgid "Approved: coupon sent"
+msgstr ""
+
+#: apps/orders/models.py:256
+msgid "Rejected"
+msgstr ""
+
+#: apps/orders/services.py:57
+msgid "Cash on Delivery is not available right now."
+msgstr ""
+
+#: apps/orders/services.py:59
+msgid "Cash on Delivery is not available for this account or area."
+msgstr ""
+
+#: apps/orders/services.py:61
+#, python-format
+msgid "Cash on Delivery is available up to ₹%(v)s."
+msgstr ""
+
+#: apps/orders/services.py:117
+msgid "Choose a payment method."
+msgstr "भुगतान का तरीका चुनें।"
+
+#: apps/orders/services.py:119
+msgid ""
+"Please verify your mobile number before your first Cash on Delivery order."
+msgstr ""
+
+#: apps/orders/services.py:121
+#, python-format
+msgid "ASAP %(eta)s"
+msgstr ""
+
+#: apps/orders/services.py:127
+msgid "That delivery slot is no longer available."
+msgstr ""
+
+#: apps/orders/services.py:199
+#, python-format
+msgid "Sorry, only %(n)s left of %(item)s. Please update your cart."
+msgstr ""
+
+#: apps/orders/services.py:344
+msgid "This order can no longer be cancelled. Please contact us."
+msgstr ""
+
+#: apps/orders/views.py:36 templates/cart/_drawer.html:5
+msgid "Your cart is empty."
+msgstr "आपका कार्ट खाली है।"
+
+#: apps/orders/views.py:40
+msgid "Add your delivery address to continue."
+msgstr ""
+
+#: apps/orders/views.py:53
+msgid "Please review your order and try again."
+msgstr ""
+
+#: apps/orders/views.py:135
+msgid "Your order is cancelled."
+msgstr "आपका ऑर्डर रद्द हो गया है।"
+
+#: apps/orders/views.py:147
+#, python-format
+msgid "Added %(n)s items from your last order."
+msgstr ""
+
+#: apps/orders/views.py:149
+msgid "Those items are out of stock right now."
+msgstr ""
+
+#: apps/orders/views.py:159
+msgid "A complaint can be sent once for a delivered order."
+msgstr ""
+
+#: apps/orders/views.py:172
+msgid "Sorry about that! We'll review your photo and send a coupon."
+msgstr ""
+
+#: apps/orders/views.py:174
+msgid "Please attach a photo."
+msgstr ""
+
+#: apps/orders/views.py:201
+msgid ""
+"If the details match an order, we emailed a 6-digit code to the registered "
+"email."
+msgstr ""
+
+#: apps/orders/views.py:232
+msgid "Thank you! Our team will call you with a quote shortly."
+msgstr ""
+
+#: apps/orders/views.py:255
+#, python-format
+msgid "Subscription started. First delivery on %(d)s."
+msgstr ""
+
+#: apps/orders/views.py:274
+msgid "Subscription updated."
+msgstr ""
+
+#: apps/payments/models.py:13
+msgid "Created"
+msgstr ""
+
+#: apps/payments/models.py:14 apps/payments/models.py:36
+msgid "Succeeded"
+msgstr ""
+
+#: apps/payments/models.py:40
+msgid "Original payment method"
+msgstr ""
+
+#: apps/payments/models.py:41
+msgid "UPI (manual)"
+msgstr ""
+
+#: apps/payments/models.py:42
+msgid "Cash (manual)"
+msgstr ""
+
+#: apps/payments/models.py:43
+msgid "Bank transfer (manual)"
+msgstr ""
+
+#: apps/payments/views.py:29
+msgid ""
+"We couldn't start the online payment. Please try again or choose Cash on "
+"Delivery."
+msgstr ""
+
+#: apps/payments/views.py:41
+msgid ""
+"Payment could not be verified. If money was taken it will be confirmed "
+"automatically."
+msgstr ""
+
+#: apps/payments/views.py:50
+msgid "We're confirming your payment. This page will update shortly."
+msgstr ""
+
+#: apps/payments/views.py:59
+msgid ""
+"Payment cancelled. Your items are back in stock; you can order again "
+"anytime."
+msgstr ""
+
+#: apps/promotions/models.py:17
+msgid "Percentage"
+msgstr ""
+
+#: apps/promotions/models.py:18
+msgid "Flat ₹"
+msgstr ""
+
+#: apps/promotions/models.py:28
+msgid "Total uses allowed"
+msgstr ""
+
+#: apps/promotions/models.py:35
+msgid "Personal coupon (e.g. Thandu guarantee)"
+msgstr ""
+
+#: apps/promotions/models.py:120
+msgid "Second line in the sunrise gradient"
+msgstr ""
+
+#: apps/promotions/models.py:130
+#, python-format
+msgid "Focal point % from left"
+msgstr ""
+
+#: apps/promotions/models.py:131
+#, python-format
+msgid "Focal point % from top"
+msgstr ""
+
+#: apps/promotions/models.py:141
+msgid "Drink illustrations shown when there is no image"
+msgstr ""
+
+#: apps/promotions/models.py:179
+msgid "Toran-style decoration; layout never changes"
+msgstr ""
+
+#: apps/promotions/models.py:183
+msgid "Festival bonus coins on delivered orders"
+msgstr ""
+
+#: apps/promotions/models.py:200
+msgid "Earned on order"
+msgstr ""
+
+#: apps/promotions/models.py:201
+msgid "Used at checkout"
+msgstr ""
+
+#: apps/promotions/models.py:202
+msgid "Referral bonus"
+msgstr ""
+
+#: apps/promotions/models.py:203
+msgid "Birthday bonus"
+msgstr ""
+
+#: apps/promotions/models.py:204
+msgid "Festival bonus"
+msgstr ""
+
+#: apps/promotions/models.py:205
+msgid "Reversed (refund/cancel)"
+msgstr ""
+
+#: apps/promotions/models.py:206
+msgid "Adjustment"
+msgstr ""
+
+#: apps/promotions/services.py:27 apps/promotions/services.py:29
+msgid "This coupon is not valid."
+msgstr "यह कूपन मान्य नहीं है।"
+
+#: apps/promotions/services.py:32
+#, python-format
+msgid "Add items worth ₹%(v)s more to use %(c)s."
+msgstr ""
+
+#: apps/promotions/services.py:35
+msgid "This coupon has been fully used."
+msgstr ""
+
+#: apps/promotions/services.py:39
+msgid "You have already used this coupon."
+msgstr ""
+
+#: apps/promotions/services.py:41
+msgid "This coupon is for your first order only."
+msgstr ""
+
+#: apps/reviews/models.py:12
+msgid "Waiting for approval"
+msgstr ""
+
+#: apps/reviews/models.py:13
+msgid "Approved"
+msgstr ""
+
+#: apps/reviews/models.py:14
+msgid "Hidden"
+msgstr ""
+
+#: apps/reviews/models.py:23
+msgid "Matched the bad-word filter"
+msgstr ""
+
+#: apps/reviews/views.py:34
+msgid "Photos (up to 3)"
+msgstr ""
+
+#: apps/reviews/views.py:45
+msgid "Your review"
+msgstr "आपका रिव्यू"
+
+#: apps/reviews/views.py:58
+msgid "You already reviewed this item. Thank you!"
+msgstr ""
+
+#: apps/reviews/views.py:87
+msgid "Thanks! Your review will appear after a quick check."
+msgstr ""
+
+#: apps/support/models.py:14
+msgid "Orders"
+msgstr "ऑर्डर"
+
+#: apps/support/models.py:15 templates/cart/_summary.html:8
+#: templates/cart/_summary.html:12 templates/orders/detail.html:35
+msgid "Delivery"
+msgstr "डिलीवरी"
+
+#: apps/support/models.py:16
+msgid "Payments"
+msgstr "भुगतान"
+
+#: apps/support/models.py:17
+msgid "Refunds"
+msgstr ""
+
+#: apps/support/models.py:18 templates/base.html:54
+msgid "Account"
+msgstr "अकाउंट"
+
+#: apps/support/models.py:19
+msgid "Products"
+msgstr "प्रोडक्ट"
+
+#: apps/support/models.py:24
+msgid "Extra words customers might use"
+msgstr ""
+
+#: apps/support/models.py:39
+msgid "Open"
+msgstr ""
+
+#: apps/support/models.py:40
+msgid "Waiting for customer"
+msgstr ""
+
+#: apps/support/models.py:60 apps/support/models.py:79
+msgid "Assistant"
+msgstr ""
+
+#: apps/support/models.py:61
+msgid "Team"
+msgstr ""
+
+#: apps/support/models.py:80 templates/storefront/product.html:89
+msgid "Rasiko Team"
+msgstr ""
+
+#: apps/support/models.py:81
+msgid "System"
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:2 templates/accounts/2fa_verify.html:2
+msgid "Two-factor sign in"
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:4
+msgid "Turn on two-factor sign in"
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:5
+msgid ""
+"The dashboard needs this for owners and managers. Scan the code with Google "
+"Authenticator, Microsoft Authenticator or any TOTP app, then type the "
+"6-digit code it shows."
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:6
+msgid "QR code for your authenticator app"
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:7
+msgid "Can't scan? Enter this key:"
+msgstr ""
+
+#: templates/accounts/2fa_setup.html:9
+msgid "Turn on"
+msgstr ""
+
+#: templates/accounts/2fa_verify.html:4
+msgid "Enter your 6-digit code"
+msgstr ""
+
+#: templates/accounts/2fa_verify.html:5
+msgid "Open your authenticator app and type the current code for Rasiko."
+msgstr ""
+
+#: templates/accounts/2fa_verify.html:7
+msgid "Continue"
+msgstr "आगे बढ़ें"
+
+#: templates/accounts/account.html:2 templates/orders/detail.html:5
+msgid "My account"
+msgstr "मेरा अकाउंट"
+
+#: templates/accounts/account.html:5
+#, python-format
+msgid "Namaste, %(n)s"
+msgstr ""
+
+#: templates/accounts/account.html:6 templates/dashboard/base.html:23
+msgid "Sign out"
+msgstr "साइन आउट"
+
+#: templates/accounts/account.html:8
+msgid "Open dashboard"
+msgstr ""
+
+#: templates/accounts/account.html:9
+msgid ""
+"Please verify your email using the link we sent, so you get order updates "
+"and invoices."
+msgstr ""
+
+#: templates/accounts/account.html:11
+msgid "Your orders"
+msgstr "आपके ऑर्डर"
+
+#: templates/accounts/account.html:12 templates/orders/_track_card.html:4
+#: templates/orders/detail.html:2 templates/payments/pay.html:6
+#: templates/reviews/write.html:4
+msgid "Order"
+msgstr "ऑर्डर"
+
+#: templates/accounts/account.html:12
+msgid "Date"
+msgstr "तारीख़"
+
+#: templates/accounts/account.html:12 templates/support/tickets.html:4
+msgid "Status"
+msgstr "स्थिति"
+
+#: templates/accounts/account.html:12 templates/orders/detail.html:38
+msgid "Total"
+msgstr "कुल"
+
+#: templates/accounts/account.html:14
+msgid "Reorder"
+msgstr "फिर से ऑर्डर करें"
+
+#: templates/accounts/account.html:15
+msgid "No orders yet."
+msgstr "अभी तक कोई ऑर्डर नहीं।"
+
+#: templates/accounts/account.html:15 templates/cart/cart.html:26
+msgid "Start shopping"
+msgstr "ख़रीदारी शुरू करें"
+
+#: templates/accounts/account.html:18 templates/orders/detail.html:34
+msgid "Rasiko Coins"
+msgstr "रसिको कॉइन्स"
+
+#: templates/accounts/account.html:19
+msgid "1 coin = ₹1 off. Earn coins on every delivered order."
+msgstr ""
+
+#: templates/accounts/account.html:20
+msgid "Your referral code"
+msgstr "आपका रेफ़रल कोड"
+
+#: templates/accounts/account.html:20
+msgid "Copy"
+msgstr "कॉपी"
+
+#: templates/accounts/account.html:21
+msgid "Addresses"
+msgstr "पते"
+
+#: templates/accounts/account.html:22
+msgid "Default"
+msgstr "डिफ़ॉल्ट"
+
+#: templates/accounts/account.html:23
+msgid "Edit"
+msgstr "बदलें"
+
+#: templates/accounts/account.html:24
+msgid "Remove this address?"
+msgstr "यह पता हटाएँ?"
+
+#: templates/accounts/account.html:24 templates/cart/cart.html:14
+msgid "Remove"
+msgstr "हटाएँ"
+
+#: templates/accounts/account.html:25
+msgid "Add address"
+msgstr "पता जोड़ें"
+
+#: templates/accounts/account.html:26
+msgid "Settings"
+msgstr "सेटिंग्स"
+
+#: templates/accounts/account.html:27
+msgid "Edit profile"
+msgstr "प्रोफ़ाइल बदलें"
+
+#: templates/accounts/account.html:28 templates/storefront/wishlist.html:2
+msgid "Saved for later"
+msgstr "बाद के लिए सेव"
+
+#: templates/accounts/account.html:29 templates/orders/subscriptions.html:3
+msgid "Subscriptions"
+msgstr "सब्सक्रिप्शन"
+
+#: templates/accounts/account.html:30 templates/support/ticket.html:3
+#: templates/support/tickets.html:2 templates/support/tickets.html:3
+msgid "My help requests"
+msgstr "मेरे मदद अनुरोध"
+
+#: templates/accounts/account.html:31
+msgid "Change password"
+msgstr "पासवर्ड बदलें"
+
+#: templates/accounts/address_form.html:2
+msgid "Delivery address"
+msgstr "डिलीवरी पता"
+
+#: templates/accounts/address_form.html:5
+msgid "Edit address"
+msgstr "पता बदलें"
+
+#: templates/accounts/address_form.html:5
+msgid "Add a delivery address"
+msgstr "डिलीवरी पता जोड़ें"
+
+#: templates/accounts/address_form.html:6
+msgid "Drag the red pin to your exact gate so the rider finds you fast."
+msgstr ""
+
+#: templates/accounts/address_form.html:9
+msgid "Map. Drag the pin to your address."
+msgstr ""
+
+#: templates/accounts/address_form.html:10
+msgid "Use my current location"
+msgstr "मेरी मौजूदा लोकेशन लें"
+
+#: templates/accounts/address_form.html:11
+msgid "Enter your 6-digit pincode to check delivery."
+msgstr ""
+
+#: templates/accounts/address_form.html:17
+msgid "Save address"
+msgstr "पता सेव करें"
+
+#: templates/accounts/login.html:2 templates/accounts/login.html:4
+#: templates/accounts/login.html:8 templates/accounts/signup.html:10
+msgid "Sign in"
+msgstr "साइन इन"
+
+#: templates/accounts/login.html:9
+msgid "Forgot password?"
+msgstr "पासवर्ड भूल गए?"
+
+#: templates/accounts/login.html:10
+msgid "New to Rasiko?"
+msgstr "रसिको पर नए हैं?"
+
+#: templates/accounts/login.html:10
+msgid "Create an account"
+msgstr "अकाउंट बनाएँ"
+
+#: templates/accounts/password_reset.html:2
+#: templates/accounts/password_reset_confirm.html:7
+msgid "Reset password"
+msgstr "पासवर्ड रीसेट करें"
+
+#: templates/accounts/password_reset.html:4
+msgid "Reset your password"
+msgstr "अपना पासवर्ड रीसेट करें"
+
+#: templates/accounts/password_reset.html:5
+msgid "Enter your email and we'll send a reset link."
+msgstr ""
+
+#: templates/accounts/password_reset.html:7
+msgid "Send link"
+msgstr "लिंक भेजें"
+
+#: templates/accounts/password_reset_confirm.html:2
+msgid "New password"
+msgstr "नया पासवर्ड"
+
+#: templates/accounts/password_reset_confirm.html:4
+msgid "Choose a new password"
+msgstr "नया पासवर्ड चुनें"
+
+#: templates/accounts/password_reset_confirm.html:6
+msgid "Save password"
+msgstr "पासवर्ड सेव करें"
+
+#: templates/accounts/password_reset_confirm.html:7
+msgid "This link has expired"
+msgstr "इस लिंक की अवधि ख़त्म हो गई"
+
+#: templates/accounts/password_reset_confirm.html:7
+msgid "Please ask for a new reset link."
+msgstr ""
+
+#: templates/accounts/password_reset_done.html:2
+#: templates/accounts/password_reset_done.html:4
+msgid "Check your email"
+msgstr "अपना ईमेल देखें"
+
+#: templates/accounts/password_reset_done.html:5
+msgid ""
+"If an account exists for that email, a reset link is on its way. It works "
+"for 3 days."
+msgstr ""
+
+#: templates/accounts/password_reset_done.html:6
+msgid "Back to sign in"
+msgstr "साइन इन पर वापस"
+
+#: templates/accounts/phone_verify.html:2
+msgid "Verify mobile"
+msgstr "मोबाइल सत्यापित करें"
+
+#: templates/accounts/phone_verify.html:4
+msgid "Verify your mobile"
+msgstr "अपना मोबाइल सत्यापित करें"
+
+#: templates/accounts/phone_verify.html:5
+#, python-format
+msgid ""
+"We'll send a 6-digit code for %(p)s. You need this once before your first "
+"Cash on Delivery order."
+msgstr ""
+
+#: templates/accounts/phone_verify.html:6 templates/orders/track.html:9
+msgid "Send code"
+msgstr "कोड भेजें"
+
+#: templates/accounts/phone_verify.html:9
+msgid "Verify"
+msgstr "सत्यापित करें"
+
+#: templates/accounts/profile.html:2
+msgid "Profile"
+msgstr "प्रोफ़ाइल"
+
+#: templates/accounts/profile.html:4
+msgid "Your profile"
+msgstr "आपकी प्रोफ़ाइल"
+
+#: templates/accounts/profile.html:7 templates/storefront/home.html:66
+msgid "Save"
+msgstr "सेव करें"
+
+#: templates/accounts/profile.html:7 templates/orders/subscriptions.html:13
+msgid "Cancel"
+msgstr "रद्द करें"
+
+#: templates/accounts/profile.html:8
+msgid "Verify your mobile number"
+msgstr "अपना मोबाइल नंबर सत्यापित करें"
+
+#: templates/accounts/signup.html:2 templates/accounts/signup.html:9
+msgid "Create account"
+msgstr "अकाउंट बनाएँ"
+
+#: templates/accounts/signup.html:4
+msgid "Create your account"
+msgstr "अपना अकाउंट बनाएँ"
+
+#: templates/accounts/signup.html:5
+msgid "Get 50 Rasiko Coins on your first order and faster checkout."
+msgstr ""
+
+#: templates/accounts/signup.html:8
+msgid "By creating an account you agree to our"
+msgstr ""
+
+#: templates/accounts/signup.html:8
+msgid "Terms"
+msgstr "शर्तें"
+
+#: templates/accounts/signup.html:8
+msgid "and"
+msgstr "और"
+
+#: templates/accounts/signup.html:8
+msgid "Privacy Policy"
+msgstr "प्राइवेसी पॉलिसी"
+
+#: templates/accounts/signup.html:10
+msgid "Already have an account?"
+msgstr "पहले से अकाउंट है?"
+
+#: templates/base.html:7
+msgid "Cold drinks & juices delivered in Rajkot"
+msgstr ""
+
+#: templates/base.html:28 templates/dashboard/base.html:13
+msgid "Skip to content"
+msgstr "मुख्य सामग्री पर जाएँ"
+
+#: templates/base.html:35
+#, python-format
+msgid "Free delivery above <b>%(v)s</b> in Rajkot"
+msgstr ""
+
+#: templates/base.html:35
+msgid "Cash on Delivery available"
+msgstr "कैश ऑन डिलीवरी उपलब्ध"
+
+#: templates/base.html:35
+#, python-format
+msgid "Delivery in %(a)s–%(b)s min"
+msgstr ""
+
+#: templates/base.html:44 templates/support/help.html:5
+msgid "Search"
+msgstr "खोजें"
+
+#: templates/base.html:46
+msgid "Search juices, soda, milkshakes, brands…"
+msgstr ""
+
+#: templates/base.html:53
+msgid "Coins"
+msgstr "कॉइन्स"
+
+#: templates/base.html:55
+msgid "Cart"
+msgstr "कार्ट"
+
+#: templates/base.html:58
+msgid "Categories"
+msgstr "कैटेगरी"
+
+#: templates/base.html:61
+msgid "All"
+msgstr "सभी"
+
+#: templates/base.html:63 templates/storefront/brands.html:2
+#: templates/storefront/brands.html:4
+msgid "Brands"
+msgstr "ब्रांड"
+
+#: templates/base.html:64
+msgid "Party orders"
+msgstr "पार्टी ऑर्डर"
+
+#: templates/base.html:68
+msgid "Language"
+msgstr "भाषा"
+
+#: templates/base.html:89
+msgid "Order on WhatsApp"
+msgstr "व्हाट्सऐप पर ऑर्डर करें"
+
+#: templates/base.html:91
+msgid "Shop"
+msgstr "शॉप"
+
+#: templates/base.html:93 templates/storefront/home.html:4
+#: templates/storefront/offers.html:2
+msgid "Offers"
+msgstr "ऑफ़र"
+
+#: templates/base.html:94 templates/orders/bulk.html:2
+#: templates/orders/bulk.html:5
+msgid "Party & bulk orders"
+msgstr "पार्टी और थोक ऑर्डर"
+
+#: templates/base.html:96
+msgid "Help"
+msgstr "मदद"
+
+#: templates/base.html:97 templates/support/help.html:2
+msgid "24×7 Help Center"
+msgstr "24×7 मदद केंद्र"
+
+#: templates/base.html:98 templates/orders/success.html:21
+#: templates/orders/track.html:2 templates/support/help.html:10
+msgid "Track order"
+msgstr "ऑर्डर ट्रैक करें"
+
+#: templates/base.html:108 templates/orders/checkout.html:47
+#: templates/storefront/home.html:96
+msgid "Secure payments"
+msgstr "सुरक्षित भुगतान"
+
+#: templates/base.html:108
+msgid "Prices include GST"
+msgstr "क़ीमतों में GST शामिल"
+
+#: templates/base.html:113
+msgid "Open 24×7 help chat"
+msgstr "24×7 मदद चैट खोलें"
+
+#: templates/base.html:113
+msgid "Help 24×7"
+msgstr "मदद 24×7"
+
+#: templates/cart/_drawer.html:4 templates/cart/cart.html:2
+#: templates/cart/cart.html:5
+msgid "Your cart"
+msgstr "आपका कार्ट"
+
+#: templates/cart/_drawer.html:4
+msgid "Close"
+msgstr "बंद करें"
+
+#: templates/cart/_drawer.html:8
+msgid "View cart"
+msgstr "कार्ट देखें"
+
+#: templates/cart/_drawer.html:8 templates/orders/checkout.html:2
+#: templates/orders/checkout.html:5
+msgid "Checkout"
+msgstr "चेकआउट"
+
+#: templates/cart/_lines.html:11
+msgid "Remove one"
+msgstr "एक कम करें"
+
+#: templates/cart/_lines.html:11
+msgid "Add one more"
+msgstr "एक और जोड़ें"
+
+#: templates/cart/_summary.html:2
+msgid "Items (MRP)"
+msgstr "सामान (MRP)"
+
+#: templates/cart/_summary.html:3
+msgid "Rasiko price savings"
+msgstr "रसिको दाम पर बचत"
+
+#: templates/cart/_summary.html:3
+msgid "included"
+msgstr "शामिल"
+
+#: templates/cart/_summary.html:4 templates/orders/detail.html:32
+msgid "Item total"
+msgstr "सामान का कुल"
+
+#: templates/cart/_summary.html:5 templates/orders/detail.html:33
+msgid "Coupon"
+msgstr "कूपन"
+
+#: templates/cart/_summary.html:6
+#, python-format
+msgid "Rasiko Coins (%(n)s)"
+msgstr ""
+
+#: templates/cart/_summary.html:8 templates/orders/detail.html:35
+msgid "FREE"
+msgstr "मुफ़्त"
+
+#: templates/cart/_summary.html:9 templates/orders/detail.html:36
+msgid "Small order fee"
+msgstr "छोटे ऑर्डर का शुल्क"
+
+#: templates/cart/_summary.html:12
+msgid "at checkout"
+msgstr "चेकआउट पर"
+
+#: templates/cart/_summary.html:13
+msgid "To pay"
+msgstr "देय राशि"
+
+#: templates/cart/_summary.html:14 templates/orders/success.html:19
+#, python-format
+msgid "You saved %(s)s on this order"
+msgstr ""
+
+#: templates/cart/_summary.html:15
+#, python-format
+msgid "Add %(a)s more for free delivery"
+msgstr ""
+
+#: templates/cart/cart.html:9
+msgid "Continue shopping"
+msgstr "ख़रीदारी जारी रखें"
+
+#: templates/cart/cart.html:11 templates/orders/checkout.html:56
+msgid "Order summary"
+msgstr "ऑर्डर सारांश"
+
+#: templates/cart/cart.html:13 templates/cart/cart.html:15
+msgid "Coupon code"
+msgstr "कूपन कोड"
+
+#: templates/cart/cart.html:14
+msgid "applied"
+msgstr "लागू हुआ"
+
+#: templates/cart/cart.html:15 templates/storefront/listing.html:25
+msgid "Apply"
+msgstr "लागू करें"
+
+#: templates/cart/cart.html:19
+msgid "Don't use coins"
+msgstr "कॉइन्स इस्तेमाल न करें"
+
+#: templates/cart/cart.html:19
+#, python-format
+msgid "Use %(n)s Rasiko Coins"
+msgstr ""
+
+#: templates/cart/cart.html:21
+msgid "Proceed to checkout"
+msgstr "चेकआउट करें"
+
+#: templates/cart/cart.html:22
+msgid "You'll sign in or create an account at checkout."
+msgstr ""
+
+#: templates/cart/cart.html:26
+msgid "Your cart is empty"
+msgstr "आपका कार्ट खाली है"
+
+#: templates/dashboard/base.html:22
+msgid "View shop"
+msgstr "शॉप देखें"
+
+#: templates/orders/_track_card.html:12
+#, python-format
+msgid "Expected by %(t)s"
+msgstr ""
+
+#: templates/orders/_track_card.html:13
+msgid "Rider"
+msgstr ""
+
+#: templates/orders/_track_card.html:14
+msgid "Delivery code"
+msgstr "डिलीवरी कोड"
+
+#: templates/orders/bulk.html:3
+msgid ""
+"Crates and cases of cold drinks, juices and lassi for weddings, functions, "
+"offices and shops in Rajkot with bulk prices."
+msgstr ""
+
+#: templates/orders/bulk.html:6
+msgid ""
+"Weddings, functions, offices and shops: tell us what you need and we'll call"
+" you with a quote."
+msgstr ""
+
+#: templates/orders/bulk.html:10
+msgid "Request a quote"
+msgstr "क़ीमत पूछें"
+
+#: templates/orders/bulk.html:12
+msgid "Bulk price slabs"
+msgstr ""
+
+#: templates/orders/bulk.html:13
+msgid "From"
+msgstr ""
+
+#: templates/orders/bulk.html:13
+msgid "Each"
+msgstr ""
+
+#: templates/orders/bulk.html:13
+msgid "Ask us for crate and case prices."
+msgstr ""
+
+#: templates/orders/bulk.html:14
+msgid "Chat on WhatsApp"
+msgstr "व्हाट्सऐप पर चैट करें"
+
+#: templates/orders/checkout.html:11
+msgid "Deliver to"
+msgstr "यहाँ डिलीवर करें"
+
+#: templates/orders/checkout.html:19
+msgid "Add a new address"
+msgstr "नया पता जोड़ें"
+
+#: templates/orders/checkout.html:20
+#, python-format
+msgid "ASAP delivery %(e)s"
+msgstr ""
+
+#: templates/orders/checkout.html:20
+msgid "Rajkot's fastest"
+msgstr ""
+
+#: templates/orders/checkout.html:24
+msgid "When"
+msgstr "कब"
+
+#: templates/orders/checkout.html:25
+msgid "Delivery time"
+msgstr "डिलीवरी का समय"
+
+#: templates/orders/checkout.html:27
+msgid "As soon as possible"
+msgstr "जितनी जल्दी हो सके"
+
+#: templates/orders/checkout.html:30
+msgid "Note for the rider (optional)"
+msgstr ""
+
+#: templates/orders/checkout.html:31
+msgid "e.g. Ring the bell twice"
+msgstr ""
+
+#: templates/orders/checkout.html:35
+msgid "Pay with"
+msgstr "भुगतान करें"
+
+#: templates/orders/checkout.html:40
+msgid "We'll verify your mobile number once before your first COD order."
+msgstr ""
+
+#: templates/orders/checkout.html:40
+msgid "Verify now"
+msgstr "अभी सत्यापित करें"
+
+#: templates/orders/checkout.html:46
+msgid "Why shop with us"
+msgstr "हमसे क्यों ख़रीदें"
+
+#: templates/orders/checkout.html:49
+msgid "GST invoice"
+msgstr "GST बिल"
+
+#: templates/orders/checkout.html:50 templates/orders/detail.html:23
+#: templates/storefront/home.html:97
+msgid "Thandu guarantee"
+msgstr "ठंडा गारंटी"
+
+#: templates/orders/checkout.html:62
+msgid "Place order"
+msgstr "ऑर्डर करें"
+
+#: templates/orders/checkout.html:63
+msgid ""
+"Prices, delivery fee and discounts are checked again on our server when you "
+"place the order."
+msgstr ""
+
+#: templates/orders/checkout.html:64
+msgid "Refund & cancellation policy"
+msgstr "रिफ़ंड और रद्दीकरण नीति"
+
+#: templates/orders/detail.html:9
+msgid "This order is waiting for payment."
+msgstr ""
+
+#: templates/orders/detail.html:9
+msgid "Pay now"
+msgstr "अभी भुगतान करें"
+
+#: templates/orders/detail.html:11
+msgid "Items"
+msgstr "सामान"
+
+#: templates/orders/detail.html:13
+#, python-format
+msgid "%(n)s refunded"
+msgstr ""
+
+#: templates/orders/detail.html:15 templates/reviews/write.html:4
+msgid "Rate"
+msgstr ""
+
+#: templates/orders/detail.html:19
+msgid "Not chilled? Thandu guarantee"
+msgstr ""
+
+#: templates/orders/detail.html:22
+msgid "Send complaint"
+msgstr ""
+
+#: templates/orders/detail.html:25
+msgid "Download GST invoice"
+msgstr "GST बिल डाउनलोड करें"
+
+#: templates/orders/detail.html:26
+msgid "Buy again"
+msgstr "फिर से ख़रीदें"
+
+#: templates/orders/detail.html:27
+msgid "Cancel this order?"
+msgstr "यह ऑर्डर रद्द करें?"
+
+#: templates/orders/detail.html:27
+msgid "Cancel order"
+msgstr "ऑर्डर रद्द करें"
+
+#: templates/orders/detail.html:31
+msgid "Bill"
+msgstr "बिल"
+
+#: templates/orders/detail.html:40
+#, python-format
+msgid "You saved %(s)s"
+msgstr ""
+
+#: templates/orders/detail.html:42
+#, python-format
+msgid "You earned %(n)s Rasiko Coins"
+msgstr ""
+
+#: templates/orders/detail.html:44
+msgid "Need help with this order?"
+msgstr "इस ऑर्डर में मदद चाहिए?"
+
+#: templates/orders/subscriptions.html:4
+msgid ""
+"Daily or weekly milk, water cans or cold drinks for your shop. Pay by Cash "
+"on Delivery; pause or skip anytime."
+msgstr ""
+
+#: templates/orders/subscriptions.html:9 templates/storefront/_results.html:21
+msgid "Next"
+msgstr "अगला"
+
+#: templates/orders/subscriptions.html:9
+msgid "Skipping"
+msgstr ""
+
+#: templates/orders/subscriptions.html:11
+msgid "Skip next"
+msgstr ""
+
+#: templates/orders/subscriptions.html:12
+msgid "Pause"
+msgstr "रोकें"
+
+#: templates/orders/subscriptions.html:12
+msgid "Resume"
+msgstr "फिर शुरू करें"
+
+#: templates/orders/subscriptions.html:13
+msgid "Cancel this subscription?"
+msgstr ""
+
+#: templates/orders/subscriptions.html:15
+msgid "No subscriptions yet."
+msgstr ""
+
+#: templates/orders/subscriptions.html:17
+msgid "New subscription"
+msgstr ""
+
+#: templates/orders/subscriptions.html:19
+msgid "Add an address first"
+msgstr ""
+
+#: templates/orders/subscriptions.html:20
+msgid "Start subscription"
+msgstr ""
+
+#: templates/orders/success.html:16 templates/orders/success.html:17
+msgid "Thank you for your order"
+msgstr "आपके ऑर्डर के लिए धन्यवाद"
+
+#: templates/orders/success.html:18
+#, python-format
+msgid "Order <b>%(n)s</b> is placed."
+msgstr ""
+
+#: templates/orders/success.html:18
+#, python-format
+msgid "Expected by <b>%(t)s</b>."
+msgstr ""
+
+#: templates/orders/success.html:20
+msgid "Your delivery code"
+msgstr "आपका डिलीवरी कोड"
+
+#: templates/orders/success.html:20
+msgid "Tell this code to the rider when you receive your order."
+msgstr ""
+
+#: templates/orders/success.html:21
+msgid "Keep shopping"
+msgstr "ख़रीदारी जारी रखें"
+
+#: templates/orders/track.html:4
+msgid "Track your order"
+msgstr "अपना ऑर्डर ट्रैक करें"
+
+#: templates/orders/track.html:8
+msgid "6-digit code from your email"
+msgstr ""
+
+#: templates/orders/track.html:8
+msgid "Show my order"
+msgstr "मेरा ऑर्डर दिखाएँ"
+
+#: templates/orders/track.html:10
+msgid "Or see all your orders"
+msgstr ""
+
+#: templates/orders/track.html:10
+msgid "Log in to see all your orders"
+msgstr ""
+
+#: templates/partials/product_card.html:4 templates/storefront/product.html:31
+#: templates/storefront/product.html:40
+msgid "Out of stock"
+msgstr "स्टॉक में नहीं"
+
+#: templates/partials/product_card.html:5 templates/storefront/product.html:36
+msgid "Price drop"
+msgstr "दाम घटे"
+
+#: templates/partials/product_card.html:7
+msgid "Bestseller"
+msgstr "बेस्टसेलर"
+
+#: templates/partials/product_card.html:16
+#: templates/storefront/listing.html:20
+msgid "Size"
+msgstr "साइज़"
+
+#: templates/partials/product_card.html:21
+#, python-format
+msgid "You save %(s)s"
+msgstr ""
+
+#: templates/partials/product_card.html:25
+#, python-format
+msgid "Add %(n)s to cart"
+msgstr ""
+
+#: templates/partials/product_card.html:25 templates/storefront/home.html:69
+#: templates/storefront/offers.html:11
+msgid "Add"
+msgstr "जोड़ें"
+
+#: templates/partials/product_card.html:26
+#: templates/storefront/product.html:51
+msgid "Notify me"
+msgstr "मुझे बताएँ"
+
+#: templates/payments/pay.html:2 templates/payments/pay.html:12
+msgid "Pay"
+msgstr "भुगतान करें"
+
+#: templates/payments/pay.html:5
+msgid "Complete your payment"
+msgstr "अपना भुगतान पूरा करें"
+
+#: templates/payments/pay.html:7
+msgid "Your items are held for 15 minutes while you pay."
+msgstr ""
+
+#: templates/payments/pay.html:20
+msgid "Pay with UPI / card / netbanking"
+msgstr ""
+
+#: templates/payments/pay.html:23
+msgid "Cancel payment"
+msgstr ""
+
+#: templates/payments/pay.html:24
+msgid "Card details never touch our servers"
+msgstr ""
+
+#: templates/reviews/write.html:2
+msgid "Write a review"
+msgstr "रिव्यू लिखें"
+
+#: templates/reviews/write.html:8
+msgid "Submit review"
+msgstr "रिव्यू भेजें"
+
+#: templates/storefront/_results.html:3 templates/storefront/brands.html:5
+#, python-format
+msgid "%(n)s product"
+msgid_plural "%(n)s products"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/storefront/_results.html:6
+msgid "Sort by"
+msgstr "क्रम से लगाएँ"
+
+#: templates/storefront/_results.html:8
+msgid "Popular"
+msgstr "लोकप्रिय"
+
+#: templates/storefront/_results.html:9
+msgid "Price: low to high"
+msgstr "दाम: कम से ज़्यादा"
+
+#: templates/storefront/_results.html:10
+msgid "Price: high to low"
+msgstr "दाम: ज़्यादा से कम"
+
+#: templates/storefront/_results.html:11
+msgid "Top rated"
+msgstr "टॉप रेटेड"
+
+#: templates/storefront/_results.html:12
+msgid "Newest"
+msgstr "सबसे नया"
+
+#: templates/storefront/_results.html:18
+msgid "Pages"
+msgstr ""
+
+#: templates/storefront/_results.html:19
+msgid "Previous"
+msgstr "पिछला"
+
+#: templates/storefront/_results.html:24
+msgid "No drinks match that."
+msgstr ""
+
+#: templates/storefront/_results.html:24
+msgid "Try fewer filters or another search."
+msgstr ""
+
+#: templates/storefront/_suggest.html:4
+#, python-format
+msgid "See all results for “%(q)s”"
+msgstr ""
+
+#: templates/storefront/_suggest.html:6
+msgid "No matches yet. Try another word."
+msgstr ""
+
+#: templates/storefront/coming_soon.html:1
+#: templates/storefront/coming_soon.html:5
+msgid "Coming soon"
+msgstr "जल्द आ रहा है"
+
+#: templates/storefront/home.html:26
+msgid "View offers"
+msgstr "ऑफ़र देखें"
+
+#: templates/storefront/home.html:32
+msgid "Thandu thandu,"
+msgstr ""
+
+#: templates/storefront/home.html:32
+msgid "tamare ghare!"
+msgstr ""
+
+#: templates/storefront/home.html:36
+msgid "Previous slide"
+msgstr ""
+
+#: templates/storefront/home.html:37
+msgid "Next slide"
+msgstr ""
+
+#: templates/storefront/home.html:38
+msgid "Choose slide"
+msgstr ""
+
+#: templates/storefront/home.html:43 templates/storefront/home.html:106
+#: templates/storefront/offers.html:6
+msgid "Tap to copy"
+msgstr "कॉपी करने के लिए टैप करें"
+
+#: templates/storefront/home.html:46
+msgid "Shop by category"
+msgstr "कैटेगरी से ख़रीदें"
+
+#: templates/storefront/home.html:53
+msgid "Best Sellers"
+msgstr "बेस्ट सेलर्स"
+
+#: templates/storefront/home.html:53
+msgid "See all"
+msgstr "सभी देखें"
+
+#: templates/storefront/home.html:57
+msgid "Fresh Picks"
+msgstr "ताज़ा पसंद"
+
+#: templates/storefront/home.html:57
+msgid "New this week"
+msgstr "इस हफ़्ते नया"
+
+#: templates/storefront/home.html:64 templates/storefront/offers.html:8
+msgid "Combo packs"
+msgstr "कॉम्बो पैक"
+
+#: templates/storefront/home.html:64
+msgid "All offers"
+msgstr "सभी ऑफ़र"
+
+#: templates/storefront/home.html:76
+msgid "Recently viewed"
+msgstr "हाल ही में देखा"
+
+#: templates/storefront/home.html:83
+msgid "Shop by brand"
+msgstr "ब्रांड से ख़रीदें"
+
+#: templates/storefront/home.html:83
+msgid "All brands"
+msgstr "सभी ब्रांड"
+
+#: templates/storefront/home.html:91
+msgid "About Rasiko"
+msgstr "रसिको के बारे में"
+
+#: templates/storefront/home.html:92
+msgid ""
+"A family-run Rajkot business bringing you genuine brands at honest prices, "
+"delivered fresh to your door."
+msgstr ""
+
+#: templates/storefront/home.html:94
+msgid "FSSAI Licensed"
+msgstr ""
+
+#: templates/storefront/home.html:95
+msgid "GST Invoice"
+msgstr ""
+
+#: templates/storefront/home.html:98
+msgid "Verified reviews"
+msgstr "सत्यापित रिव्यू"
+
+#: templates/storefront/home.html:104
+msgid "Festive offer"
+msgstr ""
+
+#: templates/storefront/landing.html:7
+msgid "Why Rajkot orders from Rasiko"
+msgstr ""
+
+#: templates/storefront/landing.html:7
+msgid "Chilled drinks in 30–60 minutes across Rajkot"
+msgstr ""
+
+#: templates/storefront/landing.html:7
+msgid "Cash on Delivery and UPI"
+msgstr ""
+
+#: templates/storefront/landing.html:7
+msgid "FSSAI licensed, GST invoice on every order"
+msgstr ""
+
+#: templates/storefront/listing.html:6 templates/storefront/product.html:10
+msgid "Home"
+msgstr "होम"
+
+#: templates/storefront/listing.html:12 templates/storefront/listing.html:15
+msgid "Filters"
+msgstr "फ़िल्टर"
+
+#: templates/storefront/listing.html:16
+msgid "Availability"
+msgstr ""
+
+#: templates/storefront/listing.html:17
+msgid "In stock only"
+msgstr "सिर्फ़ स्टॉक वाले"
+
+#: templates/storefront/listing.html:18
+msgid "Veg only"
+msgstr "सिर्फ़ शाकाहारी"
+
+#: templates/storefront/listing.html:19
+msgid "Brand"
+msgstr "ब्रांड"
+
+#: templates/storefront/listing.html:21
+msgid "Price"
+msgstr "दाम"
+
+#: templates/storefront/listing.html:22
+msgid "Min"
+msgstr ""
+
+#: templates/storefront/listing.html:22
+msgid "Minimum price"
+msgstr ""
+
+#: templates/storefront/listing.html:22
+msgid "Max"
+msgstr ""
+
+#: templates/storefront/listing.html:22
+msgid "Maximum price"
+msgstr ""
+
+#: templates/storefront/listing.html:23
+msgid "Rating"
+msgstr "रेटिंग"
+
+#: templates/storefront/listing.html:24
+msgid "above"
+msgstr ""
+
+#: templates/storefront/listing.html:26
+msgid "Clear filters"
+msgstr "फ़िल्टर हटाएँ"
+
+#: templates/storefront/offers.html:4
+msgid "Offers & coupons"
+msgstr "ऑफ़र और कूपन"
+
+#: templates/storefront/offers.html:6
+#, python-format
+msgid "On orders above %(m)s"
+msgstr ""
+
+#: templates/storefront/offers.html:7
+msgid "No coupons right now. Check back soon!"
+msgstr ""
+
+#: templates/storefront/offers.html:12
+msgid "Best prices today"
+msgstr "आज के सबसे अच्छे दाम"
+
+#: templates/storefront/product.html:17
+msgid "Image"
+msgstr ""
+
+#: templates/storefront/product.html:24
+#, python-format
+msgid "%(n)s review"
+msgid_plural "%(n)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/storefront/product.html:28
+msgid "Choose size"
+msgstr "साइज़ चुनें"
+
+#: templates/storefront/product.html:38
+#, python-format
+msgid "You save %(s)s (Rasiko price vs MRP)"
+msgstr ""
+
+#: templates/storefront/product.html:39
+msgid "Inclusive of all taxes"
+msgstr "सभी टैक्स सहित"
+
+#: templates/storefront/product.html:40
+#, python-format
+msgid "Only %(n)s left"
+msgstr ""
+
+#: templates/storefront/product.html:40
+msgid "In stock"
+msgstr "स्टॉक में है"
+
+#: templates/storefront/product.html:43
+msgid "Add to cart"
+msgstr "कार्ट में डालें"
+
+#: templates/storefront/product.html:44
+msgid "Buy now"
+msgstr "अभी ख़रीदें"
+
+#: templates/storefront/product.html:47
+msgid "Saved"
+msgstr "सेव किया"
+
+#: templates/storefront/product.html:47
+msgid "Save for later"
+msgstr "बाद के लिए सेव करें"
+
+#: templates/storefront/product.html:50
+msgid "Tell me when it's back"
+msgstr "वापस आने पर बताएँ"
+
+#: templates/storefront/product.html:54
+#, python-format
+msgid "Delivery %(eta)s in Rajkot"
+msgstr ""
+
+#: templates/storefront/product.html:55
+msgid ""
+"Exact time shows at checkout after you pin your address. 30-minute delivery "
+"in nearby areas."
+msgstr ""
+
+#: templates/storefront/product.html:56
+msgid "Bulk prices"
+msgstr "थोक दाम"
+
+#: templates/storefront/product.html:56
+#, python-format
+msgid "%(q)s+ units: %(p)s each"
+msgstr ""
+
+#: templates/storefront/product.html:56
+msgid "Party order? Get a quote"
+msgstr "पार्टी ऑर्डर? क़ीमत पूछें"
+
+#: templates/storefront/product.html:57
+msgid "Subscribe for daily or weekly delivery"
+msgstr ""
+
+#: templates/storefront/product.html:59
+msgid "Product details"
+msgstr "प्रोडक्ट की जानकारी"
+
+#: templates/storefront/product.html:61
+msgid "About"
+msgstr "बारे में"
+
+#: templates/storefront/product.html:62
+msgid "Ingredients"
+msgstr "सामग्री"
+
+#: templates/storefront/product.html:63
+msgid "Allergens"
+msgstr "एलर्जन"
+
+#: templates/storefront/product.html:64
+msgid "Nutrition"
+msgstr "पोषण"
+
+#: templates/storefront/product.html:65
+msgid "Shelf life"
+msgstr "शेल्फ़ लाइफ़"
+
+#: templates/storefront/product.html:66
+msgid "Storage"
+msgstr "भंडारण"
+
+#: templates/storefront/product.html:67
+msgid "Best before"
+msgstr "इससे पहले इस्तेमाल करें"
+
+#: templates/storefront/product.html:68
+msgid "Country of origin"
+msgstr "मूल देश"
+
+#: templates/storefront/product.html:69
+msgid "Diet"
+msgstr "आहार"
+
+#: templates/storefront/product.html:75
+msgid "Frequently bought together"
+msgstr "अक्सर साथ ख़रीदे जाते हैं"
+
+#: templates/storefront/product.html:78
+msgid "Ratings & reviews"
+msgstr "रेटिंग और रिव्यू"
+
+#: templates/storefront/product.html:81
+#, python-format
+msgid "%(n)s verified review"
+msgid_plural "%(n)s verified reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/storefront/product.html:86
+msgid "Verified buyer"
+msgstr "सत्यापित ख़रीदार"
+
+#: templates/storefront/product.html:88
+msgid "Customer photo"
+msgstr "ग्राहक की फ़ोटो"
+
+#: templates/storefront/product.html:91
+msgid ""
+"No reviews yet. Only customers who received this product can review it."
+msgstr ""
+
+#: templates/storefront/product.html:94
+msgid "Goes well with"
+msgstr "इसके साथ बढ़िया"
+
+#: templates/storefront/wishlist.html:3
+msgid "Tap the heart on any product to save it here."
+msgstr ""
+
+#: templates/support/chat_widget.html:1
+msgid "Help chat"
+msgstr "मदद चैट"
+
+#: templates/support/chat_widget.html:2
+msgid "Rasiko Help · 24×7"
+msgstr ""
+
+#: templates/support/chat_widget.html:2
+msgid "Close chat"
+msgstr "चैट बंद करें"
+
+#: templates/support/chat_widget.html:3
+msgid ""
+"Namaste! Ask me about delivery areas, timings, payments, refunds or your "
+"order."
+msgstr ""
+
+#: templates/support/chat_widget.html:4
+msgid "My order"
+msgstr "मेरा ऑर्डर"
+
+#: templates/support/chat_widget.html:4
+msgid "Talk to a person"
+msgstr "किसी व्यक्ति से बात करें"
+
+#: templates/support/chat_widget.html:5
+msgid "Message"
+msgstr "संदेश"
+
+#: templates/support/chat_widget.html:5
+msgid "Type your question…"
+msgstr "अपना सवाल लिखें…"
+
+#: templates/support/chat_widget.html:5
+msgid "Send"
+msgstr "भेजें"
+
+#: templates/support/help.html:4
+msgid "How can we help?"
+msgstr "हम कैसे मदद करें?"
+
+#: templates/support/help.html:5
+msgid "Search help"
+msgstr "मदद खोजें"
+
+#: templates/support/help.html:5
+msgid "e.g. refund, delivery time, COD"
+msgstr ""
+
+#: templates/support/help.html:8
+msgid "No answers matched. Ask in the chat and we'll help."
+msgstr ""
+
+#: templates/support/help.html:9
+msgid "Still need help?"
+msgstr "अभी भी मदद चाहिए?"
+
+#: templates/support/help.html:9
+msgid "Chat with us any time, or call during store hours."
+msgstr ""
+
+#: templates/support/help.html:10
+msgid "Open chat"
+msgstr "चैट खोलें"
+
+#: templates/support/help.html:10
+msgid "Call"
+msgstr "कॉल करें"
+
+#: templates/support/ticket.html:5
+msgid "No messages yet."
+msgstr "अभी कोई संदेश नहीं।"
+
+#: templates/support/ticket.html:6
+msgid "Continue in chat"
+msgstr ""
+
+#: templates/support/tickets.html:4
+msgid "Subject"
+msgstr "विषय"
+
+#: templates/support/tickets.html:4
+msgid "Updated"
+msgstr ""
+
+#: templates/support/tickets.html:6
+msgid "No help requests yet."
+msgstr "अभी कोई मदद अनुरोध नहीं।"

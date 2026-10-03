@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Profile" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Your profile" %}</h1>
+<form method="post" novalidate>{% csrf_token %}{% include "partials/form_errors.html" %}
+<div class="form-grid form-grid--2">{% for f in form %}{% include "partials/field.html" %}{% endfor %}</div>
+<button class="btn btn--buy">{% trans "Save" %}</button> <a class="btn btn--ghost" href="{% url 'accounts:home' %}">{% trans "Cancel" %}</a></form>
+{% if user.phone and not user.phone_verified %}<p style="margin-top:14px"><a class="link" href="{% url 'accounts:phone_verify' %}">{% trans "Verify your mobile number" %}</a></p>{% endif %}</div></div>{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ cfg.title }}{% endblock %}{% block heading %}{{ cfg.title }}{% endblock %}
+{% block actions %}<a class="btn btn--buy btn--sm" href="{% url 'dashboard:crud_new' slug %}">+ Add {{ cfg.singular }}</a>{% endblock %}
+{% block content %}
+{% if cfg.help %}<p class="muted">{{ cfg.help }}</p>{% endif %}
+{% if cfg.search %}<form class="toolbar" method="get"><input class="input" name="q" value="{{ q }}" placeholder="Search" aria-label="Search"><button class="btn btn--ghost btn--sm">Search</button></form>{% endif %}
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr>{% for h in headers %}<th>{{ h|capfirst }}</th>{% endfor %}<th></th></tr></thead><tbody>
+{% for obj, cells in rows %}<tr>{% for c in cells %}<td>{% if forloop.first %}<a class="link" href="{% url 'dashboard:crud_edit' slug obj.pk %}">{{ c }}</a>{% else %}{{ c }}{% endif %}</td>{% endfor %}<td class="actions"><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:crud_edit' slug obj.pk %}">Edit</a></td></tr>
+{% empty %}<tr><td colspan="{{ headers|length|add:1 }}" class="muted">Nothing here yet.</td></tr>{% endfor %}
+</tbody></table></div>
+{% include "dashboard/_pager.html" %}
+{% endblock %}

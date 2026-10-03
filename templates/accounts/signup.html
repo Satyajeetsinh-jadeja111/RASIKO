@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Create account" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Create your account" %}</h1>
+<p class="page-sub">{% trans "Get 50 Rasiko Coins on your first order and faster checkout." %}</p>
+<form method="post" novalidate>{% csrf_token %}{% include "partials/form_errors.html" %}
+{% for f in form %}{% include "partials/field.html" %}{% endfor %}
+<p class="muted" style="font-size:13px">{% trans "By creating an account you agree to our" %} <a class="link" href="{% url 'storefront:page' 'terms' %}">{% trans "Terms" %}</a> {% trans "and" %} <a class="link" href="{% url 'storefront:page' 'privacy' %}">{% trans "Privacy Policy" %}</a>.</p>
+<button class="btn btn--buy btn--block">{% trans "Create account" %}</button></form>
+<p style="margin-top:14px">{% trans "Already have an account?" %} <a class="link" href="{% url 'accounts:login' %}">{% trans "Sign in" %}</a></p></div></div>{% endblock %}

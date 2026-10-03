@@ -1,0 +1,3 @@
+{% load rasiko %}Hi {{ quote.name }}, we got your party order request and will call you on {{ quote.phone }} with a quote.
+
+{{ quote.requirements }}

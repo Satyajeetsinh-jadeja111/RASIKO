@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Import products{% endblock %}{% block heading %}Import products from CSV{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:products_export' %}">Download current list</a><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:products' %}">← Products</a>{% endblock %}
+{% block content %}
+<section class="panel-box"><p>Easiest way: download the current list, edit it in Excel or Google Sheets, save as CSV and upload it here. Rows are matched by <b>sku</b>: a known SKU is updated, a new SKU is created. Nothing is saved if any row has a mistake.</p>
+<p class="muted" style="font-size:14px">Columns: {{ columns|join:", " }}. Categories use their web names separated by “|”, like <code>juices|summer-coolers</code>.</p>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}<div class="drop-zone"><label for="file"><b>Choose a CSV file</b> (max 2 MB)</label><br><input id="file" type="file" name="file" accept=".csv,text/csv" required></div>
+<label style="display:flex;gap:8px;margin:12px 0"><input type="checkbox" name="dry_run" value="1" checked> Only check the file, don't save yet</label>
+<button class="btn btn--buy btn--sm">Upload</button></form></section>
+{% if report %}<section class="panel-box" style="margin-top:14px"><h2>Result</h2>
+{% if report.errors %}<div class="flash flash--error">Found {{ report.errors|length }} problem(s). Nothing was saved.</div><ul>{% for e in report.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+{% elif report.dry %}<div class="flash flash--success">All {{ report.rows }} rows look fine. Untick “Only check the file” and upload again to save.</div>
+{% else %}<div class="flash flash--success">Saved: {{ report.created }} new, {{ report.updated }} updated.</div>{% endif %}</section>{% endif %}
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Brands" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page">
+  <h1 class="page-title">{% trans "Brands" %}</h1>
+  <div class="grid-products">{% for b in brands %}<a class="box" href="{{ b.get_absolute_url }}" style="text-align:center">{% if b.logo %}<img src="{{ b.logo.url }}" alt="" style="max-height:70px;margin:0 auto 8px">{% endif %}<b style="font:600 18px var(--font-head);color:var(--maroon)">{{ b.name }}</b><div class="muted">{% blocktrans count n=b.n %}{{ n }} product{% plural %}{{ n }} products{% endblocktrans %}</div></a>{% endfor %}</div>
+</div>{% endblock %}

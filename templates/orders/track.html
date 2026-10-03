@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Track order" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page" style="max-width:640px;margin:0 auto">
+  <h1 class="page-title">{% trans "Track your order" %}</h1>
+  {% if order %}{% include "orders/_track_card.html" %}{% else %}
+  <form class="box" method="post">{% csrf_token %}
+    {% for f in form %}<div class="field"><label class="label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{{ f.errors }}</div>{% endfor %}
+    {% if ask_code %}<div class="field"><label class="label" for="code">{% trans "6-digit code from your email" %}</label><input class="input" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></div><input type="hidden" name="step" value="verify"><button class="btn btn--buy">{% trans "Show my order" %}</button>
+    {% else %}<input type="hidden" name="step" value="send"><button class="btn btn--buy">{% trans "Send code" %}</button>{% endif %}
+    {% if user.is_authenticated %}<p style="margin-top:12px"><a class="link" href="{% url 'accounts:home' %}">{% trans "Or see all your orders" %} →</a></p>{% else %}<p style="margin-top:12px"><a class="link" href="{% url 'accounts:login' %}">{% trans "Log in to see all your orders" %} →</a></p>{% endif %}
+  </form>{% endif %}
+</div>{% endblock %}

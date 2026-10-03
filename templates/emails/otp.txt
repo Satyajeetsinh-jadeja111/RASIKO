@@ -1,0 +1,1 @@
+{% load rasiko %}Your Rasiko code is {{ code }}. It expires in 10 minutes. Never share it with anyone who calls you.

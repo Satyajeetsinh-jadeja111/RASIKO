@@ -1,0 +1,12 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Party quotes{% endblock %}{% block heading %}Party & bulk quotes{% endblock %}
+{% block content %}<div class="dash-grid">{% for q in page %}
+<form class="panel-box" method="post">{% csrf_token %}<input type="hidden" name="id" value="{{ q.pk }}">
+  <h2>{{ q.name }} · {{ q.get_kind_display }}{% if q.event_date %} · {{ q.event_date|date:"d M Y" }}{% endif %}</h2>
+  <p><a class="link" href="tel:{{ q.phone }}">{{ q.phone }}</a>{% if q.email %} · {{ q.email }}{% endif %} · asked {{ q.created_at|timesince }} ago{% if q.budget %} · budget {{ q.budget|rupee }}{% endif %}</p>
+  <p style="white-space:pre-wrap;background:var(--chandan);border-radius:12px;padding:10px">{{ q.requirements }}</p>
+  <div class="form-grid form-grid--2"><div class="field"><label class="label" for="st{{ q.pk }}">Status</label><select class="input" id="st{{ q.pk }}" name="state">{% for v, l in states %}<option value="{{ v }}" {% if v == q.state %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+  <div class="field"><label class="label" for="qa{{ q.pk }}">Quoted amount (₹)</label><input class="input" id="qa{{ q.pk }}" name="quoted_amount" value="{{ q.quoted_amount|default_if_none:'' }}" inputmode="decimal"></div></div>
+  <div class="field"><label class="label" for="sn{{ q.pk }}">Staff note</label><textarea class="input" id="sn{{ q.pk }}" name="staff_note" rows="2">{{ q.staff_note }}</textarea></div>
+  <button class="btn btn--ghost btn--sm">Save</button></form>
+{% empty %}<p class="muted">No party order requests yet.</p>{% endfor %}</div>{% include "dashboard/_pager.html" %}{% endblock %}

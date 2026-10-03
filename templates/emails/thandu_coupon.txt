@@ -1,0 +1,1 @@
+{% load rasiko %}Sorry it wasn't chilled. Use coupon {{ coupon.code }} ({{ coupon.value|rupee }} off) before {{ coupon.valid_until|date:'d M Y' }}.

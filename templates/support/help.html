@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "24×7 Help Center" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page">
+<h1 class="page-title">{% trans "How can we help?" %}</h1>
+<form method="get" class="box" style="display:flex;gap:8px;margin-bottom:18px"><label class="sr-only" for="hq">{% trans "Search help" %}</label><input class="input" id="hq" name="q" value="{{ q }}" placeholder="{% trans 'e.g. refund, delivery time, COD' %}"><button class="btn btn--buy btn--sm">{% trans "Search" %}</button></form>
+{% for topic, items in topics.items %}<section class="box faq" style="margin-bottom:14px"><h2>{{ topic }}</h2>
+  {% for a in items %}<details><summary>{{ a.question }}</summary><div>{{ a.answer|linebreaks }}</div></details>{% endfor %}</section>
+{% empty %}<p class="muted">{% trans "No answers matched. Ask in the chat and we'll help." %}</p>{% endfor %}
+<div class="box box--mitti"><h2>{% trans "Still need help?" %}</h2><p>{% trans "Chat with us any time, or call during store hours." %}</p>
+<div class="btns"><button class="btn btn--buy" type="button" data-chat-open>{% trans "Open chat" %}</button>{% if store.phone %}<a class="btn btn--ghost" href="tel:{{ store.phone }}">{% trans "Call" %} {{ store.phone }}</a>{% endif %}<a class="btn btn--ghost" href="{% url 'orders:track' %}">{% trans "Track order" %}</a></div></div>
+</div>{% endblock %}

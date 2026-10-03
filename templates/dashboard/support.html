@@ -1,0 +1,7 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Support inbox{% endblock %}{% block heading %}Support inbox{% endblock %}
+{% block content %}
+<form class="toolbar" method="get"><select class="input" name="state" aria-label="Show" data-autosubmit>{% for v, l in states %}<option value="{{ v }}" {% if v == state %}selected{% endif %}>{{ l }}</option>{% endfor %}<option value="all" {% if state == "all" %}selected{% endif %}>All</option></select></form>
+<div class="panel-box tbl-wrap" id="support-list"><table class="tbl"><thead><tr><th>Question</th><th>Customer</th><th>Order</th><th>Last message</th><th>Status</th></tr></thead><tbody>
+{% for t in page %}<tr><td><a class="link" href="{% url 'dashboard:support_ticket' t.public_id %}">{{ t.subject|truncatechars:70 }}</a></td><td>{{ t.name|default:t.email }}</td><td>{% if t.order %}{{ t.order.number }}{% endif %}</td><td>{{ t.last|default:t.created_at|timesince }} ago</td><td>{{ t.get_state_display }}</td></tr>
+{% empty %}<tr><td colspan="5" class="muted">No conversations here.</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

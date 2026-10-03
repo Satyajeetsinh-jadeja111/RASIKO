@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ cfg.title }}{% endblock %}
+{% block heading %}{% if obj %}Edit {{ cfg.singular }}{% else %}New {{ cfg.singular }}{% endif %}{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% if cfg.back %}{% url cfg.back %}{% else %}{% url 'dashboard:crud_list' slug %}{% endif %}">← Back</a>{% endblock %}
+{% block content %}
+{% if cfg.help %}<p class="muted">{{ cfg.help }}</p>{% endif %}
+<form class="panel-box" method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+  {% include "dashboard/_form_fields.html" %}
+  {% if formset %}<h2>Items</h2>{{ formset.management_form }}<div class="tbl-wrap"><table class="tbl"><thead><tr>{% for f in formset.forms.0.visible_fields %}<th>{{ f.label }}</th>{% endfor %}</tr></thead><tbody>
+    {% for fm in formset %}<tr>{% for f in fm.visible_fields %}<td>{{ f }}{{ f.errors }}</td>{% endfor %}{% for h in fm.hidden_fields %}{{ h }}{% endfor %}</tr>{% endfor %}</tbody></table></div>{{ formset.non_form_errors }}{% endif %}
+  <div class="btns" style="margin-top:12px"><button class="btn btn--buy">Save</button></div>
+</form>
+{% if obj and cfg.can_delete %}<form method="post" action="{% url 'dashboard:crud_delete' slug obj.pk %}" data-confirm="Delete this {{ cfg.singular }}? This can't be undone." style="margin-top:14px">{% csrf_token %}<button class="btn btn--danger btn--sm">Delete</button></form>{% endif %}
+{% endblock %}

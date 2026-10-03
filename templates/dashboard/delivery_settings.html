@@ -1,0 +1,25 @@
+{% extends "dashboard/base.html" %}{% load static rasiko %}
+{% block title %}Delivery{% endblock %}{% block heading %}Delivery settings{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}">{% endblock %}
+{% block content %}
+<form method="post" novalidate>{% csrf_token %}
+<div class="dash-grid">
+<section class="panel-box"><h2>Delivery area</h2>
+  <p class="muted" style="font-size:14px">The green circle is the delivery radius. Optionally click on the map to draw an exact area; customers must be inside both. Drag the red pin to move the shop.</p>
+  <div id="area-map" class="map" style="height:380px" data-lat="{{ form.instance.store_lat }}" data-lng="{{ form.instance.store_lng }}" data-radius="{{ form.instance.radius_km }}"></div>
+  <div class="btns" style="margin-top:8px"><button class="btn btn--ghost btn--sm" type="button" data-poly-undo>Undo last point</button><button class="btn btn--ghost btn--sm" type="button" data-poly-clear>Clear drawn area</button></div>
+</section>
+<section class="panel-box"><h2>Fees, limits and timings</h2>{% include "dashboard/_form_fields.html" %}</section>
+<section class="panel-box"><h2>Store hours</h2>{{ hours.management_form }}<table class="tbl"><thead><tr><th>Day</th><th>Opens</th><th>Closes</th><th>Closed all day</th></tr></thead><tbody>
+{% for hf in hours %}<tr><td>{{ hf.instance.get_weekday_display }}{{ hf.id }}</td><td>{{ hf.opens }}</td><td>{{ hf.closes }}</td><td>{{ hf.is_closed }}</td></tr>{% endfor %}</tbody></table></section>
+</div>
+<div class="btns" style="margin:14px 0"><button class="btn btn--buy">Save delivery settings</button></div>
+</form>
+<div class="dash-grid dash-grid--2">
+  <section class="panel-box"><h2>Fee by distance</h2><table class="tbl"><thead><tr><th>From km</th><th>To km</th><th class="num">Fee</th><th></th></tr></thead><tbody>{% for s in slabs %}<tr><td>{{ s.min_km }}</td><td>{{ s.max_km }}</td><td class="num">{{ s.fee|rupee }}</td><td class="actions"><a class="link" href="{% url 'dashboard:crud_edit' 'fee-slabs' s.pk %}">Edit</a></td></tr>{% endfor %}</tbody></table><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:crud_new' 'fee-slabs' %}" style="margin-top:8px">+ Add slab</a></section>
+  <section class="panel-box"><h2>Pincodes</h2><table class="tbl"><thead><tr><th>Pincode</th><th>Area</th><th>Fast</th><th>COD</th><th></th></tr></thead><tbody>{% for p in pincodes %}<tr class="{% if not p.is_active %}muted-row{% endif %}"><td>{{ p.code }}</td><td>{{ p.area }}</td><td>{{ p.fast_delivery|yesno:"Yes,No" }}</td><td>{{ p.cod_blocked|yesno:"Blocked,Yes" }}</td><td class="actions"><a class="link" href="{% url 'dashboard:crud_edit' 'pincodes' p.pk %}">Edit</a></td></tr>{% endfor %}</tbody></table><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:crud_new' 'pincodes' %}" style="margin-top:8px">+ Add pincode</a></section>
+  <section class="panel-box"><h2>Holidays (closed)</h2><ul class="plain">{% for h in holidays %}<li>{{ h.date|date:"D d M Y" }} · {{ h.note }} <a class="link" href="{% url 'dashboard:crud_edit' 'holidays' h.pk %}">Edit</a></li>{% empty %}<li class="muted">None.</li>{% endfor %}</ul><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:crud_new' 'holidays' %}" style="margin-top:8px">+ Add holiday</a></section>
+  <section class="panel-box"><h2>Riders</h2><ul class="plain">{% for r in riders %}<li>{{ r.name }} · {{ r.phone }}{% if not r.is_active %} <span class="chip">Off</span>{% endif %} <a class="link" href="{% url 'dashboard:crud_edit' 'riders' r.pk %}">Edit</a></li>{% empty %}<li class="muted">No riders yet.</li>{% endfor %}</ul><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:crud_new' 'riders' %}" style="margin-top:8px">+ Add rider</a></section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'vendor/leaflet/leaflet.js' %}" defer></script>{% endblock %}

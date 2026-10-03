@@ -1,0 +1,5 @@
+{% load rasiko %}Rasiko Team replied about "{{ ticket.subject }}":
+
+{{ reply }}
+
+{{ SITE_URL }}/help/tickets/

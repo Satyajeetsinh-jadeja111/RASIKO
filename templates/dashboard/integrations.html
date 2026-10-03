@@ -1,0 +1,30 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Integrations{% endblock %}{% block heading %}Integrations and API keys{% endblock %}
+{% block content %}
+<div class="flash flash--info" style="font-weight:500">Every paid service is <b>off</b> until you switch it on here and paste its keys. While a service is off, the shop uses the free option shown on its card. Keys are stored encrypted, are never shown again after saving, and every change is logged and emailed to the admin list. Leave a key box empty to keep the saved key.</div>
+{% for c in cards %}
+<form class="panel-box int-card" id="{{ c.spec.slug }}" method="post" action="{% url 'dashboard:integration_save' c.spec.slug %}" autocomplete="off" style="margin-bottom:16px">{% csrf_token %}
+  <header><h2>{{ c.spec.name }}</h2>
+    <label style="display:flex;align-items:center;gap:10px;font-weight:600">{% if c.enabled %}On{% else %}Off{% endif %}<span class="switch"><input type="checkbox" name="enabled" {% if c.enabled %}checked{% endif %} aria-label="Switch {{ c.spec.name }} on or off" data-int-toggle><span></span></span></label></header>
+  <div class="int-meta">
+    <div><b>Cost:</b> {{ c.spec.cost }}</div>
+    <div><b>Where to get the keys:</b> {{ c.spec.where }}</div>
+    <div><b>While off:</b> {{ c.spec.fallback }}</div>
+    {% if c.spec.slug == "razorpay" or c.spec.slug == "stripe" %}<div><b>Webhook URL to paste in {{ c.spec.name|truncatewords:1 }}:</b> <code>{{ site_url }}/payments/webhooks/{{ c.spec.slug }}/</code> <button class="btn btn--ghost btn--sm" type="button" data-copy="{{ site_url }}/payments/webhooks/{{ c.spec.slug }}/">Copy</button>{% if store.active_gateway == c.spec.slug %} · <span class="chip chip--green">Checkout uses this one</span>{% else %} · <a class="link" href="{% url 'dashboard:store_settings' %}">Choose it in Store settings</a>{% endif %}</div>{% endif %}
+    {% if c.spec.slug == "s3" %}<div>After switching storage, restart the app so every worker uses it. Existing photos stay where they are.</div>{% endif %}
+    {% if c.row.last_test_ok is not None %}<div>Last test: <span class="chip {% if c.row.last_test_ok %}chip--green{% else %}chip--red{% endif %}">{% if c.row.last_test_ok %}Passed{% else %}Failed{% endif %}</span> {{ c.row.last_test_message }}</div>{% endif %}
+    {% if c.row.updated_by %}<div>Last changed by {{ c.row.updated_by.email }} on {{ c.row.updated_at|date:"d M Y, H:i" }}</div>{% endif %}
+  </div>
+  <div class="form-grid form-grid--2" data-int-fields>
+    {% for f in c.fields %}<div class="field"><label class="label" for="{{ c.spec.slug }}-{{ f.name }}">{{ f.label }}{% if f.required %} *{% endif %}</label>
+      {% if f.choices %}<select class="input" id="{{ c.spec.slug }}-{{ f.name }}" name="{{ f.name }}">{% for ch in f.choices %}<option value="{{ ch }}" {% if ch == f.value %}selected{% endif %}>{{ ch }}</option>{% endfor %}</select>
+      {% elif f.secret %}<input class="input" type="password" id="{{ c.spec.slug }}-{{ f.name }}" name="{{ f.name }}" autocomplete="new-password" spellcheck="false" placeholder="{% if f.is_set %}Saved ({{ f.masked }}). Type to replace{% else %}Not set{% endif %}">
+      {% else %}<input class="input" id="{{ c.spec.slug }}-{{ f.name }}" name="{{ f.name }}" value="{{ f.value }}" spellcheck="false">{% endif %}
+      {% if f.help %}<div class="help">{{ f.help }}</div>{% endif %}</div>{% endfor %}
+  </div>
+  {% if c.missing %}<p class="muted" style="margin:0;font-size:14px">Needed before it can be switched on: {{ c.missing|join:", " }}.</p>{% endif %}
+  <div class="btns"><button class="btn btn--buy btn--sm" name="action" value="save">Save</button><button class="btn btn--ghost btn--sm" name="action" value="test">Save and test connection</button>
+  {% if c.row and c.row.data_encrypted %}<button class="btn btn--danger btn--sm" name="action" value="clear" formnovalidate data-confirm-click="Remove the saved keys for {{ c.spec.name }} and switch it off?">Remove keys</button>{% endif %}</div>
+</form>
+{% endfor %}
+{% endblock %}

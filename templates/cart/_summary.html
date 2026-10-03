@@ -1,0 +1,15 @@
+{% load rasiko i18n %}
+<div class="sumrow"><span>{% trans "Items (MRP)" %}</span><span>{{ totals.mrp_total|rupee }}</span></div>
+{% if totals.mrp_total > totals.subtotal %}<div class="sumrow" style="color:var(--tulsi-deep)"><span>{% trans "Rasiko price savings" %}</span><span>{% trans "included" %}</span></div>{% endif %}
+<div class="sumrow"><span>{% trans "Item total" %}</span><span>{{ totals.subtotal|rupee }}</span></div>
+{% if totals.discount %}<div class="sumrow" style="color:var(--tulsi-deep)"><span>{% trans "Coupon" %} {{ totals.coupon_code }}</span><span>−{{ totals.discount|rupee }}</span></div>{% endif %}
+{% if totals.coins_value %}<div class="sumrow" style="color:var(--tulsi-deep)"><span>{% blocktrans with n=totals.coins_used %}Rasiko Coins ({{ n }}){% endblocktrans %}</span><span>−{{ totals.coins_value|rupee }}</span></div>{% endif %}
+{% if totals.delivery %}{% with d=totals.delivery %}{% if d.ok %}
+<div class="sumrow"><span>{% trans "Delivery" %} <small class="muted">({{ d.road_km }} km)</small></span><span>{% if d.delivery_fee %}{{ d.delivery_fee|rupee }}{% else %}<b style="color:var(--tulsi-deep)">{% trans "FREE" %}</b>{% endif %}</span></div>
+{% if d.small_order_fee %}<div class="sumrow"><span>{% trans "Small order fee" %}</span><span>{{ d.small_order_fee|rupee }}</span></div>{% endif %}
+{% for label, amount in d.surcharges %}<div class="sumrow"><span>{{ label }}</span><span>{{ amount|rupee }}</span></div>{% endfor %}
+{% else %}<div class="flash flash--error">{{ d.message }}</div>{% endif %}{% endwith %}
+{% else %}<div class="sumrow muted"><span>{% trans "Delivery" %}</span><span>{% trans "at checkout" %}</span></div>{% endif %}
+<div class="sumrow sumrow--total"><span>{% trans "To pay" %}</span><span>{{ totals.total|rupee }}</span></div>
+{% if totals.savings %}<div class="saved-banner">{% blocktrans with s=totals.savings|rupee %}You saved {{ s }} on this order{% endblocktrans %}</div>{% endif %}
+{% if totals.delivery.amount_for_free %}<div class="muted" style="font-size:14px">{% blocktrans with a=totals.delivery.amount_for_free|rupee %}Add {{ a }} more for free delivery{% endblocktrans %}</div>{% elif totals.delivery.free_reason %}<div class="muted" style="font-size:14px">{{ totals.delivery.free_reason }}</div>{% endif %}

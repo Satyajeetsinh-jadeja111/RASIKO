@@ -1,0 +1,10 @@
+{% load static rasiko %}<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Packing slip {{ order.number }}</title><link rel="stylesheet" href="{% static 'css/app.css' %}">
+<style>body{background:#fff;padding:24px;max-width:720px;margin:auto}h1{font-size:24px;margin:0}.big{font-size:40px;font-weight:700;letter-spacing:2px}</style></head>
+<body><div style="display:flex;justify-content:space-between;align-items:center"><img src="{% static 'brand/rasiko-logo.svg' %}" alt="Rasiko" height="48"><div class="big">{{ order.number }}</div></div>
+<p><b>{{ order.ship_name }}</b> · {{ order.ship_phone }}<br>{{ order.ship_address }}, {{ order.ship_pincode }}</p>
+<p>{% if order.is_asap %}ASAP{% else %}{{ order.slot_label }}{% endif %} · {{ order.get_payment_method_display }}{% if order.payment_method == "cod" %} · <b>Collect {{ order.total|rupee }}</b>{% endif %}</p>
+<table class="tbl"><thead><tr><th>✓</th><th>Item</th><th>SKU</th><th class="num">Qty</th></tr></thead><tbody>{% for l in lines %}<tr><td>☐</td><td>{{ l.product_name }} {{ l.variant_label }}</td><td>{{ l.sku }}</td><td class="num"><b>{{ l.qty }}</b></td></tr>{% endfor %}</tbody></table>
+{% if order.customer_note %}<p><b>Note:</b> {{ order.customer_note }}</p>{% endif %}
+<p class="muted">Pack cold drinks last. Check seals and chill.</p>
+<p class="no-print"><button class="btn btn--buy btn--sm" type="button" data-print>Print</button></p>
+<script src="{% static 'js/dashboard.js' %}" defer></script></body></html>

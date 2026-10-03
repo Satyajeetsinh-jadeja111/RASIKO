@@ -1,0 +1,21 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Products{% endblock %}{% block heading %}Products{% endblock %}
+{% block actions %}{% if is_manager %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:products_import' %}">Import CSV</a><a class="btn btn--ghost btn--sm" href="{% url 'dashboard:products_export' %}">Export CSV</a>{% endif %}<a class="btn btn--buy btn--sm" href="{% url 'dashboard:product_new' %}">+ Add product</a>{% endblock %}
+{% block content %}
+<form class="toolbar" method="get">
+  <select class="input" name="state" aria-label="Show" data-autosubmit><option value="live" {% if state == "live" %}selected{% endif %}>All products</option><option value="hidden" {% if state == "hidden" %}selected{% endif %}>Hidden</option><option value="deleted" {% if state == "deleted" %}selected{% endif %}>Removed</option></select>
+  <select class="input" name="category" aria-label="Category" data-autosubmit><option value="">Any category</option>{% for c in categories %}<option value="{{ c.pk }}" {% if request.GET.category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
+  <select class="input" name="brand" aria-label="Brand" data-autosubmit><option value="">Any brand</option>{% for b in brands %}<option value="{{ b.pk }}" {% if request.GET.brand == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select>
+  <input class="input" name="q" value="{{ q }}" placeholder="Name, SKU or brand" aria-label="Search"><button class="btn btn--ghost btn--sm">Search</button>
+</form>
+<form method="post" data-bulk>{% csrf_token %}
+<div class="toolbar"><select class="input" name="action" aria-label="Bulk action"><option value="">With selected…</option><option value="activate">Show in shop</option><option value="deactivate">Hide from shop</option><option value="feature">Mark featured</option><option value="unfeature">Remove featured</option><option value="bestseller">Mark best seller</option>{% if is_manager %}{% if state == "deleted" %}<option value="restore">Restore</option>{% else %}<option value="delete">Remove</option>{% endif %}{% endif %}</select><button class="btn btn--ghost btn--sm">Apply</button></div>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th><input type="checkbox" data-check-all aria-label="Select all"></th><th></th><th>Product</th><th>Brand</th><th>Sizes and prices</th><th>Stock</th><th>Status</th></tr></thead><tbody>
+{% for p in page %}<tr><td><input type="checkbox" name="ids" value="{{ p.pk }}" aria-label="Select {{ p.name }}"></td>
+<td style="width:56px">{% with im=p.images.all.0 %}{% if im %}<img src="{{ im.image.url }}" alt="" width="44" height="44" style="object-fit:cover;border-radius:8px">{% else %}<div style="width:44px">{% drink p.illustration p.illustration_color %}</div>{% endif %}{% endwith %}</td>
+<td><a class="link" href="{% url 'dashboard:product_edit' p.pk %}">{{ p.name }}</a>{% if p.is_featured %} <span class="chip chip--gold">Featured</span>{% endif %}{% if p.is_bestseller %} <span class="chip chip--orange">Best seller</span>{% endif %}</td><td>{{ p.brand.name }}</td>
+<td>{% for v in p.variants.all %}{{ v.label }} {{ v.price|rupee }}{% if not forloop.last %} · {% endif %}{% endfor %}</td>
+<td>{% for v in p.variants.all %}<span class="chip {% if not v.in_stock %}chip--red{% elif v.is_low_stock %}chip--orange{% else %}chip--green{% endif %}">{{ v.available_qty }}</span> {% endfor %}</td>
+<td>{% if p.deleted_at %}<span class="chip chip--red">Removed</span>{% elif p.is_active %}<span class="chip chip--green">Live</span>{% else %}<span class="chip">Hidden</span>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">No products match.</td></tr>{% endfor %}</tbody></table></div></form>
+{% include "dashboard/_pager.html" %}{% endblock %}

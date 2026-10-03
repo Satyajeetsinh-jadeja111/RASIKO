@@ -1,0 +1,123 @@
+{% load static i18n rasiko %}<!doctype html>
+{% get_current_language as LANG %}
+<html lang="{{ LANG }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ store.name }} · {% trans "Cold drinks & juices delivered in Rajkot" %}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ store.meta_description }}{% endblock %}">
+  <link rel="canonical" href="{{ SITE_URL }}{{ request.path }}">
+  <meta property="og:site_name" content="{{ store.name }}">
+  <meta property="og:title" content="{% block og_title %}{{ store.name }} · {{ store.tagline }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ store.meta_description }}{% endblock %}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:url" content="{{ SITE_URL }}{{ request.path }}">
+  <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}{% static 'brand/rasiko-icon-512.png' %}{% endblock %}">
+  <meta name="theme-color" content="#1B6E42">
+  <link rel="icon" href="{% static 'favicons/favicon.ico' %}" sizes="any">
+  <link rel="icon" href="{% static 'brand/rasiko-icon.svg' %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static 'favicons/apple-touch-icon.png' %}">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="{% static 'fonts/fredoka.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+  <script type="application/ld+json">{{ org_jsonld|default:""|safe }}</script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% include "partials/icons.html" %}
+  <a class="sr-only" href="#main">{% trans "Skip to content" %}</a>
+
+  {% if campaign and campaign.show_overlay %}<div class="toran toran--{{ campaign.theme }}" aria-hidden="true"></div>{% endif %}
+
+  {# North: Kuber offer strip #}
+  <div class="strip">
+    <svg class="icon" style="width:16px;height:16px;display:inline;vertical-align:-3px;margin-right:4px"><use href="#i-truck"/></svg>
+    {% blocktrans with v=delivery_cfg.free_near_threshold|rupee %}Free delivery above <b>{{ v }}</b> in Rajkot{% endblocktrans %}<span class="more">{% if store.cod_enabled %}<span class="sep">·</span>{% trans "Cash on Delivery available" %}{% endif %}<span class="sep">·</span>{% blocktrans with a=delivery_cfg.asap_min_minutes b=delivery_cfg.asap_max_minutes %}Delivery in {{ a }}–{{ b }} min{% endblocktrans %}</span>
+  </div>
+
+  <header class="header">
+    <div class="wrap header__row">
+      {# North-West: logo + categories (Vayavya) #}
+      <a class="logo" href="{% url 'storefront:home' %}" aria-label="{{ store.name }} home"><img src="{% static 'brand/rasiko-logo.svg' %}" alt="{{ store.name }} · Food &amp; Beverages · Rajkot" width="197" height="59"></a>
+      {# North: search (Kuber) #}
+      <form class="search" role="search" action="{% url 'storefront:search' %}" method="get" autocomplete="off">
+        <label class="sr-only" for="q">{% trans "Search" %}</label>
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input id="q" name="q" type="search" value="{{ request.GET.q|default:'' }}" placeholder="{% trans 'Search juices, soda, milkshakes, brands…' %}"
+               hx-get="{% url 'storefront:suggest' %}" hx-trigger="input changed delay:250ms, search" hx-target="#suggest" hx-swap="innerHTML">
+        <div id="suggest" class="suggest"></div>
+      </form>
+      {# North-East (Ishanya): kept light; only the auspicious mark and light icons #}
+      <div class="ne">
+        {% if store.auspicious_mark == "shubh_labh" %}<span class="shubh" title="Shubh Labh" lang="hi">शुभ लाभ</span>{% elif store.auspicious_mark == "om" %}<span class="shubh" title="Om" lang="hi">ॐ</span>{% endif %}
+        {% if coins is not None %}<a class="coins" href="{% url 'accounts:home' %}#coins" aria-label="{{ coins }} Rasiko Coins"><span class="coin" aria-hidden="true"></span>{{ coins }} {% trans "Coins" %}</a>{% endif %}
+        <a class="round" href="{% if user.is_authenticated %}{% url 'accounts:home' %}{% else %}{% url 'accounts:login' %}{% endif %}" aria-label="{% trans 'Account' %}"><svg class="icon"><use href="#i-user"/></svg></a>
+        <a class="round" href="{% url 'cart:detail' %}" aria-label="{% trans 'Cart' %}" data-open-cart><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cartCount" {% if not cart_count %}hidden{% endif %}>{{ cart_count }}</span></a>
+      </div>
+    </div>
+    <nav class="cats" aria-label="{% trans 'Categories' %}">
+      <div class="wrap" style="display:flex;align-items:center;gap:8px">
+        <ul style="flex:1">
+          <li><a href="{% url 'storefront:home' %}" {% if request.path == '/' %}aria-current="page"{% endif %}>{% trans "All" %}</a></li>
+          {% for c in menu_categories %}<li><a href="{{ c.get_absolute_url }}" {% nav_current c.get_absolute_url %}>{{ c.local_name }}</a></li>{% endfor %}
+          <li><a href="{% url 'storefront:brands' %}" {% nav_current '/brands/' %}>{% trans "Brands" %}</a></li>
+          <li><a href="{% url 'orders:bulk' %}" {% nav_current '/orders/party/' %}>{% trans "Party orders" %}</a></li>
+        </ul>
+        <form class="lang" action="{% url 'set_language' %}" method="post">{% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <label class="sr-only" for="langsel">{% trans "Language" %}</label>
+          <select id="langsel" name="language" data-autosubmit>
+            {% get_available_languages as LANGUAGES %}{% for code, name in LANGUAGES %}<option value="{{ code }}" {% if code == LANG %}selected{% endif %}>{{ name }}</option>{% endfor %}
+          </select>
+        </form>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="wrap">
+    {% if messages %}<div role="status">{% for m in messages %}<div class="flash flash--{{ m.tags|default:'info' }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {# South: heaviest block, maroon with the sunrise border #}
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <div class="flogo"><img src="{% static 'brand/rasiko-icon.svg' %}" alt="" width="56" height="56"><div><b>rasiko</b><small>FOOD &amp; BEVERAGES · RAJKOT</small></div></div>
+          <p>{{ store.tagline }}</p>
+          {% if store.whatsapp_link %}<p><a href="{{ store.whatsapp_link }}?text={% filter urlencode %}Hi Rasiko, I want to order{% endfilter %}" rel="noopener" target="_blank">{% trans "Order on WhatsApp" %} →</a></p>{% endif %}
+        </div>
+        <div><h3>{% trans "Shop" %}</h3><ul>
+          {% for c in menu_categories|slice:":5" %}<li><a href="{{ c.get_absolute_url }}">{{ c.local_name }}</a></li>{% endfor %}
+          <li><a href="{% url 'storefront:offers' %}">{% trans "Offers" %}</a></li>
+          <li><a href="{% url 'orders:bulk' %}">{% trans "Party & bulk orders" %}</a></li>
+        </ul></div>
+        <div><h3>{% trans "Help" %}</h3><ul>
+          <li><a href="{% url 'support:help' %}">{% trans "24×7 Help Center" %}</a></li>
+          <li><a href="{% url 'orders:track' %}">{% trans "Track order" %}</a></li>
+          {% for p in footer_pages %}<li><a href="{% url 'storefront:page' p.slug %}">{{ p.title }}</a></li>{% endfor %}
+        </ul></div>
+        <div><h3>{{ store.name }}</h3><ul>
+          <li>{{ store.address|linebreaksbr }}</li>
+          <li>{{ store.phone }}</li>
+          <li>FSSAI Lic. No. {{ store.fssai_number }}</li>
+          <li>GSTIN {{ store.gstin }}</li>
+        </ul></div>
+      </div>
+      <div class="footer__legal">© {% now "Y" %} {{ store.legal_name }} · {% trans "Secure payments" %} · {% trans "Prices include GST" %}</div>
+    </div>
+  </footer>
+
+  {# South-East (Agni): live help #}
+  <button class="chat" type="button" data-chat-open aria-label="{% trans 'Open 24×7 help chat' %}"><span class="dot" aria-hidden="true"></span><svg class="icon"><use href="#i-chat"/></svg>{% trans "Help 24×7" %}</button>
+  {% include "support/chat_widget.html" %}
+  {{ cart_keys|json_script:"cart-state" }}
+  <div id="drawer"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  {% block scripts %}{% endblock %}
+  <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'vendor/alpine-csp.min.js' %}" defer></script>
+</body>
+</html>

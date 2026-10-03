@@ -1,0 +1,37 @@
+{% load static i18n rasiko %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Dashboard{% endblock %} · {{ store.name }}</title>
+  <link rel="icon" href="{% static 'brand/rasiko-icon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="is-dash" data-ws="{% if request.user.is_authenticated %}1{% endif %}">
+{% include "partials/icons.html" %}{% include "dashboard/_icons.html" %}
+<a class="sr-only" href="#dash-main">{% trans "Skip to content" %}</a>
+<div class="dash">
+  <aside class="dash__side">
+    <a class="dash__logo" href="{% url 'dashboard:home' %}"><img src="{% static 'brand/rasiko-logo.svg' %}" alt="{{ store.name }} dashboard" width="147" height="44"></a>
+    <nav class="dash__nav" aria-label="Dashboard">
+      {% for title, links in dash_nav %}{% if title %}<div class="sep">{{ title }}</div>{% endif %}
+        {% for l in links %}<a href="{{ l.url }}" {% if l.active %}aria-current="page"{% endif %}><svg class="icon" style="width:18px;height:18px"><use href="#d-{{ l.icon }}"/></svg>{{ l.label }}</a>{% endfor %}
+      {% endfor %}
+      <div class="sep">{{ request.user.display_name }} · {{ request.user.get_role_display }}</div>
+      <a href="{% url 'storefront:home' %}" target="_blank" rel="noopener"><svg class="icon" style="width:18px;height:18px"><use href="#d-store"/></svg>{% trans "View shop" %}</a>
+      <form action="{% url 'accounts:logout' %}" method="post">{% csrf_token %}<button class="dash__logout" type="submit"><svg class="icon" style="width:18px;height:18px"><use href="#i-x"/></svg>{% trans "Sign out" %}</button></form>
+    </nav>
+  </aside>
+  <main class="dash__main" id="dash-main">
+    <div class="dash__top"><h1>{% block heading %}{% endblock %}</h1><div class="btns">{% block actions %}{% endblock %}</div></div>
+    {% if messages %}<div role="status">{% for m in messages %}<div class="flash flash--{{ m.tags|default:'info' }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% block scripts %}{% endblock %}
+<script src="{% static 'vendor/htmx.min.js' %}" defer></script>
+<script src="{% static 'js/dashboard.js' %}" defer></script>
+</body>
+</html>

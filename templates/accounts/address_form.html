@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load i18n static %}
+{% block title %}{% trans "Delivery address" %} · {{ store.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}">{% endblock %}
+{% block content %}<div class="page">
+<h1 class="page-title">{% if address %}{% trans "Edit address" %}{% else %}{% trans "Add a delivery address" %}{% endif %}</h1>
+<p class="page-sub">{% trans "Drag the red pin to your exact gate so the rider finds you fast." %}</p>
+<div class="checkout">
+  <div class="box">
+    <div id="map" class="map" data-lat="{{ delivery_cfg.store_lat }}" data-lng="{{ delivery_cfg.store_lng }}" data-radius="{{ delivery_cfg.radius_km }}" role="application" aria-label="{% trans 'Map. Drag the pin to your address.' %}"></div>
+    <button class="btn btn--ghost btn--sm" type="button" id="use-location" style="margin-top:10px">{% trans "Use my current location" %}</button>
+    <div id="area-check" class="flash flash--info" aria-live="polite">{% trans "Enter your 6-digit pincode to check delivery." %}</div>
+  </div>
+  <form class="box" method="post" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% include "partials/form_errors.html" %}
+    <div class="form-grid form-grid--2">{% for f in form.visible_fields %}{% include "partials/field.html" %}{% endfor %}</div>
+    {% for f in form.hidden_fields %}{{ f }}{% endfor %}
+    <button class="btn btn--buy">{% trans "Save address" %}</button>
+  </form>
+</div></div>{% endblock %}
+{% block scripts %}<script src="{% static 'vendor/leaflet/leaflet.js' %}" defer></script>{% endblock %}

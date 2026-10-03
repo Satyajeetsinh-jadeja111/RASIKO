@@ -1,0 +1,6 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Stock history{% endblock %}{% block heading %}Stock history{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:stock' %}">← Quick stock</a>{% endblock %}
+{% block content %}<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th>Item</th><th class="num">Change</th><th class="num">After</th><th>Why</th><th>By</th></tr></thead><tbody>
+{% for m in page %}<tr><td>{{ m.created_at|date:"d M, H:i" }}</td><td>{{ m.variant }}</td><td class="num {% if m.delta < 0 %}delta--down{% else %}delta--up{% endif %}">{% if m.delta > 0 %}+{% endif %}{{ m.delta }}</td><td class="num">{{ m.balance_after }}</td><td>{{ m.get_reason_display }}{% if m.order %} · <a class="link" href="{% url 'dashboard:order' m.order.number %}">{{ m.order.number }}</a>{% endif %}{% if m.note %}<br><span class="muted">{{ m.note }}</span>{% endif %}</td><td>{{ m.user.display_name|default:"System" }}</td></tr>
+{% empty %}<tr><td colspan="6" class="muted">No stock changes yet.</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

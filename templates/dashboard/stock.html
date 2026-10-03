@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Quick stock{% endblock %}{% block heading %}Quick stock{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:movements' %}">Stock history</a>{% endblock %}
+{% block content %}
+<p class="muted">Type the counted quantity and press Enter. “Out of stock” hides the Add button right away without changing the count.</p>
+<form class="toolbar" method="get">
+  <select class="input" name="filter" aria-label="Show" data-autosubmit><option value="">All items</option><option value="low" {% if filter == "low" %}selected{% endif %}>Running low</option><option value="out" {% if filter == "out" %}selected{% endif %}>Out of stock</option></select>
+  <select class="input" name="category" aria-label="Category" data-autosubmit><option value="">Any category</option>{% for c in categories %}<option value="{{ c.pk }}" {% if request.GET.category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
+  <input class="input" name="q" value="{{ q }}" placeholder="Name, SKU or scan barcode" aria-label="Search" autofocus><button class="btn btn--ghost btn--sm">Search</button>
+</form>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>Item</th><th>SKU</th><th class="num">Available</th><th>Set count</th><th>Out of stock</th><th>Selling</th></tr></thead><tbody>
+{% for v in page %}{% include "dashboard/_stock_row.html" %}{% empty %}<tr><td colspan="6" class="muted">Nothing matches.</td></tr>{% endfor %}
+</tbody></table></div>{% include "dashboard/_pager.html" %}
+{% endblock %}

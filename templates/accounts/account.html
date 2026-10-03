@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% load i18n rasiko %}
+{% block title %}{% trans "My account" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+  <h1 class="page-title">{% blocktrans with n=user.display_name %}Namaste, {{ n }}{% endblocktrans %}</h1>
+  <form action="{% url 'accounts:logout' %}" method="post">{% csrf_token %}<button class="btn btn--ghost btn--sm">{% trans "Sign out" %}</button></form>
+</div>
+{% if user.is_dashboard_user %}<p><a class="btn btn--gold btn--sm" href="/{{ ADMIN_URL }}">{% trans "Open dashboard" %}</a></p>{% endif %}
+{% if not user.email_verified %}<div class="flash flash--info">{% trans "Please verify your email using the link we sent, so you get order updates and invoices." %}</div>{% endif %}
+<div class="acct">
+  <section class="box"><h2>{% trans "Your orders" %}</h2>
+    {% if orders %}<table class="tbl"><thead><tr><th>{% trans "Order" %}</th><th>{% trans "Date" %}</th><th>{% trans "Status" %}</th><th class="num">{% trans "Total" %}</th><th></th></tr></thead><tbody>
+    {% for o in orders %}<tr><td><a class="link" href="{{ o.get_absolute_url }}">{{ o.number }}</a></td><td>{{ o.placed_at|date:"d M Y" }}</td><td><span class="chip {{ o.status|status_chip }}">{{ o.get_status_display }}</span></td><td class="num">{{ o.total|rupee }}</td>
+      <td>{% if o.status == "delivered" %}<form action="{% url 'orders:reorder' o.public_id %}" method="post">{% csrf_token %}<button class="btn btn--ghost btn--sm">{% trans "Reorder" %}</button></form>{% endif %}</td></tr>{% endfor %}
+    </tbody></table>{% else %}<p class="muted">{% trans "No orders yet." %} <a class="link" href="{% url 'storefront:home' %}">{% trans "Start shopping" %}</a></p>{% endif %}
+  </section>
+  <aside>
+    <section class="box box--cream" id="coins"><h2>{% trans "Rasiko Coins" %}</h2><p class="price-big"><span class="coin" aria-hidden="true"></span> {{ coins }}</p>
+      <p class="muted" style="font-size:14px">{% trans "1 coin = ₹1 off. Earn coins on every delivered order." %}</p>
+      <p style="font-size:14px">{% trans "Your referral code" %}: <b>{{ user.referral_code }}</b> <button class="btn btn--ghost btn--sm" type="button" data-copy="{{ user.referral_code }}">{% trans "Copy" %}</button></p></section>
+    <section class="box" style="margin-top:14px"><h2>{% trans "Addresses" %}</h2>
+      {% for a in addresses %}<div style="border-top:1px solid var(--line);padding:10px 0"><b>{{ a.label }}</b>{% if a.is_default %} <span class="chip chip--green">{% trans "Default" %}</span>{% endif %}<br><span class="muted" style="font-size:14px">{{ a.as_text }}</span><br>
+        <a class="link" href="{% url 'accounts:address_edit' a.public_id %}">{% trans "Edit" %}</a>
+        <form action="{% url 'accounts:address_delete' a.public_id %}" method="post" style="display:inline" data-confirm="{% trans 'Remove this address?' %}">{% csrf_token %}<button class="linkbtn">{% trans "Remove" %}</button></form></div>{% endfor %}
+      <a class="btn btn--ghost btn--sm" href="{% url 'accounts:address_new' %}">+ {% trans "Add address" %}</a></section>
+    <section class="box" style="margin-top:14px"><h2>{% trans "Settings" %}</h2><ul class="plain">
+      <li><a class="link" href="{% url 'accounts:profile' %}">{% trans "Edit profile" %}</a></li>
+      <li><a class="link" href="{% url 'storefront:wishlist' %}">{% trans "Saved for later" %}</a></li>
+      <li><a class="link" href="{% url 'orders:subscriptions' %}">{% trans "Subscriptions" %}</a></li>
+      <li><a class="link" href="{% url 'support:tickets' %}">{% trans "My help requests" %}</a></li>
+      <li><a class="link" href="{% url 'accounts:password_reset' %}">{% trans "Change password" %}</a></li>
+    </ul></section>
+  </aside>
+</div></div>{% endblock %}

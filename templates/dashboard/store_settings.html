@@ -1,0 +1,6 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Store settings{% endblock %}{% block heading %}Store settings{% endblock %}
+{% block content %}
+<p class="muted">Shop details print on invoices and in Google search. “Launch at” keeps the Coming Soon page up for customers until your muhurat; staff can still see the shop.</p>
+<form class="panel-box" method="post" novalidate>{% csrf_token %}{% include "dashboard/_form_fields.html" %}<button class="btn btn--buy">Save</button></form>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% load rasiko i18n %}{% if items %}
+<ul class="suggest__list" role="listbox">
+  {% for p in items %}{% with v=p.default_variant %}<li role="option"><a href="{{ p.get_absolute_url }}"><span class="suggest__img">{% if p.primary_image %}<img src="{{ p.primary_image.image.url }}" alt="">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}</span><span><b>{{ p.local_name }}</b><small>{{ p.brand.name }}{% if v %} · {{ v.label }} · {{ v.price|rupee }}{% endif %}</small></span></a></li>{% endwith %}{% endfor %}
+  <li><a class="link" href="{% url 'storefront:search' %}?q={{ q|urlencode }}">{% blocktrans %}See all results for “{{ q }}”{% endblocktrans %}</a></li>
+</ul>
+{% elif q|length >= 2 %}<div class="suggest__list" style="padding:12px">{% trans "No matches yet. Try another word." %}</div>{% endif %}

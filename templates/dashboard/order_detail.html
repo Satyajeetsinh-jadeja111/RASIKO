@@ -1,0 +1,53 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Order {{ order.number }}{% endblock %}
+{% block heading %}Order {{ order.number }} <span class="chip {{ order.status|status_chip }}" style="vertical-align:middle">{{ order.get_status_display }}</span>{% endblock %}
+{% block actions %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:packing_slip' order.number %}" target="_blank">Packing slip</a>{% if order.status != "pending_payment" and order.status != "payment_failed" %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:order_invoice' order.number %}" target="_blank">Invoice PDF</a>{% endif %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:orders' %}">← Orders</a>{% endblock %}
+{% block content %}
+<div class="dash-grid dash-grid--2">
+  <section class="panel-box"><h2>Items</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th></tr></thead><tbody>
+    {% for l in lines %}<tr><td>{{ l.product_name }} <span class="muted">{{ l.variant_label }}</span>{% if l.combo_name %}<br><span class="chip">{{ l.combo_name }}</span>{% endif %}{% if l.refunded_qty %}<br><span class="chip chip--maroon">{{ l.refunded_qty }} refunded</span>{% endif %}<br><span class="muted" style="font-size:12px">{{ l.sku }}</span></td><td class="num">{{ l.qty }}</td><td class="num">{{ l.unit_price|rupee }}</td><td class="num">{{ l.line_total|rupee }}</td></tr>{% endfor %}
+    <tr class="muted-row"><td colspan="3">Items</td><td class="num">{{ order.subtotal|rupee }}</td></tr>
+    {% if order.discount %}<tr class="muted-row"><td colspan="3">Coupon {{ order.coupon_code }}</td><td class="num">−{{ order.discount|rupee }}</td></tr>{% endif %}
+    {% if order.coins_value %}<tr class="muted-row"><td colspan="3">Coins ({{ order.coins_used }})</td><td class="num">−{{ order.coins_value|rupee }}</td></tr>{% endif %}
+    <tr class="muted-row"><td colspan="3">Delivery ({{ order.road_km }} km)</td><td class="num">{{ order.delivery_fee|rupee }}</td></tr>
+    {% if order.small_order_fee %}<tr class="muted-row"><td colspan="3">Small order fee</td><td class="num">{{ order.small_order_fee|rupee }}</td></tr>{% endif %}
+    {% for s in order.surcharges %}<tr class="muted-row"><td colspan="3">{{ s.0 }}</td><td class="num">{{ s.1 }}</td></tr>{% endfor %}
+    <tr><td colspan="3"><b>Total</b> · GST incl. {{ order.gst_total|rupee }}</td><td class="num"><b>{{ order.total|rupee }}</b></td></tr>
+    {% if order.refunded_total %}<tr><td colspan="3">Refunded</td><td class="num">−{{ order.refunded_total|rupee }}</td></tr>{% endif %}
+  </tbody></table></div></section>
+
+  <section class="panel-box"><h2>Customer & delivery</h2>
+    <p><b>{{ order.ship_name }}</b> · <a class="link" href="tel:{{ order.ship_phone }}">{{ order.ship_phone }}</a><br>{{ order.ship_address }}, {{ order.ship_pincode }}<br>
+    <a class="link" href="https://www.google.com/maps/search/?api=1&query={{ order.ship_lat }},{{ order.ship_lng }}" target="_blank" rel="noopener">Open in Google Maps</a></p>
+    <p>{% if order.is_asap %}As soon as possible{% if order.fast_promise %} · 30-minute promise{% endif %}{% else %}Slot: {{ order.slot_label }}{% endif %}</p>
+    <p>{{ order.get_payment_method_display }} · <span class="chip {{ order.payment_status|status_chip }}">{{ order.get_payment_status_display }}</span></p>
+    {% if order.customer_note %}<p class="flash flash--info">Customer note: {{ order.customer_note }}</p>{% endif %}
+    {% if is_manager %}<p class="muted">Customer: <a class="link" href="{% url 'dashboard:customer' order.user.pk %}">{{ order.user.email }}</a></p>{% endif %}
+    <form method="post" action="{% url 'dashboard:order_note' order.number %}">{% csrf_token %}
+      <div class="field"><label class="label" for="rider">Rider</label><select class="input" id="rider" name="rider"><option value="">Not assigned</option>{% for r in riders %}<option value="{{ r.pk }}" {% if order.rider_id == r.pk %}selected{% endif %}>{{ r.name }} · {{ r.phone }}</option>{% endfor %}</select></div>
+      <div class="field"><label class="label" for="staff_note">Staff note (customers never see this)</label><textarea class="input" id="staff_note" name="staff_note" rows="2">{{ order.staff_note }}</textarea></div>
+      <button class="btn btn--ghost btn--sm">Save</button></form>
+  </section>
+
+  <section class="panel-box"><h2>Move the order</h2>
+    {% if nexts %}<form method="post" action="{% url 'dashboard:order_status' order.number %}">{% csrf_token %}
+      <div class="field"><label class="label" for="status">New status</label><select class="input" id="status" name="status">{% for v, l in nexts %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select></div>
+      {% if order.delivery_otp and order.status == "out_for_delivery" %}<div class="field"><label class="label" for="otp">Delivery code from the customer (for Delivered)</label><input class="input" id="otp" name="otp" inputmode="numeric" maxlength="4"></div>{% endif %}
+      <div class="field"><label class="label" for="note">Note (needed for cancel; the customer sees it)</label><input class="input" id="note" name="note" maxlength="200"></div>
+      <button class="btn btn--buy btn--sm">Update status</button></form>
+    {% else %}<p class="muted">This order is finished.</p>{% endif %}
+    <h2 style="margin-top:16px">History</h2><ul class="plain">{% for e in events %}<li><span class="chip {{ e.status|status_chip }}">{{ e.get_status_display }}</span> {{ e.at|date:"d M, H:i" }}{% if e.by %} · {{ e.by.display_name }}{% endif %}{% if e.note %}<br><span class="muted">{{ e.note }}</span>{% endif %}</li>{% endfor %}</ul>
+  </section>
+
+  {% if refund_form %}<section class="panel-box"><h2>Refund</h2>
+    {% if refunds %}<table class="tbl" style="margin-bottom:12px"><tbody>{% for r in refunds %}<tr><td>{{ r.created_at|date:"d M" }}</td><td>{{ r.get_method_display }}</td><td>{{ r.reason }}</td><td><span class="chip {{ r.status|status_chip }}">{{ r.get_status_display }}</span></td><td class="num">{{ r.amount|rupee }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+    {% if order.refundable_amount > 0 and order.status != "pending_payment" %}
+    <form method="post" action="{% url 'dashboard:order_refund' order.number %}" data-confirm="Send this refund? Money refunds can't be undone.">{% csrf_token %}
+      <p class="muted" style="font-size:14px">Leave the item boxes empty for an amount-only refund. Up to {{ order.refundable_amount|rupee }} can be refunded.</p>
+      <table class="tbl"><tbody>{% for l in lines %}{% if l.refundable_qty %}<tr><td>{{ l.product_name }} {{ l.variant_label }}</td><td><label class="sr-only" for="line_{{ l.pk }}">Qty to refund</label><input class="input qty-input" id="line_{{ l.pk }}" name="line_{{ l.pk }}" type="number" min="0" max="{{ l.refundable_qty }}" placeholder="0–{{ l.refundable_qty }}"></td></tr>{% endif %}{% endfor %}</tbody></table>
+      <div class="form-grid form-grid--2" style="margin-top:10px">{% for f in refund_form %}{% include "partials/field.html" %}{% endfor %}</div>
+      <button class="btn btn--danger btn--sm">Refund</button></form>{% endif %}
+    {% if payments %}<h2 style="margin-top:14px">Payments</h2><table class="tbl"><tbody>{% for p in payments %}<tr><td>{{ p.gateway }}</td><td>{{ p.gateway_payment_id|default:p.gateway_order_id }}</td><td><span class="chip {{ p.status|status_chip }}">{{ p.get_status_display }}</span></td><td class="num">{{ p.amount|rupee }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+  </section>{% endif %}
+</div>
+{% endblock %}

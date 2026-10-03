@@ -1,0 +1,96 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{{ p.seo_title|default:p.local_name }} · {{ p.brand.name }} · {{ store.name }} Rajkot{% endblock %}
+{% block meta_description %}{{ p.seo_description|default:p.short_description }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ p.name }} · {{ store.name }}{% endblock %}
+{% block og_image %}{% if p.primary_image %}{{ SITE_URL }}{{ p.primary_image.image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block head %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="crumbs"><a href="{% url 'storefront:home' %}">{% trans "Home" %}</a>{% with c=p.categories.all.0 %}{% if c %} / <a href="{{ c.get_absolute_url }}">{{ c.local_name }}</a>{% endif %}{% endwith %} / {{ p.local_name }}</div>
+  <div class="pdp">
+    {# West: images #}
+    <div data-gallery>
+      <div class="gallery__main">
+        {% if p.images.all %}<img src="{{ p.images.all.0.image.url }}" alt="{{ p.images.all.0.alt|default:p.name }}" data-gallery-main width="800" height="800">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
+      </div>
+      {% if p.images.all|length > 1 %}<div class="thumbs">{% for im in p.images.all %}<button type="button" data-src="{{ im.image.url }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{% trans 'Image' %} {{ forloop.counter }}"><img src="{{ im.image.url }}" alt="" loading="lazy"></button>{% endfor %}</div>{% endif %}
+    </div>
+
+    {# East: details and Add to cart #}
+    <div>
+      <p class="muted" style="margin:0"><a class="link" href="{{ p.brand.get_absolute_url }}">{{ p.brand.name }}</a></p>
+      <h1 class="page-title" style="display:flex;align-items:center;gap:10px">{{ p.local_name }} {% veg_mark p.diet %}</h1>
+      {% if p.rating_count %}<p><span class="stars">{{ p.rating_avg|star_text }}</span> {{ p.rating_avg|floatformat:1 }} · <a class="link" href="#reviews">{% blocktrans count n=p.rating_count %}{{ n }} review{% plural %}{{ n }} reviews{% endblocktrans %}</a></p>{% endif %}
+      {% if p.short_description %}<p>{{ p.short_description }}</p>{% endif %}
+
+      <form class="box" style="margin:14px 0" data-pdp-form action="{% url 'cart:update' %}" method="post">{% csrf_token %}
+        <fieldset style="border:0;padding:0;margin:0"><legend class="label">{% trans "Choose size" %}</legend>
+        <div class="variants">{% for v in variants %}
+          <label><input type="radio" name="key" value="v:{{ v.pk }}" data-price="{{ v.price|rupee }}" data-mrp="{% if v.mrp > v.price %}{{ v.mrp|rupee }}{% endif %}" data-save="{% if v.savings %}{{ v.savings|rupee }}{% endif %}" data-stock="{{ v.in_stock|yesno:'1,0' }}" data-low="{% if v.is_low_stock %}{{ v.available_qty }}{% endif %}" {% if v.pk == selected.pk %}checked{% endif %}>
+            <span>{{ v.label }}<small>{{ v.price|rupee }}{% if not v.in_stock %} · {% trans "Out of stock" %}{% endif %}</small></span></label>{% endfor %}
+        </div></fieldset>
+        <div style="margin:14px 0 6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="price-big" data-pdp-price>{{ selected.price|rupee }}</span>
+          <span class="mrp" data-pdp-mrp>{% if selected.mrp > selected.price %}MRP {{ selected.mrp|rupee }}{% endif %}</span>
+          {% if selected.price_dropped %}<span class="chip chip--green">{% trans "Price drop" %}</span>{% endif %}
+        </div>
+        <div class="save" data-pdp-save style="font-size:15px">{% if selected.savings %}{% blocktrans with s=selected.savings|rupee %}You save {{ s }} (Rasiko price vs MRP){% endblocktrans %}{% endif %}</div>
+        <p class="muted" style="font-size:13px;margin:2px 0 10px">{% trans "Inclusive of all taxes" %}</p>
+        <div data-pdp-stock>{% if selected.is_low_stock %}<span class="chip chip--orange">{% blocktrans with n=selected.available_qty %}Only {{ n }} left{% endblocktrans %}</span>{% elif not selected.in_stock %}<span class="chip chip--red">{% trans "Out of stock" %}</span>{% else %}<span class="chip chip--green">{% trans "In stock" %}</span>{% endif %}</div>
+        <input type="hidden" name="qty" value="1">
+        <div class="btns" style="margin-top:14px">
+          <button class="btn btn--buy" type="submit" data-pdp-add {% if not selected.in_stock %}disabled{% endif %}>{% trans "Add to cart" %}</button>
+          <button class="btn btn--outline" type="submit" name="next" value="{% url 'orders:checkout' %}" {% if not selected.in_stock %}disabled{% endif %}>{% trans "Buy now" %}</button>
+        </div>
+      </form>
+      {% if user.is_authenticated %}<form action="{% url 'storefront:wishlist_toggle' p.pk %}" method="post" style="display:inline">{% csrf_token %}<button class="btn btn--ghost btn--sm" type="submit"><svg class="icon" style="width:18px;height:18px{% if in_wishlist %};fill:var(--kumkum);color:var(--kumkum){% endif %}"><use href="#i-heart"/></svg>{% if in_wishlist %}{% trans "Saved" %}{% else %}{% trans "Save for later" %}{% endif %}</button></form>{% endif %}
+      {% if selected and not selected.in_stock %}
+      <form class="box box--cream" action="{% url 'storefront:back_in_stock' selected.pk %}" method="post" style="margin-top:12px">{% csrf_token %}
+        <b>{% trans "Tell me when it's back" %}</b>
+        <div style="display:flex;gap:8px;margin-top:8px">{% if not user.is_authenticated %}<input class="input" type="email" name="email" required placeholder="you@example.com" aria-label="{% trans 'Email' %}">{% endif %}<button class="btn btn--gold btn--sm">{% trans "Notify me" %}</button></div>
+      </form>{% endif %}
+
+      <div class="eta" style="margin-top:14px"><svg class="icon" style="width:18px;height:18px"><use href="#i-bolt"/></svg>{% blocktrans %}Delivery {{ eta }} in Rajkot{% endblocktrans %}</div>
+      <p class="muted" style="font-size:14px">{% trans "Exact time shows at checkout after you pin your address. 30-minute delivery in nearby areas." %}</p>
+      {% with slabs=selected.bulk_slabs.all %}{% if slabs %}<div class="box box--mitti" style="margin-top:12px"><b>{% trans "Bulk prices" %}</b><ul style="margin:6px 0 0;padding-left:18px">{% for s in slabs %}<li>{% blocktrans with q=s.min_qty p=s.unit_price|rupee %}{{ q }}+ units: {{ p }} each{% endblocktrans %}</li>{% endfor %}</ul><a class="link" href="{% url 'orders:bulk' %}">{% trans "Party order? Get a quote" %} →</a></div>{% endif %}{% endwith %}
+      {% if user.is_authenticated %}<p style="margin-top:12px"><a class="link" href="{% url 'orders:subscriptions' %}?variant={{ selected.pk }}"><svg class="icon" style="width:16px;height:16px;display:inline;vertical-align:-3px"><use href="#i-repeat"/></svg> {% trans "Subscribe for daily or weekly delivery" %}</a></p>{% endif %}
+
+      <details class="box" style="margin-top:14px" open><summary style="font:600 17px var(--font-head);cursor:pointer">{% trans "Product details" %}</summary>
+        <dl class="spec" style="margin-top:10px">
+          {% if p.description %}<dt>{% trans "About" %}</dt><dd>{{ p.description|linebreaksbr }}</dd>{% endif %}
+          {% if p.ingredients %}<dt>{% trans "Ingredients" %}</dt><dd>{{ p.ingredients }}</dd>{% endif %}
+          {% if p.allergens %}<dt>{% trans "Allergens" %}</dt><dd>{{ p.allergens }}</dd>{% endif %}
+          {% if p.nutrition %}<dt>{% trans "Nutrition" %}</dt><dd>{% for k, v in p.nutrition.items %}{{ k }}: {{ v }}{% if not forloop.last %} · {% endif %}{% endfor %}</dd>{% endif %}
+          {% if p.shelf_life %}<dt>{% trans "Shelf life" %}</dt><dd>{{ p.shelf_life }}</dd>{% endif %}
+          {% if p.storage_instructions %}<dt>{% trans "Storage" %}</dt><dd>{{ p.storage_instructions }}</dd>{% endif %}
+          {% if p.best_before_note %}<dt>{% trans "Best before" %}</dt><dd>{{ p.best_before_note }}</dd>{% endif %}
+          <dt>{% trans "Country of origin" %}</dt><dd>{{ p.country_of_origin }}</dd>
+          <dt>{% trans "Diet" %}</dt><dd>{{ p.get_diet_display }}</dd>
+        </dl>
+      </details>
+    </div>
+  </div>
+
+  {% if together %}<section class="panel" style="margin-top:22px"><div class="panel__head"><h2>{% trans "Frequently bought together" %}</h2></div><div class="row">{% for p in together %}{% include "partials/product_card.html" %}{% endfor %}</div></section>{% endif %}
+
+  <section id="reviews" class="box" style="margin-top:22px">
+    <h2>{% trans "Ratings & reviews" %}</h2>
+    {% if p.rating_count %}
+    <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+      <div><div class="price-big">{{ p.rating_avg|floatformat:1 }} <span class="stars">★</span></div><div class="muted">{% blocktrans count n=p.rating_count %}{{ n }} verified review{% plural %}{{ n }} verified reviews{% endblocktrans %}</div></div>
+      <div class="bars">{% for s, n, pct in breakdown %}<div><span>{{ s }}★</span><i><b style="width:{{ pct }}%"></b></i><span class="muted">{{ n }}</span></div>{% endfor %}</div>
+    </div>
+    {% for r in reviews %}<article style="border-top:1px solid var(--line);padding:14px 0;margin-top:14px">
+      <div><span class="stars">{{ r.stars|star_text }}</span> <b>{{ r.title }}</b></div>
+      <div class="muted" style="font-size:13px">{{ r.user.display_name }} · {% trans "Verified buyer" %} · {{ r.created_at|date:"d M Y" }}</div>
+      {% if r.body %}<p style="margin:6px 0">{{ r.body }}</p>{% endif %}
+      {% if r.photos.all %}<div class="thumbs">{% for ph in r.photos.all %}<img src="{{ ph.image.url }}" alt="{% trans 'Customer photo' %}" loading="lazy" style="width:72px;height:72px;object-fit:cover;border-radius:12px">{% endfor %}</div>{% endif %}
+      {% if r.reply %}<div class="box box--cream" style="margin-top:8px;padding:10px 14px"><b>{% trans "Rasiko Team" %}:</b> {{ r.reply }}</div>{% endif %}
+    </article>{% endfor %}
+    {% else %}<p class="muted">{% trans "No reviews yet. Only customers who received this product can review it." %}</p>{% endif %}
+  </section>
+
+  {% if related %}<section class="panel" style="margin-top:22px"><div class="panel__head"><h2>{% trans "Goes well with" %}</h2></div><div class="row">{% for p in related %}{% include "partials/product_card.html" %}{% endfor %}</div></section>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Two-factor sign in" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><div class="auth box">
+<h1 class="page-title">{% trans "Turn on two-factor sign in" %}</h1>
+<p class="page-sub">{% trans "The dashboard needs this for owners and managers. Scan the code with Google Authenticator, Microsoft Authenticator or any TOTP app, then type the 6-digit code it shows." %}</p>
+<div style="text-align:center;margin:12px 0"><img src="{{ qr }}" alt="{% trans 'QR code for your authenticator app' %}" width="220" height="220" style="background:#fff;border-radius:16px;padding:8px;border:1px solid var(--line)"></div>
+<p class="muted" style="font-size:13px;word-break:break-all">{% trans "Can't scan? Enter this key:" %} <code>{{ secret }}</code></p>
+<form method="post" novalidate>{% csrf_token %}{% for f in form %}{% include "partials/field.html" %}{% endfor %}
+<button class="btn btn--buy btn--block">{% trans "Turn on" %}</button></form></div></div>{% endblock %}

@@ -1,0 +1,12 @@
+{% load rasiko %}Order {{ order.number }} placed
+
+Hi {{ order.ship_name|default:order.user.display_name }},
+
+Shubh Labh! We got your order and will confirm it in a moment.
+
+{% for l in order.lines.all %}- {{ l.product_name }} {{ l.variant_label }} x {{ l.qty }}: {{ l.line_total|rupee }}
+{% endfor %}Total: {{ order.total|rupee }} ({{ order.get_payment_method_display }})
+
+View your order: {{ SITE_URL }}{{ order.get_absolute_url }}
+
+{{ store.name }} · {{ store.phone }}

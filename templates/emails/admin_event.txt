@@ -1,0 +1,4 @@
+{% load rasiko %}{{ title }}
+
+{% for k, v in data.items %}{{ k }}: {{ v }}
+{% endfor %}

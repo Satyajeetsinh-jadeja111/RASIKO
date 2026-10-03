@@ -1,0 +1,12 @@
+{% load rasiko %}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{{ store.name }}</title></head>
+<body style="margin:0;background:#FFF8EE;font-family:'Nunito Sans',Arial,sans-serif;color:#3E2723">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8EE"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border-radius:18px;border:1px solid #F3E3CC;overflow:hidden">
+<tr><td style="background:#1B6E42;padding:14px 22px;color:#FFFFFF;font:700 22px Arial,sans-serif">rasiko <span style="font-size:12px;letter-spacing:2px;color:#FFE08A">FOOD &amp; BEVERAGES · RAJKOT</span></td></tr>
+<tr><td style="height:4px;background:linear-gradient(90deg,#FB8C00,#FFC107,#E53935)"></td></tr>
+<tr><td style="padding:22px;font-size:15px;line-height:1.55">{% block body %}{% endblock %}</td></tr>
+<tr><td style="background:#7A1E2C;color:#FFF4E0;padding:14px 22px;font-size:12px;line-height:1.5">
+{{ store.legal_name|default:store.name }} · {{ store.address|linebreaksbr }}<br>{{ store.phone }}{% if store.fssai_number %} · FSSAI {{ store.fssai_number }}{% endif %}{% if store.gstin %} · GSTIN {{ store.gstin }}{% endif %}<br>
+<a href="{{ SITE_URL }}/help/" style="color:#FFE08A">24×7 Help Center</a></td></tr>
+</table></td></tr></table></body></html>

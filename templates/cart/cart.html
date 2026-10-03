@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{% trans "Your cart" %} · {{ store.name }}{% endblock %}
+{% block content %}
+<div class="page">
+  <h1 class="page-title">{% trans "Your cart" %}</h1>
+  {% if cart.lines %}
+  <div class="checkout">
+    <div class="box">{% include "cart/_lines.html" %}
+      <p style="margin-top:12px"><a class="link" href="{% url 'storefront:home' %}">← {% trans "Continue shopping" %}</a></p></div>
+    <aside class="checkout__summary box">
+      <h2>{% trans "Order summary" %}</h2>
+      <form method="post" action="{% url 'cart:coupon' %}" style="display:flex;gap:8px;margin-bottom:10px">{% csrf_token %}
+        <label class="sr-only" for="code">{% trans "Coupon code" %}</label>
+        {% if totals.coupon_code %}<span class="chip chip--green" style="flex:1">{{ totals.coupon_code }} {% trans "applied" %}</span><button class="btn btn--ghost btn--sm" name="remove" value="1">{% trans "Remove" %}</button>
+        {% else %}<input class="input" id="code" name="code" placeholder="{% trans 'Coupon code' %}" style="min-height:40px"><button class="btn btn--gold btn--sm">{% trans "Apply" %}</button>{% endif %}
+      </form>
+      {% if totals.coins_available %}<form method="post" action="{% url 'cart:coins' %}" style="margin-bottom:10px">{% csrf_token %}
+        <input type="hidden" name="use" value="{% if request.session.use_coins %}0{% else %}1{% endif %}">
+        <button class="btn btn--ghost btn--sm btn--block"><span class="coin" style="display:inline-block;vertical-align:-3px"></span> {% if request.session.use_coins %}{% trans "Don't use coins" %}{% else %}{% blocktrans with n=totals.coins_available %}Use {{ n }} Rasiko Coins{% endblocktrans %}{% endif %}</button></form>{% endif %}
+      {% include "cart/_summary.html" %}
+      <a class="btn btn--buy btn--block" style="margin-top:12px" href="{% url 'orders:checkout' %}" {% if totals.problems %}aria-disabled="true"{% endif %}>{% trans "Proceed to checkout" %}</a>
+      {% if not user.is_authenticated %}<p class="muted" style="font-size:13px;text-align:center">{% trans "You'll sign in or create an account at checkout." %}</p>{% endif %}
+    </aside>
+  </div>
+  {% else %}
+  <div class="box box--cream" style="text-align:center;padding:40px">{% drink "lemon" %}<p style="font:600 22px var(--font-head)">{% trans "Your cart is empty" %}</p><a class="btn btn--buy" href="{% url 'storefront:home' %}">{% trans "Start shopping" %}</a></div>
+  {% endif %}
+</div>
+{% endblock %}

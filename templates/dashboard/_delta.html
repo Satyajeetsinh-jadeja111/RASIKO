@@ -1,0 +1,1 @@
+{% if x.change is not None %}<span class="delta {% if x.change >= 0 %}delta--up{% else %}delta--down{% endif %}">{% if x.change >= 0 %}▲{% else %}▼{% endif %} {{ x.change }}% vs before</span>{% else %}<span class="delta">no earlier data</span>{% endif %}

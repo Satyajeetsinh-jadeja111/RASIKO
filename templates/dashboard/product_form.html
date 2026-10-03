@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}{% if product %}{{ product.name }}{% else %}New product{% endif %}{% endblock %}
+{% block heading %}{% if product %}{{ product.name }}{% else %}New product{% endif %}{% endblock %}
+{% block actions %}{% if product %}<a class="btn btn--ghost btn--sm" href="{{ product.get_absolute_url }}" target="_blank">View in shop</a>{% endif %}<a class="btn btn--ghost btn--sm" href="{% url 'dashboard:products' %}">← Products</a>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+<div class="dash-grid">
+  <section class="panel-box"><h2>Details</h2>{% include "dashboard/_form_fields.html" %}</section>
+  <section class="panel-box"><h2>Sizes, prices and stock</h2>
+    <p class="muted" style="font-size:14px">Prices include GST. The shop shows “You save” from MRP. Stock is changed with “Add stock” so every change is logged.</p>
+    {{ formset.management_form }}{{ formset.non_form_errors }}
+    {% for vf in formset %}<fieldset class="box" style="margin-bottom:12px"><legend class="label">{% if vf.instance.pk %}{{ vf.instance.label }} · in stock {{ vf.instance.stock_qty }}{% if vf.instance.reserved_qty %} ({{ vf.instance.reserved_qty }} held for payment){% endif %}{% else %}Add a size{% endif %}</legend>
+      {% include "partials/form_errors.html" with form=vf %}
+      <div class="form-grid form-grid--2">{% for f in vf.visible_fields %}{% include "partials/field.html" %}{% endfor %}</div>{% for h in vf.hidden_fields %}{{ h }}{% endfor %}
+      {% if vf.instance.pk %}<a class="link" href="{% url 'dashboard:movements' %}?variant={{ vf.instance.pk }}">Stock history</a>{% endif %}
+    </fieldset>{% endfor %}
+  </section>
+  <section class="panel-box"><h2>Photos</h2>
+    <p class="muted" style="font-size:14px">Square photos on a plain light background look best (at least 800 × 800). We remove hidden location data and convert them to WebP. Drag to reorder; the first photo is the main one.</p>
+    <div class="thumbs-edit" data-sortable="image_order">{% for im in images %}<figure class="sortable-item" draggable="true" data-id="{{ im.pk }}"><img src="{{ im.image.url }}" alt="{{ im.alt }}"><label class="sr-only" for="alt_{{ im.pk }}">Alt text</label><input class="input" id="alt_{{ im.pk }}" name="alt_{{ im.pk }}" value="{{ im.alt }}" placeholder="Describe the photo" style="min-height:30px;font-size:12px;margin-top:4px"><label style="display:flex;gap:4px;margin-top:4px"><input type="checkbox" name="delete_image" value="{{ im.pk }}"> Delete</label></figure>{% endfor %}</div>
+    <input type="hidden" name="image_order" value="">
+    <div class="drop-zone" style="margin-top:12px"><label for="new_images"><b>Add photos</b> (up to 8, JPG / PNG / WebP, max 5 MB each)</label><br><input id="new_images" type="file" name="new_images" accept="image/jpeg,image/png,image/webp" multiple></div>
+  </section>
+</div>
+<div class="btns" style="margin-top:14px"><button class="btn btn--buy">Save product</button></div>
+</form>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "My help requests" %} · {{ store.name }}{% endblock %}
+{% block content %}<div class="page"><h1 class="page-title">{% trans "My help requests" %}</h1>
+<div class="box">{% if tickets %}<table class="tbl"><thead><tr><th>{% trans "Subject" %}</th><th>{% trans "Status" %}</th><th>{% trans "Updated" %}</th></tr></thead><tbody>
+{% for t in tickets %}<tr><td><a class="link" href="{% url 'support:ticket' t.public_id %}">{{ t.subject }}</a></td><td>{{ t.get_state_display }}</td><td>{{ t.updated_at|date:"d M, H:i" }}</td></tr>{% endfor %}
+</tbody></table>{% else %}<p class="muted">{% trans "No help requests yet." %}</p>{% endif %}</div></div>{% endblock %}

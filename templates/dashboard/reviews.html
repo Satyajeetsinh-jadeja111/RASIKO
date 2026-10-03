@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Reviews{% endblock %}{% block heading %}Reviews{% endblock %}
+{% block content %}
+<form class="toolbar" method="get"><select class="input" name="state" aria-label="Show" data-autosubmit><option value="pending" {% if state == "pending" %}selected{% endif %}>Waiting for approval</option><option value="approved" {% if state == "approved" %}selected{% endif %}>Approved</option><option value="hidden" {% if state == "hidden" %}selected{% endif %}>Hidden</option><option value="all" {% if state == "all" %}selected{% endif %}>All</option></select></form>
+<div class="dash-grid dash-grid--2">{% for r in page %}
+<form class="panel-box" method="post">{% csrf_token %}<input type="hidden" name="id" value="{{ r.pk }}">
+  <h2><span class="stars">{{ r.stars|star_text }}</span> {{ r.title }}</h2>
+  {% if r.flagged %}<p class="flash flash--error">Flagged: may contain abusive words or links.</p>{% endif %}
+  <p class="muted" style="font-size:14px">{{ r.product.name }} · {{ r.user.display_name }} · {{ r.created_at|date:"d M Y" }} · <span class="chip {{ r.state|status_chip }}">{{ r.get_state_display }}</span></p>
+  {% if r.body %}<p>{{ r.body }}</p>{% endif %}
+  {% if r.photos.all %}<div class="thumbs-edit">{% for p in r.photos.all %}<img src="{{ p.image.url }}" alt="Customer photo" style="width:90px;height:90px;object-fit:cover;border-radius:10px">{% endfor %}</div>{% endif %}
+  <div class="field" style="margin-top:10px"><label class="label" for="rp{{ r.pk }}">Reply as Rasiko Team (shown publicly)</label><textarea class="input" id="rp{{ r.pk }}" name="reply" rows="2">{{ r.reply }}</textarea></div>
+  <div class="btns"><button class="btn btn--buy btn--sm" name="action" value="approved">Approve</button><button class="btn btn--ghost btn--sm" name="action" value="">Save reply</button><button class="btn btn--danger btn--sm" name="action" value="hidden">Hide</button></div>
+</form>{% empty %}<p class="muted">Nothing to moderate.</p>{% endfor %}</div>{% include "dashboard/_pager.html" %}{% endblock %}

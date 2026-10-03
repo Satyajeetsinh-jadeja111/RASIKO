@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block title %}{% trans "Party & bulk orders" %} · {{ store.name }} Rajkot{% endblock %}
+{% block meta_description %}{% trans "Crates and cases of cold drinks, juices and lassi for weddings, functions, offices and shops in Rajkot with bulk prices." %}{% endblock %}
+{% block content %}<div class="page">
+  <h1 class="page-title">{% trans "Party & bulk orders" %}</h1>
+  <p class="page-sub">{% trans "Weddings, functions, offices and shops: tell us what you need and we'll call you with a quote." %}</p>
+  <div class="checkout">
+    <form class="box" method="post">{% csrf_token %}
+      <div class="form-grid form-grid--2">{% for f in form %}<div class="field" {% if f.name == "requirements" %}style="grid-column:1/-1"{% endif %}><label class="label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{{ f.errors }}</div>{% endfor %}</div>
+      <button class="btn btn--buy">{% trans "Request a quote" %}</button>
+    </form>
+    <aside class="box box--mitti"><h2>{% trans "Bulk price slabs" %}</h2>
+      {% if slabs %}<table class="tbl"><thead><tr><th>{% trans "Product" %}</th><th>{% trans "From" %}</th><th class="num">{% trans "Each" %}</th></tr></thead><tbody>{% for s in slabs %}<tr><td>{{ s.variant }}</td><td>{{ s.min_qty }}+</td><td class="num">{{ s.unit_price|rupee }}</td></tr>{% endfor %}</tbody></table>{% else %}<p>{% trans "Ask us for crate and case prices." %}</p>{% endif %}
+      {% if store.whatsapp_link %}<p style="margin-top:12px"><a class="btn btn--ghost btn--sm" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener"><svg class="icon" style="width:18px;height:18px"><use href="#i-whatsapp"/></svg>{% trans "Chat on WhatsApp" %}</a></p>{% endif %}
+    </aside>
+  </div>
+</div>{% endblock %}

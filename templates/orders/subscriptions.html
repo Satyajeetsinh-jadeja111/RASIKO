@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block content %}<div class="page">
+  <h1 class="page-title">{% trans "Subscriptions" %}</h1>
+  <p class="page-sub">{% trans "Daily or weekly milk, water cans or cold drinks for your shop. Pay by Cash on Delivery; pause or skip anytime." %}</p>
+  <div class="checkout">
+    <div>
+      {% for s in subs %}<div class="box" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>{{ s.qty }} × {{ s.variant }}</b><span class="chip {% if s.state == 'active' %}chip--green{% else %}chip--gold{% endif %}">{{ s.get_state_display }}</span></div>
+        <p class="muted" style="margin:4px 0">{{ s.get_frequency_display }} · {{ s.delivery_time|time:"g:i A" }} · {% trans "Next" %}: {{ s.next_run|date:"D d M" }}{% if s.skip_dates %} · {% trans "Skipping" %} {{ s.skip_dates|join:", " }}{% endif %}</p>
+        <div class="btns">
+          <form method="post" action="{% url 'orders:subscription_action' s.public_id %}">{% csrf_token %}<input type="hidden" name="action" value="skip"><button class="btn btn--ghost btn--sm">{% trans "Skip next" %}</button></form>
+          <form method="post" action="{% url 'orders:subscription_action' s.public_id %}">{% csrf_token %}<input type="hidden" name="action" value="{% if s.state == 'active' %}pause{% else %}resume{% endif %}"><button class="btn btn--ghost btn--sm">{% if s.state == 'active' %}{% trans "Pause" %}{% else %}{% trans "Resume" %}{% endif %}</button></form>
+          <form method="post" action="{% url 'orders:subscription_action' s.public_id %}" data-confirm="{% trans 'Cancel this subscription?' %}">{% csrf_token %}<input type="hidden" name="action" value="cancel"><button class="btn btn--danger btn--sm">{% trans "Cancel" %}</button></form>
+        </div></div>
+      {% empty %}<p class="muted">{% trans "No subscriptions yet." %}</p>{% endfor %}
+    </div>
+    <form class="box" method="post">{% csrf_token %}<h2>{% trans "New subscription" %}</h2>
+      {% for f in form %}<div class="field"><label class="label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{{ f.errors }}</div>{% endfor %}
+      {% if not user.addresses.exists %}<p><a class="link" href="{% url 'accounts:address_new' %}?next={% url 'orders:subscriptions' %}">{% trans "Add an address first" %}</a></p>{% endif %}
+      <button class="btn btn--buy">{% trans "Start subscription" %}</button></form>
+  </div>
+</div>{% endblock %}

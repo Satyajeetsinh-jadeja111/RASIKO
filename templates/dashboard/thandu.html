@@ -1,0 +1,9 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Thandu guarantee{% endblock %}{% block heading %}Thandu guarantee{% endblock %}
+{% block content %}<p class="muted">Customers who got a drink that wasn't chilled send a photo within 30 minutes of delivery. Approving emails them a personal coupon worth {{ store.thandu_coupon_amount|rupee }}.</p>
+<div class="dash-grid dash-grid--2">{% for c in page %}<section class="panel-box"><h2><a class="link" href="{% url 'dashboard:order' c.order.number %}">{{ c.order.number }}</a> · {{ c.get_state_display }}</h2>
+{% if c.photo %}<img src="{{ c.photo.url }}" alt="Customer photo" style="max-height:220px;border-radius:12px">{% endif %}
+<p>{{ c.note }}</p><p class="muted">{{ c.order.user.email }} · {{ c.created_at|date:"d M, H:i" }}{% if c.order.delivered_at %} · delivered {{ c.order.delivered_at|date:"H:i" }}{% endif %}</p>
+{% if c.coupon %}<p>Coupon: <b>{{ c.coupon.code }}</b></p>{% endif %}
+{% if c.state == "pending" %}<form method="post" class="btns">{% csrf_token %}<input type="hidden" name="id" value="{{ c.pk }}"><button class="btn btn--buy btn--sm" name="action" value="approve">Approve and send coupon</button><button class="btn btn--danger btn--sm" name="action" value="reject">Reject</button></form>{% endif %}</section>
+{% empty %}<p class="muted">No complaints. Everything arrived chilled!</p>{% endfor %}</div>{% include "dashboard/_pager.html" %}{% endblock %}

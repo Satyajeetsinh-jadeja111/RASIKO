@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% load rasiko i18n %}
+{% block content %}
+<div class="page">
+  <section class="box blessing">
+    {% if store.show_success_blessing %}
+    <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true" style="margin:0 auto">
+      <ellipse cx="60" cy="108" rx="38" ry="6" fill="#F3E2C3"/>
+      <path d="M36 58h48c0 26-8 44-24 44S36 84 36 58Z" fill="#E53935"/>
+      <path d="M36 58h48" stroke="#F4B400" stroke-width="5" stroke-linecap="round"/>
+      <path d="M44 72h32" stroke="#F4B400" stroke-width="3" stroke-dasharray="3 5"/>
+      <rect x="50" y="46" width="20" height="12" rx="3" fill="#B71C2C"/>
+      <path d="M60 46c-6-6-18-8-24-2 6 0 12 2 16 6M60 46c6-6 18-8 24-2-6 0-12 2-16 6" fill="#2FA05A"/>
+      <path d="M60 12c5 7 5 13 0 17-5-4-5-10 0-17Z" fill="#FB8C00"/><path d="M60 18c2 3 2 6 0 8-2-2-2-5 0-8Z" fill="#F4B400"/>
+      <circle cx="60" cy="38" r="6" fill="#F4B400"/>
+    </svg>
+    <h1>Shubh Labh 🙏 {% trans "Thank you for your order" %}</h1>
+    {% else %}<h1>{% trans "Thank you for your order" %}</h1>{% endif %}
+    <p>{% blocktrans with n=order.number %}Order <b>{{ n }}</b> is placed.{% endblocktrans %} {% if eta %}{% blocktrans with t=eta|time:"g:i A" %}Expected by <b>{{ t }}</b>.{% endblocktrans %}{% endif %}</p>
+    {% if order.savings %}<div class="saved-banner" style="display:inline-block">{% blocktrans with s=order.savings|rupee %}You saved {{ s }} on this order{% endblocktrans %}</div>{% endif %}
+    <p class="muted">{% trans "Your delivery code" %}: <span class="otp-box">{{ order.delivery_otp }}</span><br><small>{% trans "Tell this code to the rider when you receive your order." %}</small></p>
+    <div class="btns" style="justify-content:center"><a class="btn btn--buy" href="{{ order.get_absolute_url }}">{% trans "Track order" %}</a><a class="btn btn--outline" href="{% url 'storefront:home' %}">{% trans "Keep shopping" %}</a></div>
+  </section>
+</div>
+{% endblock %}
