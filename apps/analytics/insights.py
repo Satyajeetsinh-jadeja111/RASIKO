@@ -106,33 +106,49 @@ def build(period_days=30):
     return report
 
 
+SUMMARY_SYSTEM = (
+    "You advise the owner of a small cold drinks and beverages shop in Rajkot. Write 4 short, "
+    "friendly sentences in plain English: the headline, the biggest risk, and the two most useful "
+    "things to do this week. Use only the facts given."
+)
+
+
 def _add_ai_summary(report):
-    cfg = get_config("claude")
+    cfg, provider = get_config("claude"), "Claude"
+    if not cfg:
+        cfg, provider = get_config("gemini"), "Gemini"
     if not cfg or cfg.get("insights_summary") != "yes":
         return
+    facts = "\n".join(
+        [
+            "Going well:",
+            *report.going_well,
+            "Can be better:",
+            *report.can_be_better,
+            "Suggested actions:",
+            *report.actions,
+        ]
+    )
     try:
-        import anthropic
+        if provider == "Gemini":
+            from apps.support import gemini
 
-        client = anthropic.Anthropic(api_key=cfg["api_key"])
-        facts = "\n".join(
-            [
-                "Going well:",
-                *report.going_well,
-                "Can be better:",
-                *report.can_be_better,
-                "Suggested actions:",
-                *report.actions,
-            ]
-        )
-        msg = client.messages.create(
-            model=cfg.get("model") or "claude-haiku-4-5-20251001",
-            max_tokens=400,
-            system="You advise the owner of a small cold drinks and beverages shop in Rajkot. Write 4 short, "
-            "friendly sentences in plain English: the headline, the biggest risk, and the two most useful "
-            "things to do this week. Use only the facts given.",
-            messages=[{"role": "user", "content": facts}],
-        )
-        report.ai_summary = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")[:2000]
+            content = gemini.generate(
+                cfg, [{"role": "user", "parts": [{"text": facts}]}], system=SUMMARY_SYSTEM, timeout=60
+            )
+            text = gemini.text_of(content)
+        else:
+            import anthropic
+
+            client = anthropic.Anthropic(api_key=cfg["api_key"])
+            msg = client.messages.create(
+                model=cfg.get("model") or "claude-haiku-4-5-20251001",
+                max_tokens=400,
+                system=SUMMARY_SYSTEM,
+                messages=[{"role": "user", "content": facts}],
+            )
+            text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+        report.ai_summary = text[:2000]
         report.save(update_fields=["ai_summary"])
     except Exception:  # noqa: BLE001 - the rule-based report still stands
-        logger.exception("Claude insights summary failed")
+        logger.exception("%s insights summary failed", provider)

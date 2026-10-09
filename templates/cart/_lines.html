@@ -4,11 +4,11 @@
   <div class="cline__img">{% if line.kind == "v" %}{% if line.product.primary_image %}<img src="{{ line.product.primary_image.image.url }}" alt="">{% else %}{% drink line.product.illustration line.product.illustration_color %}{% endif %}{% else %}{% drink "cola" %}{% endif %}</div>
   <div>
     <b>{{ line.name }}</b> <span class="muted">· {{ line.label }}</span><br>
-    <span>{{ line.unit_price|rupee }}</span>{% if line.unit_mrp > line.unit_price %} <span class="mrp">{{ line.unit_mrp|rupee }}</span>{% endif %}
+    <span>{{ line.unit_price|rupee }}</span>{% if line.kind == "v" %} <span class="muted" style="font-size:13px">{% trans "per box" %}</span>{% endif %}{% if line.unit_mrp > line.unit_price %} <span class="mrp">{{ line.unit_mrp|rupee }}</span>{% endif %}
     {% if line.problem %}<div class="chip chip--red" style="margin-top:4px">{{ line.problem }}</div>{% endif %}
   </div>
   <div class="buy__ctl" data-key="{{ line.key }}" data-name="{{ line.name }}" data-reload>
-    <div class="qty"><button type="button" data-d="-1" aria-label="{% trans 'Remove one' %}">−</button><span>{{ line.qty }}</span><button type="button" data-d="1" aria-label="{% trans 'Add one more' %}" {% if line.qty >= line.max_qty %}disabled{% endif %}>+</button></div>
+    <div class="qty"><button type="button" data-d="-1" aria-label="{% trans 'Remove one box' %}">−</button><span>{{ line.qty }}</span><button type="button" data-d="1" aria-label="{% trans 'Add one more box' %}" {% if line.qty >= line.max_qty %}disabled{% endif %}>+</button></div>
   </div>
 </div>
 {% endfor %}

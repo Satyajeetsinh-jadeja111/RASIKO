@@ -12,7 +12,7 @@
     {# West: images #}
     <div data-gallery>
       <div class="gallery__main">
-        {% if p.images.all %}<img src="{{ p.images.all.0.image.url }}" alt="{{ p.images.all.0.alt|default:p.name }}" data-gallery-main width="800" height="800">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
+        {% if p.images.all %}<img src="{{ p.images.all.0.image.url }}" alt="{{ p.images.all.0.alt|default:p.name }}" srcset="{{ p.images.all.0.srcset }}" sizes="(max-width: 899px) 90vw, 560px" fetchpriority="high" data-gallery-main width="800" height="800">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
       </div>
       {% if p.images.all|length > 1 %}<div class="thumbs">{% for im in p.images.all %}<button type="button" data-src="{{ im.image.url }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{% trans 'Image' %} {{ forloop.counter }}"><img src="{{ im.image.url }}" alt="" loading="lazy"></button>{% endfor %}</div>{% endif %}
     </div>
@@ -25,22 +25,22 @@
       {% if p.short_description %}<p>{{ p.short_description }}</p>{% endif %}
 
       <form class="box" style="margin:14px 0" data-pdp-form action="{% url 'cart:update' %}" method="post">{% csrf_token %}
-        <fieldset style="border:0;padding:0;margin:0"><legend class="label">{% trans "Choose size" %}</legend>
+        <fieldset style="border:0;padding:0;margin:0"><legend class="label">{% trans "Choose box" %}</legend>
         <div class="variants">{% for v in variants %}
-          <label><input type="radio" name="key" value="v:{{ v.pk }}" data-price="{{ v.price|rupee }}" data-mrp="{% if v.mrp > v.price %}{{ v.mrp|rupee }}{% endif %}" data-save="{% if v.savings %}{{ v.savings|rupee }}{% endif %}" data-stock="{{ v.in_stock|yesno:'1,0' }}" data-low="{% if v.is_low_stock %}{{ v.available_qty }}{% endif %}" {% if v.pk == selected.pk %}checked{% endif %}>
-            <span>{{ v.label }}<small>{{ v.price|rupee }}{% if not v.in_stock %} · {% trans "Out of stock" %}{% endif %}</small></span></label>{% endfor %}
+          <label><input type="radio" name="key" value="v:{{ v.pk }}" data-price="{{ v.price|rupee }}" data-mrp="{% if v.mrp > v.price %}{{ v.mrp|rupee }}{% endif %}" data-save="{% if v.savings %}{{ v.savings|rupee }}{% endif %}" data-stock="{{ v.in_stock|yesno:'1,0' }}" data-low="{% if v.is_low_stock %}{{ v.available_boxes }}{% endif %}" data-per="{% if v.units_per_box > 1 %}{{ v.price_per_bottle|rupee }}{% endif %}" {% if v.pk == selected.pk %}checked{% endif %}>
+            <span>{{ v.box_label }}<small>{{ v.price|rupee }}{% if v.units_per_box > 1 %} · {% blocktrans with p=v.price_per_bottle|rupee %}{{ p }}/bottle{% endblocktrans %}{% endif %}{% if not v.in_stock %} · {% trans "Out of stock" %}{% endif %}</small></span></label>{% endfor %}
         </div></fieldset>
         <div style="margin:14px 0 6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-          <span class="price-big" data-pdp-price>{{ selected.price|rupee }}</span>
+          <span class="price-big" data-pdp-price>{{ selected.price|rupee }}</span><span class="muted">{% trans "per box" %}</span>
           <span class="mrp" data-pdp-mrp>{% if selected.mrp > selected.price %}MRP {{ selected.mrp|rupee }}{% endif %}</span>
           {% if selected.price_dropped %}<span class="chip chip--green">{% trans "Price drop" %}</span>{% endif %}
         </div>
         <div class="save" data-pdp-save style="font-size:15px">{% if selected.savings %}{% blocktrans with s=selected.savings|rupee %}You save {{ s }} (Rasiko price vs MRP){% endblocktrans %}{% endif %}</div>
-        <p class="muted" style="font-size:13px;margin:2px 0 10px">{% trans "Inclusive of all taxes" %}</p>
-        <div data-pdp-stock>{% if selected.is_low_stock %}<span class="chip chip--orange">{% blocktrans with n=selected.available_qty %}Only {{ n }} left{% endblocktrans %}</span>{% elif not selected.in_stock %}<span class="chip chip--red">{% trans "Out of stock" %}</span>{% else %}<span class="chip chip--green">{% trans "In stock" %}</span>{% endif %}</div>
+        <p class="muted" style="font-size:13px;margin:2px 0 10px"><span data-pdp-per>{% if selected.units_per_box > 1 %}{% blocktrans with p=selected.price_per_bottle|rupee %}{{ p }} per bottle{% endblocktrans %} · {% endif %}</span>{% trans "Inclusive of all taxes" %} · {% trans "Sold in whole boxes only" %}</p>
+        <div data-pdp-stock>{% if selected.is_low_stock %}<span class="chip chip--orange">{% blocktrans with n=selected.available_boxes %}Only {{ n }} boxes left{% endblocktrans %}</span>{% elif not selected.in_stock %}<span class="chip chip--red">{% trans "Out of stock" %}</span>{% else %}<span class="chip chip--green">{% trans "In stock" %}</span>{% endif %}</div>
         <input type="hidden" name="qty" value="1">
         <div class="btns" style="margin-top:14px">
-          <button class="btn btn--buy" type="submit" data-pdp-add {% if not selected.in_stock %}disabled{% endif %}>{% trans "Add to cart" %}</button>
+          <button class="btn btn--buy" type="submit" data-pdp-add {% if not selected.in_stock %}disabled{% endif %}>{% trans "Add box to cart" %}</button>
           <button class="btn btn--outline" type="submit" name="next" value="{% url 'orders:checkout' %}" {% if not selected.in_stock %}disabled{% endif %}>{% trans "Buy now" %}</button>
         </div>
       </form>
@@ -53,7 +53,7 @@
 
       <div class="eta" style="margin-top:14px"><svg class="icon" style="width:18px;height:18px"><use href="#i-bolt"/></svg>{% blocktrans %}Delivery {{ eta }} in Rajkot{% endblocktrans %}</div>
       <p class="muted" style="font-size:14px">{% trans "Exact time shows at checkout after you pin your address. 30-minute delivery in nearby areas." %}</p>
-      {% with slabs=selected.bulk_slabs.all %}{% if slabs %}<div class="box box--mitti" style="margin-top:12px"><b>{% trans "Bulk prices" %}</b><ul style="margin:6px 0 0;padding-left:18px">{% for s in slabs %}<li>{% blocktrans with q=s.min_qty p=s.unit_price|rupee %}{{ q }}+ units: {{ p }} each{% endblocktrans %}</li>{% endfor %}</ul><a class="link" href="{% url 'orders:bulk' %}">{% trans "Party order? Get a quote" %} →</a></div>{% endif %}{% endwith %}
+      {% with slabs=selected.bulk_slabs.all %}{% if slabs %}<div class="box box--mitti" style="margin-top:12px"><b>{% trans "Bulk prices" %}</b><ul style="margin:6px 0 0;padding-left:18px">{% for s in slabs %}<li>{% blocktrans with q=s.min_qty p=s.unit_price|rupee %}{{ q }}+ boxes: {{ p }} per box{% endblocktrans %}</li>{% endfor %}</ul><a class="link" href="{% url 'orders:bulk' %}">{% trans "Party order? Get a quote" %} →</a></div>{% endif %}{% endwith %}
       {% if user.is_authenticated %}<p style="margin-top:12px"><a class="link" href="{% url 'orders:subscriptions' %}?variant={{ selected.pk }}"><svg class="icon" style="width:16px;height:16px;display:inline;vertical-align:-3px"><use href="#i-repeat"/></svg> {% trans "Subscribe for daily or weekly delivery" %}</a></p>{% endif %}
 
       <details class="box" style="margin-top:14px" open><summary style="font:600 17px var(--font-head);cursor:pointer">{% trans "Product details" %}</summary>

@@ -70,6 +70,9 @@ class StoreSettings(SingletonModel):
 
     # Payments
     active_gateway = models.CharField(max_length=10, choices=Gateway.choices, default=Gateway.RAZORPAY)
+    gateway_fallback_enabled = models.BooleanField(
+        default=False, help_text=_("Allow the other enabled gateway when the selected gateway is disabled.")
+    )
     cod_enabled = models.BooleanField(default=True)
 
     # Auspicious elements (Store settings -> Auspicious elements)

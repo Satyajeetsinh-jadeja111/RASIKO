@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -2403,3 +2402,12 @@ msgstr ""
 #: templates/support/tickets.html:6
 msgid "No help requests yet."
 msgstr "अभी कोई मदद अनुरोध नहीं।"
+
+msgid "No products found"
+msgstr "कोई उत्पाद नहीं मिला"
+
+msgid "Try another search or clear your filters."
+msgstr "कुछ और खोजें या अपने फ़िल्टर हटाएँ।"
+
+msgid "Browse products"
+msgstr "उत्पाद देखें"

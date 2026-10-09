@@ -16,7 +16,7 @@
     </div>
     <form class="box" method="post">{% csrf_token %}<h2>{% trans "New subscription" %}</h2>
       {% for f in form %}<div class="field"><label class="label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{{ f.errors }}</div>{% endfor %}
-      {% if not user.addresses.exists %}<p><a class="link" href="{% url 'accounts:address_new' %}?next={% url 'orders:subscriptions' %}">{% trans "Add an address first" %}</a></p>{% endif %}
+      {% if not has_address %}<p><a class="link" href="{% url 'accounts:address_new' %}?next={% url 'orders:subscriptions' %}">{% trans "Add an address first" %}</a></p>{% endif %}
       <button class="btn btn--buy">{% trans "Start subscription" %}</button></form>
   </div>
 </div>{% endblock %}

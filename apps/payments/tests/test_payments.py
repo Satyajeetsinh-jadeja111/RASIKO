@@ -39,6 +39,7 @@ def captured(payment, amount=None):
                     "id": "pay_1",
                     "order_id": payment.gateway_order_id,
                     "amount": amount or to_paise(payment.amount),
+                    "currency": "INR",
                 }
             }
         },
@@ -55,7 +56,7 @@ class TestWebhooks:
         order.refresh_from_db()
         variant.refresh_from_db()
         assert order.status == "placed" and order.payment_status == "paid"
-        assert variant.stock_qty == 16 and variant.reserved_qty == 0
+        assert variant.stock_qty == 12 and variant.reserved_qty == 0
         assert WebhookEvent.objects.count() == 1
         assert StockMovement.objects.filter(order=order).count() == 1
 
@@ -73,7 +74,7 @@ class TestWebhooks:
         order.refresh_from_db()
         assert order.payment_status != "paid"
 
-    def test_failed_payment_releases_stock(self, online_order, variant):
+    def test_failed_attempt_keeps_reservation_for_retry(self, online_order, variant):
         order, payment = online_order
         body, headers = signed(
             {
@@ -94,13 +95,21 @@ class TestWebhooks:
         assert handle_webhook("razorpay", body, headers) == "payment_failed"
         order.refresh_from_db()
         variant.refresh_from_db()
-        assert order.status == "payment_failed" and variant.reserved_qty == 0
+        assert order.status == "pending_payment" and variant.reserved_qty == 8
 
     def test_browser_return_signature(self, online_order):
         order, payment = online_order
         sig = hmac.new(b"test_secret", b"order_X1|pay_9", hashlib.sha256).hexdigest()
         assert not handle_return(order, {"razorpay_payment_id": "pay_9", "razorpay_signature": "bad"})
-        assert handle_return(order, {"razorpay_payment_id": "pay_9", "razorpay_signature": sig})
+        with mock.patch("apps.payments.gateways.razorpay_gateway.RazorpayGateway.client") as client:
+            client.payment.fetch.return_value = {
+                "id": "pay_9",
+                "order_id": "order_X1",
+                "amount": to_paise(payment.amount),
+                "currency": "INR",
+                "status": "captured",
+            }
+            assert handle_return(order, {"razorpay_payment_id": "pay_9", "razorpay_signature": sig})
         order.refresh_from_db()
         assert order.payment_status == "paid"
 
@@ -118,7 +127,7 @@ def paid_order(online_order):
     return order
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 class TestRefunds:
     def test_full_refund_through_gateway(self, paid_order, manager):
         with mock.patch(
@@ -139,7 +148,7 @@ class TestRefunds:
             r = create_refund(paid_order, D("50"), "One bottle leaked", manager, lines={line.pk: 1}, restock=True)
         line.refresh_from_db()
         variant.refresh_from_db()
-        assert r.status == "pending" and line.refunded_qty == 1 and variant.stock_qty == 17
+        assert r.status == "pending" and line.refunded_qty == 1 and variant.stock_qty == 12
         body, headers = signed(
             {
                 "event": "refund.processed",
@@ -152,6 +161,8 @@ class TestRefunds:
         r.refresh_from_db()
         paid_order.refresh_from_db()
         assert r.status == "succeeded" and paid_order.payment_status == "partial_refund"
+        variant.refresh_from_db()
+        assert variant.stock_qty == 14
 
     def test_cannot_refund_more_than_paid(self, paid_order, manager):
         with pytest.raises(RefundError):

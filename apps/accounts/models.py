@@ -103,6 +103,8 @@ class Address(models.Model):
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     lng = models.DecimalField(max_digits=9, decimal_places=6)
     is_default = models.BooleanField(default=False)
+    # "Removed" by the customer but still linked to past orders, so it is hidden instead of deleted.
+    is_archived = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

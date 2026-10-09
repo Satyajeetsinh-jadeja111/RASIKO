@@ -49,7 +49,7 @@ def update(request):
         limit = v.max_orderable
         if not v.in_stock and qty > 0 and request.POST.get("mode") != "set":
             return JsonResponse({"error": _("Sorry, this is out of stock.")}, status=409)
-        name = f"{v.product.local_name} {v.label}"
+        name = f"{v.product.local_name} {v.box_label}"
     elif kind == "c":
         c = get_object_or_404(Combo, pk=pk, is_active=True)
         limit, name = 10, c.name

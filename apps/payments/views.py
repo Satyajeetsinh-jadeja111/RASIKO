@@ -35,7 +35,11 @@ def pay(request, public_id):
 @require_POST
 def razorpay_return(request, public_id):
     order = get_object_or_404(Order, public_id=public_id, user=request.user)
-    ok = services.handle_return(order, request.POST.dict())
+    try:
+        ok = services.handle_return(order, request.POST.dict())
+    except Exception:  # noqa: BLE001 - provider outage is reconciled later
+        logger.warning("Payment return awaiting reconciliation for order %s", order.pk)
+        ok = False
     if ok:
         return redirect("orders:success", public_id=order.public_id)
     messages.error(request, _("Payment could not be verified. If money was taken it will be confirmed automatically."))
@@ -45,7 +49,12 @@ def razorpay_return(request, public_id):
 @login_required
 def stripe_return(request, public_id):
     order = get_object_or_404(Order, public_id=public_id, user=request.user)
-    if services.handle_return(order, {}):
+    try:
+        ok = services.handle_return(order, {})
+    except Exception:  # noqa: BLE001 - provider outage is reconciled later
+        logger.warning("Payment return awaiting reconciliation for order %s", order.pk)
+        ok = False
+    if ok:
         return redirect("orders:success", public_id=order.public_id)
     messages.info(request, _("We're confirming your payment. This page will update shortly."))
     return redirect(order.get_absolute_url())
@@ -70,4 +79,4 @@ def webhook(request, gateway):
     except GatewayError as exc:
         logger.warning("Rejected %s webhook: %s", gateway, exc)
         return HttpResponseBadRequest("invalid")
-    return HttpResponse(result)
+    return HttpResponse(result, status=202 if result == "unknown" else 200)

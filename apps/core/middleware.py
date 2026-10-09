@@ -3,7 +3,7 @@ from django.shortcuts import render
 from .models import StoreSettings
 
 PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=(self), payment=(self "https://js.stripe.com"), usb=()'
-LAUNCH_BYPASS_PREFIXES = ("/static/", "/media/", "/healthz", "/payments/webhooks/", "/robots.txt")
+LAUNCH_BYPASS_PREFIXES = ("/static/", "/media/", "/healthz", "/readyz", "/payments/webhooks/", "/robots.txt")
 
 
 class PermissionsPolicyMiddleware:
@@ -13,6 +13,12 @@ class PermissionsPolicyMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         response.setdefault("Permissions-Policy", PERMISSIONS_POLICY)
+        # HTML includes cart/account state even on public catalog routes. Only
+        # server-side public fragments and immutable assets may be shared.
+        if "text/html" in response.get("Content-Type", "") or request.path.startswith(
+            ("/cart/", "/orders/", "/accounts/", "/payments/")
+        ):
+            response["Cache-Control"] = "private, no-store"
         return response
 
 

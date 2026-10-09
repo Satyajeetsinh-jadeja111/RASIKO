@@ -12,3 +12,9 @@ frontend/node_modules
 .pytest_cache
 .ruff_cache
 htmlcov
+logs
+ssh keys
+*.key
+*.pem
+*.csv
+docs/audit

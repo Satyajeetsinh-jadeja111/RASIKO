@@ -25,11 +25,12 @@ def _after_change(variant, before_available, user=None):
     from apps.notifications import services as notify
 
     after = variant.available_qty
-    if before_available > 0 and after <= 0:
+    box = variant.units_per_box or 1  # "out of stock" means less than one full box left
+    if before_available >= box and after < box:
         transaction.on_commit(lambda: notify.admin_event("out_of_stock", {"variant": str(variant)}))
-    elif after > 0 and after <= variant.low_stock_threshold < before_available:
+    elif after >= box and after <= variant.low_stock_threshold < before_available:
         transaction.on_commit(lambda: notify.admin_event("low_stock", {"variant": str(variant), "qty": after}))
-    if before_available <= 0 < after and not variant.manual_out_of_stock:
+    if before_available < box <= after and not variant.manual_out_of_stock:
         from .tasks import send_back_in_stock
 
         transaction.on_commit(lambda: send_back_in_stock.delay(variant.pk))
@@ -53,9 +54,28 @@ def adjust_stock(variant_id, delta, reason, user=None, note="", order=None, set_
     return v
 
 
+def _bottles(line):
+    """Order lines count boxes; stock counts bottles."""
+    return line.qty * (line.units_per_box or 1)
+
+
 def _locked_variants(lines):
     ids = sorted({line.variant_id for line in lines})
     return {v.pk: v for v in ProductVariant.objects.select_for_update().filter(pk__in=ids).order_by("pk")}
+
+
+def _check_available(lines, variants):
+    """Raise OutOfStock (counted in boxes) when any line needs more bottles than are free.
+
+    Lines of the same size (e.g. a box bought alone and inside a combo) are added up first.
+    """
+    need = {}
+    for line in lines:
+        need[line.variant_id] = need.get(line.variant_id, 0) + _bottles(line)
+    for vid, bottles in need.items():
+        v = variants[vid]
+        if not v.in_stock or v.available_qty < bottles:
+            raise OutOfStock(v, v.available_boxes if v.in_stock else 0)
 
 
 @transaction.atomic
@@ -63,14 +83,15 @@ def reserve_for_order(order, minutes=RESERVATION_MINUTES):
     lines = list(order.lines.all())
     variants = _locked_variants(lines)
     expires = timezone.now() + timedelta(minutes=minutes)
+    _check_available(lines, variants)
     for line in lines:
         v = variants[line.variant_id]
-        if not v.in_stock or v.available_qty < line.qty:
-            raise OutOfStock(v, v.available_qty if v.in_stock else 0)
-    for line in lines:
-        v = variants[line.variant_id]
-        ProductVariant.objects.filter(pk=v.pk).update(reserved_qty=F("reserved_qty") + line.qty)
-        StockReservation.objects.create(variant=v, order=order, qty=line.qty, expires_at=expires)
+        bottles = _bottles(line)
+        ProductVariant.objects.filter(pk=v.pk).update(reserved_qty=F("reserved_qty") + bottles)
+        StockReservation.objects.create(variant=v, order=order, qty=bottles, expires_at=expires)
+    from apps.catalog.cache import invalidate_catalog
+
+    invalidate_catalog()
 
 
 @transaction.atomic
@@ -105,31 +126,42 @@ def release_reservations(order):
         r.released = True
         r.save(update_fields=["released"])
     ProductVariant.objects.filter(reserved_qty__lt=0).update(reserved_qty=0)
+    from apps.catalog.cache import invalidate_catalog
+
+    invalidate_catalog()
 
 
 @transaction.atomic
 def deduct_for_cod(order):
     lines = list(order.lines.all())
     variants = _locked_variants(lines)
-    for line in lines:
-        v = variants[line.variant_id]
-        if not v.in_stock or v.available_qty < line.qty:
-            raise OutOfStock(v, v.available_qty if v.in_stock else 0)
+    _check_available(lines, variants)
     for line in lines:
         v = variants[line.variant_id]
         before = v.available_qty
-        v.stock_qty -= line.qty
+        bottles = _bottles(line)
+        v.stock_qty -= bottles
         v.save(update_fields=["stock_qty", "updated_at"])
         StockMovement.objects.create(
-            variant=v, delta=-line.qty, balance_after=v.stock_qty, reason=StockMovement.Reason.SALE, order=order
+            variant=v, delta=-bottles, balance_after=v.stock_qty, reason=StockMovement.Reason.SALE, order=order
         )
         _after_change(v, before)
 
 
+@transaction.atomic
 def restock_lines(order, qty_by_line: dict, reason, user=None):
-    for line, qty in qty_by_line.items():
+    """Restock actual boxes independently of financial refund reservations."""
+    from apps.orders.models import Order, OrderLine
+
+    Order.objects.select_for_update().get(pk=order.pk)
+    requested = {line.pk: qty for line, qty in qty_by_line.items()}
+    for line in OrderLine.objects.select_for_update().filter(order=order, pk__in=requested).order_by("pk"):
+        qty = min(requested[line.pk], line.qty - line.restocked_qty)
         if qty > 0:
-            adjust_stock(line.variant_id, qty, reason, user=user, note=f"Order {order.number}", order=order)
+            bottles = qty * (line.units_per_box or 1)
+            adjust_stock(line.variant_id, bottles, reason, user=user, note=f"Order {order.number}", order=order)
+            line.restocked_qty += qty
+            line.save(update_fields=["restocked_qty"])
 
 
 @transaction.atomic

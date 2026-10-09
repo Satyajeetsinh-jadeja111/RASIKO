@@ -1,4 +1,5 @@
 import secrets
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,7 @@ from apps.accounts.models import Address, OneTimeCode
 from apps.analytics.tracking import track
 from apps.cart.cart import Cart
 from apps.core.images import reencode
+from apps.core.integrations import is_enabled
 from apps.core.ratelimit import ratelimit
 from apps.delivery.models import ServicePincode
 from apps.delivery.services import available_slots, check_service_area, eta_text, quote
@@ -35,7 +37,7 @@ def checkout(request):
     if not cart.lines():
         messages.info(request, _("Your cart is empty."))
         return redirect("cart:detail")
-    addresses = list(request.user.addresses.all())
+    addresses = list(request.user.addresses.filter(is_archived=False))
     if not addresses:
         messages.info(request, _("Add your delivery address to continue."))
         return redirect(f"{reverse('accounts:address_new')}?next={reverse('orders:checkout')}")
@@ -52,6 +54,15 @@ def checkout(request):
         if not token or token != request.session.get("checkout_token"):
             messages.error(request, _("Please review your order and try again."))
             return redirect("orders:checkout")
+        back = f"{reverse('orders:checkout')}?address={address.public_id}"
+        if request.POST.get("payment_method") == "cod" and not request.user.phone_verified:
+            how = (
+                _("verify your mobile with an SMS code")
+                if is_enabled("sms")
+                else _("confirm with a code sent to your email")
+            )
+            messages.info(request, _("One quick step: %(how)s, then place your Cash on Delivery order.") % {"how": how})
+            return redirect(f"{reverse('accounts:phone_verify')}?{urlencode({'next': back})}")
         try:
             order = services.place_order(
                 user=request.user,
@@ -66,7 +77,7 @@ def checkout(request):
             )
         except services.CheckoutError as exc:
             messages.error(request, str(exc))
-            return redirect(f"{reverse('orders:checkout')}?address={address.public_id}")
+            return redirect(back)
         request.session.pop("checkout_token", None)
         track(request, "order")
         cart.clear()
@@ -87,6 +98,7 @@ def checkout(request):
             "slots": slots,
             "checkout_token": request.session["checkout_token"],
             "needs_phone": not request.user.phone_verified,
+            "sms_on": is_enabled("sms"),
         },
     )
 
@@ -254,7 +266,8 @@ def subscriptions(request):
         sub.save()
         messages.success(request, _("Subscription started. First delivery on %(d)s.") % {"d": sub.next_run})
         return redirect("orders:subscriptions")
-    return render(request, "orders/subscriptions.html", {"subs": subs, "form": form})
+    has_address = request.user.addresses.filter(is_archived=False).exists()
+    return render(request, "orders/subscriptions.html", {"subs": subs, "form": form, "has_address": has_address})
 
 
 @login_required

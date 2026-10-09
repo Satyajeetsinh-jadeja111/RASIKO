@@ -7,9 +7,9 @@
 <div class="dash-grid">
   <section class="panel-box"><h2>Details</h2>{% include "dashboard/_form_fields.html" %}</section>
   <section class="panel-box"><h2>Sizes, prices and stock</h2>
-    <p class="muted" style="font-size:14px">Prices include GST. The shop shows “You save” from MRP. Stock is changed with “Add stock” so every change is logged.</p>
+    <p class="muted" style="font-size:14px">Sell whole boxes only: enter bottles per box and the volume of one bottle in ml. MRP, selling price and cost are per box; stock counts bottles. Prices include GST. The shop shows “You save” from MRP. Stock is changed with “Add stock” so every change is logged.</p>
     {{ formset.management_form }}{{ formset.non_form_errors }}
-    {% for vf in formset %}<fieldset class="box" style="margin-bottom:12px"><legend class="label">{% if vf.instance.pk %}{{ vf.instance.label }} · in stock {{ vf.instance.stock_qty }}{% if vf.instance.reserved_qty %} ({{ vf.instance.reserved_qty }} held for payment){% endif %}{% else %}Add a size{% endif %}</legend>
+    {% for vf in formset %}<fieldset class="box" style="margin-bottom:12px"><legend class="label">{% if vf.instance.pk %}{{ vf.instance.box_label }} · in stock {{ vf.instance.stock_qty }} bottles{% if vf.instance.units_per_box > 1 %} = {{ vf.instance.available_boxes }} full boxes{% endif %}{% if vf.instance.reserved_qty %} ({{ vf.instance.reserved_qty }} bottles held for payment){% endif %}{% else %}Add a box size{% endif %}</legend>
       {% include "partials/form_errors.html" with form=vf %}
       <div class="form-grid form-grid--2">{% for f in vf.visible_fields %}{% include "partials/field.html" %}{% endfor %}</div>{% for h in vf.hidden_fields %}{{ h }}{% endfor %}
       {% if vf.instance.pk %}<a class="link" href="{% url 'dashboard:movements' %}?variant={{ vf.instance.pk }}">Stock history</a>{% endif %}
