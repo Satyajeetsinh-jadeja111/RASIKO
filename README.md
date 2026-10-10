@@ -257,3 +257,7 @@ This installs 32 photographed product records, with 28 active. Bailley water is 
 ### Whole-box product entry
 
 Customers purchase whole boxes; quantity 1 means one box. Variants configured with fewer than two bottles per box are unavailable to buy. In Dashboard → Products, admins must provide the bottle size label, volume of one bottle in ml, and bottles per box (at least 2). Enter selling price, MRP and cost per box; stock and adjustments remain counts of individual bottles. CSV import also requires `units_per_box` and `volume_ml` values on every row. Review demo prices and actual supplier case counts before launch.
+
+### Docker translation-build troubleshooting
+
+If an older image build fails at `django-admin compilemessages` with `No module named config`, pull the Dockerfile fix and run `docker compose build web` again. Both asset commands now run through `python manage.py` with temporary build-only settings credentials in the same build step. Keep production secrets in `.env`; do not copy them into the image or regenerate existing keys to resolve a build failure.

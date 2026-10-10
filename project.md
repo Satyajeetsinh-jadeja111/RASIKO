@@ -114,3 +114,9 @@ Verification results: initial whole-suite run collected 163 tests: 152 passed an
 ## 2026-10-09 — Git main handoff
 
 Prepared all application, configuration, migration, photo, audit and documentation changes against GitHub main at `6a7f462` in a clean temporary checkout because the original workspace `.git` is empty/read-only. Excluded local environment credentials, SSH keys, database export, uploaded media, dependency folders and runtime caches. Added ignore rules for the local database export and SSH directory. Prior verification results and production gates remain as recorded above; committing does not verify deployment.
+
+## 2026-10-10 — Oracle ARM translation build fix
+
+User's first ARM64 build reached translation compilation, then failed with `ModuleNotFoundError: config` from the standalone django-admin executable. Changed Dockerfile to run collectstatic and compilemessages through `python manage.py` in one RUN, exporting generated temporary secrets only for that build step. This also prevents the following command from losing the temporary credentials required by production settings. Production configuration and migrations unchanged.
+
+Verified Gujarati/Hindi compilation locally with production settings and temporary non-production credentials; command exited 0. Local runtime is Python 3.10, not production Python 3.12. Full corrected ARM64 image build remains to be verified on the user's Oracle VM. Updated README troubleshooting; documentation guard and whitespace checks run before commit.

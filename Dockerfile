@@ -21,11 +21,11 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY --chown=rasiko:rasiko . .
 COPY --from=css --chown=rasiko:rasiko /build/static/css/app.css static/css/app.css
-# collectstatic needs settings that import cleanly; these throwaway values never reach production.
-RUN DJANGO_SECRET_KEY=build-only-$(python -c "import secrets;print(secrets.token_hex(32))") \
+# Asset commands load production settings; these temporary values exist only in this RUN.
+RUN export DJANGO_SECRET_KEY=build-only-$(python -c "import secrets;print(secrets.token_hex(32))") \
     FIELD_ENCRYPTION_KEY=$(python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())") \
-    python manage.py collectstatic --noinput
-RUN django-admin compilemessages --ignore=venv --ignore=node_modules
+    && python manage.py collectstatic --noinput \
+    && python manage.py compilemessages --ignore=venv --ignore=node_modules
 RUN mkdir -p /app/media /app/logs /shared-static && chown -R rasiko:rasiko /app/media /app/logs /app/staticfiles /app/locale /shared-static
 USER rasiko
 EXPOSE 8000
