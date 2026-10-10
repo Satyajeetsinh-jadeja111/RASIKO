@@ -18,6 +18,7 @@ from apps.core.models import Page, StoreSettings
 from apps.core.ratelimit import ratelimit
 from apps.promotions.models import Combo, Coupon, HeroSlide
 
+from .cache import public_fragment
 from .models import BackInStockRequest, Brand, Category, Product, ProductVariant, RecentlyViewed, Wishlist
 from .search import autocomplete, search_products
 
@@ -47,23 +48,28 @@ def _recent(request):
     return [by_id[i] for i in ids if i in by_id]
 
 
-def home(request):
+def _home_catalog():
     live = _listing_qs()
     best = list(live.filter(is_bestseller=True).order_by("-sold_count")[:8]) or list(live.order_by("-sold_count")[:8])
     fresh = list(live.filter(is_new=True).order_by("-created_at")[:6])
     ctx = {
-        "slides": HeroSlide.live(),
-        "tiles": Category.objects.active().filter(show_in_menu=True)[:12],
+        "slides": list(HeroSlide.live()),
+        "tiles": list(Category.objects.active().filter(show_in_menu=True)[:12]),
         "best": best,
         "fresh": fresh,
         "featured": list(live.filter(is_featured=True)[:8]),
-        "brands": Brand.objects.active()[:12],
-        "combos": Combo.objects.filter(is_active=True, show_on_home=True).prefetch_related("items__variant__product")[
-            :4
-        ],
+        "brands": list(Brand.objects.active()[:12]),
+        "combos": list(
+            Combo.objects.filter(is_active=True, show_on_home=True).prefetch_related("items__variant__product")[:4]
+        ),
         "home_coupon": Coupon.objects.filter(is_active=True, show_on_home=True, only_user__isnull=True).first(),
-        "recent": _recent(request),
     }
+    return ctx
+
+
+def home(request):
+    ctx = dict(public_fragment("catalog_home", _home_catalog))
+    ctx["recent"] = _recent(request)
     return render(request, "storefront/home.html", ctx)
 
 
@@ -81,7 +87,10 @@ def _apply_filters(request, qs):
         qs = qs.filter(
             Exists(
                 ProductVariant.objects.filter(
-                    product=OuterRef("pk"), is_active=True, manual_out_of_stock=False, stock_qty__gt=F("reserved_qty")
+                    product=OuterRef("pk"),
+                    is_active=True,
+                    manual_out_of_stock=False,
+                    stock_qty__gte=F("reserved_qty") + F("units_per_box"),
                 )
             )
         )
@@ -330,7 +339,7 @@ def manifest(request):
 
 def service_worker(request):
     body = (
-        "const C='rasiko-static-v1';\n"
+        "const C='rasiko-static-v2';\n"
         "self.addEventListener('install',e=>{self.skipWaiting();});\n"
         "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C)"
         ".map(k=>caches.delete(k)))));});\n"
@@ -339,6 +348,8 @@ def service_worker(request):
         "e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(res=>{"
         "if(res.ok)c.put(e.request,res.clone());return res;}))));});\n"
     )
+    if settings.DEBUG:
+        body = "self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('rasiko-static-')).map(k=>caches.delete(k)))).then(()=>self.registration.unregister())));"
     resp = HttpResponse(body, content_type="application/javascript")
     resp["Service-Worker-Allowed"] = "/"
     resp["Cache-Control"] = "no-cache"
@@ -347,6 +358,22 @@ def service_worker(request):
 
 def healthz(request):
     return HttpResponse("ok", content_type="text/plain")
+
+
+def readyz(request):
+    from django.db import connection
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        from django_redis import get_redis_connection
+        from redis import Redis
+
+        get_redis_connection("default").ping()
+        Redis.from_url(settings.CELERY_BROKER_URL, socket_connect_timeout=2, socket_timeout=2).ping()
+    except Exception:  # noqa: BLE001 - readiness returns no infrastructure details
+        return HttpResponse("not ready", status=503, content_type="text/plain")
+    return HttpResponse("ready", content_type="text/plain")
 
 
 def local_landing(request, slug):

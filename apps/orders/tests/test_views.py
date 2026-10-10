@@ -57,7 +57,11 @@ class TestCheckoutFlow:
         order = Order.objects.get()
         assert order.status == "pending_payment" and r["Location"] == f"/payments/pay/{order.public_id}/"
         with mock.patch("razorpay.Client") as rc:
-            rc.return_value.order.create.return_value = {"id": "order_R1"}
+            rc.return_value.order.create.return_value = {
+                "id": "order_R1",
+                "amount": int(order.total * 100),
+                "currency": "INR",
+            }
             page = client.get(r["Location"]).content.decode()
         assert "order_R1" in page and "rzp_test_abc" in page and "test_secret" not in page
         r = client.post(f"/payments/pay/{order.public_id}/cancel/")

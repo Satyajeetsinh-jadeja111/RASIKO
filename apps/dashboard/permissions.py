@@ -91,6 +91,7 @@ NAV = [
             ("Emails", "dashboard:email_settings", (), "manager", "mail"),
             ("Staff", "dashboard:staff", (), "owner", "users"),
             ("Audit log", "dashboard:audit", (), "owner", "shield"),
+            ("Error log", "dashboard:error_log", (), "owner", "bug"),
         ],
     ),
 ]

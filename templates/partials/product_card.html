@@ -7,22 +7,24 @@
     {% elif p.is_bestseller %}<span class="tag">{% trans "Bestseller" %}</span>
     {% elif p.is_new %}<span class="tag tag--new">{% trans "New" %}</span>{% endif %}
     {% veg_mark p.diet %}
-    {% if p.primary_image %}<img src="{{ p.primary_image.image.url }}" alt="{{ p.primary_image.alt|default:p.name }}" loading="lazy" width="300" height="300">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
+    {% if p.primary_image %}<img src="{{ p.primary_image.image.url }}" alt="{{ p.primary_image.alt|default:p.name }}" srcset="{{ p.primary_image.srcset }}" sizes="(max-width: 719px) 45vw, (max-width: 1199px) 30vw, 280px" loading="lazy" width="300" height="300">{% else %}{% drink p.illustration p.illustration_color %}{% endif %}
   </a>
   <h3><a href="{{ p.get_absolute_url }}">{{ p.local_name }}</a></h3>
   <div class="meta">{{ p.brand.name }}{% if p.rating_count %} · <span class="star" aria-hidden="true">★</span> {{ p.rating_avg|floatformat:1 }}{% endif %}</div>
+  {% if p.attributes.demo_pricing %}<div class="meta">{% trans "Demo price" %}</div>{% endif %}
   {% if v %}
   {% with vs=p.active_variants %}{% if vs|length > 1 %}
   <label class="sr-only" for="vs-{{ p.pk }}">{% trans "Size" %}</label>
   <select class="variant-select" id="vs-{{ p.pk }}" data-variant-select>
-    {% for x in vs %}<option value="{{ x.pk }}" data-price="{{ x.price|rupee }}" data-mrp="{% if x.mrp > x.price %}{{ x.mrp|rupee }}{% endif %}" data-stock="{{ x.in_stock|yesno:'1,0' }}" {% if x.pk == v.pk %}selected{% endif %}>{{ x.label }}</option>{% endfor %}
+    {% for x in vs %}<option value="{{ x.pk }}" data-price="{{ x.price|rupee }}" data-mrp="{% if x.mrp > x.price %}{{ x.mrp|rupee }}{% endif %}" data-stock="{{ x.in_stock|yesno:'1,0' }}" data-per="{% if x.units_per_box > 1 %}{{ x.price_per_bottle|rupee }}{% endif %}" {% if x.pk == v.pk %}selected{% endif %}>{{ x.box_label }}</option>{% endfor %}
   </select>
-  {% else %}<div class="meta">{{ v.label }}</div>{% endif %}{% endwith %}
+  {% else %}<div class="meta">{{ v.box_label }}</div>{% endif %}{% endwith %}
+  <div class="meta per-bottle" data-per>{% if v.units_per_box > 1 %}{% blocktrans with p=v.price_per_bottle|rupee %}{{ p }} per bottle{% endblocktrans %}{% endif %}</div>
   <div class="save">{% if v.savings %}{% blocktrans with s=v.savings|rupee %}You save {{ s }}{% endblocktrans %}{% endif %}</div>
   <div class="buy">
-    <div><span class="price" data-price>{{ v.price|rupee }}</span>{% if v.mrp > v.price %}<span class="mrp" data-mrp>{{ v.mrp|rupee }}</span>{% endif %}</div>
+    <div><span class="price" data-price>{{ v.price|rupee }}</span> <span class="meta">{% trans "per box" %}</span>{% if v.mrp > v.price %}<span class="mrp" data-mrp>{{ v.mrp|rupee }}</span>{% endif %}</div>
     <div class="buy__ctl" data-key="v:{{ v.pk }}" data-name="{{ p.local_name }}">
-      {% if p.in_stock %}<button class="add" type="button" aria-label="{% blocktrans with n=p.local_name %}Add {{ n }} to cart{% endblocktrans %}">{% trans "Add" %}</button>
+      {% if p.in_stock %}<button class="add" type="button" aria-label="{% blocktrans with n=p.local_name %}Add a box of {{ n }} to cart{% endblocktrans %}">{% trans "Add box" %}</button>
       {% else %}<a class="add" style="background:var(--kajal-soft);box-shadow:none;display:inline-grid;place-items:center;font-size:13px" href="{{ p.get_absolute_url }}">{% trans "Notify me" %}</a>{% endif %}
     </div>
   </div>

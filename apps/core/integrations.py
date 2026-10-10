@@ -45,6 +45,14 @@ REGISTRY: dict[str, IntegrationSpec] = {
             where="Razorpay Dashboard -> Account & Settings -> API Keys (webhook secret under Webhooks).",
             fallback="Online payment is hidden at checkout; Cash on Delivery only.",
             fields=(
+                Field(
+                    "capture_confirmed",
+                    "Automatic capture enabled in Razorpay dashboard",
+                    required=False,
+                    choices=("no", "yes"),
+                    default="no",
+                    help="Confirm after enabling automatic capture in Razorpay. Authorization alone does not fulfill orders.",
+                ),
                 Field("key_id", "Key ID"),
                 Field("key_secret", "Key secret", secret=True),
                 Field("webhook_secret", "Webhook secret", secret=True),
@@ -100,6 +108,25 @@ REGISTRY: dict[str, IntegrationSpec] = {
             tester="apps.support.ai.test_connection",
         ),
         IntegrationSpec(
+            slug="gemini",
+            name="Google Gemini AI help chat",
+            cost="Free tier with rate limits, then pay per use (Google AI Studio).",
+            where="aistudio.google.com -> Get API key.",
+            fallback="The FAQ-matching help bot answers from Help Center articles.",
+            fields=(
+                Field("api_key", "API key", secret=True),
+                Field("model", "Model name", default="gemini-flash-latest"),
+                Field(
+                    "insights_summary",
+                    "Also write the daily insights summary (yes/no)",
+                    default="no",
+                    required=False,
+                    choices=("yes", "no"),
+                ),
+            ),
+            tester="apps.support.gemini.test_connection",
+        ),
+        IntegrationSpec(
             slug="sms",
             name="SMS OTP",
             cost="Pay per SMS. Indian SMS needs DLT registration.",
@@ -151,16 +178,14 @@ REGISTRY: dict[str, IntegrationSpec] = {
 }
 
 
-def get_config(slug: str) -> dict | None:
-    """Return the decrypted config for an enabled integration, or None when it is off."""
+def get_config(slug: str, *, allow_disabled=False) -> dict | None:
+    """Decrypt on demand; disabled credentials are only for historical payment processing."""
     from .models import Integration
 
-    cached = cache.get(CACHE_KEY.format(slug=slug))
-    if cached is not None:
-        return cached or None
     row = Integration.objects.filter(slug=slug).first()
-    config = row.config() if row and row.enabled else {}
-    cache.set(CACHE_KEY.format(slug=slug), config, 300)
+    if not row or (not row.enabled and not allow_disabled):
+        return None
+    config = row.config()
     return config or None
 
 
@@ -179,4 +204,4 @@ def run_test(slug: str, config: dict) -> tuple[bool, str]:
     try:
         return import_string(spec.tester)(config)
     except Exception as exc:  # noqa: BLE001 - surface any provider error to the owner
-        return False, f"Connection failed: {exc.__class__.__name__}: {str(exc)[:200]}"
+        return False, f"Connection failed ({exc.__class__.__name__}). Check the credentials and provider dashboard."

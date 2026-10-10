@@ -48,10 +48,11 @@ def test_late_payment_after_timeout(place, razorpay_on, variant):
     mark_paid(o, Payment.objects.create(order=o, gateway="razorpay", amount=o.total))
     o.refresh_from_db()
     variant.refresh_from_db()
-    assert o.status == "placed" and o.payment_status == "paid" and variant.stock_qty == 16
+    assert o.status == "payment_failed" and o.payment_status == "paid" and variant.stock_qty == 20
+    assert "refund required" in o.staff_note
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 def test_paid_order_cancelled_by_customer_is_refunded(place, razorpay_on):
     from apps.orders.services import cancel_by_customer
 

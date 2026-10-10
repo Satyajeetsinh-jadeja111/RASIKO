@@ -1,0 +1,44 @@
+[
+  {
+    "requested": 320,
+    "art": 80,
+    "filters": 273,
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "requested": 375,
+    "art": 80,
+    "filters": 328,
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "requested": 390,
+    "art": 80,
+    "filters": 343,
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "requested": 768,
+    "art": 96,
+    "filters": 705,
+    "scroll": 753,
+    "width": 768
+  },
+  {
+    "requested": 1024,
+    "art": 96,
+    "filters": 250,
+    "scroll": 1009,
+    "width": 1024
+  },
+  {
+    "requested": 1440,
+    "art": 96,
+    "filters": 250,
+    "scroll": 1425,
+    "width": 1440
+  }
+]

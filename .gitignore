@@ -34,3 +34,10 @@ frontend/node_modules/
 dump.rdb
 .ccr-ca.crt
 *.mo
+logs/
+
+# Local database exports and SSH material
+local_backup.sql
+*.sql.gz
+*.dump
+ssh keys/

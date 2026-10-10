@@ -10,6 +10,7 @@ django-celery-beat==2.9.0
 channels==4.3.2
 channels-redis==4.3.0
 daphne==4.2.3
+autobahn==26.7.1
 gunicorn==26.2.0
 uvicorn==0.54.0
 whitenoise==6.12.0
@@ -26,5 +27,6 @@ openpyxl==3.1.5
 stripe==15.6.1
 razorpay==2.0.1
 anthropic==1.8.0
+requests>=2.31
 boto3==1.43.103
 django-storages==1.14.6

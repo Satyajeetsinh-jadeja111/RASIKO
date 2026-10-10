@@ -14,12 +14,15 @@
   <meta property="og:url" content="{{ SITE_URL }}{{ request.path }}">
   <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}{% static 'brand/rasiko-icon-512.png' %}{% endblock %}">
   <meta name="theme-color" content="#1B6E42">
+  {# Light page from the very first paint: without these, browsers in dark mode flash a black page between pages. #}
+  <meta name="color-scheme" content="light">
+  <style>html{background:#FFF4E0;color-scheme:light}</style>
   <link rel="icon" href="{% static 'favicons/favicon.ico' %}" sizes="any">
   <link rel="icon" href="{% static 'brand/rasiko-icon.svg' %}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="{% static 'favicons/apple-touch-icon.png' %}">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="preload" href="{% static 'fonts/fredoka.woff2' %}" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=9">
   {% block head %}{% endblock %}
   <script type="application/ld+json">{{ org_jsonld|default:""|safe }}</script>
 </head>
@@ -117,7 +120,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   {% block scripts %}{% endblock %}
   <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
-  <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}?v=7" defer></script>
   <script src="{% static 'vendor/alpine-csp.min.js' %}" defer></script>
 </body>
 </html>

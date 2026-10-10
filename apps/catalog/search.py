@@ -22,9 +22,10 @@ def search_products(q: str, qs=None):
     q = (q or "").strip()[:80]
     if not q:
         return qs
-    query = SearchQuery(q, search_type="websearch", config="simple") | SearchQuery(
-        " & ".join(f"{w}:*" for w in q.split() if w.isalnum()) or q, search_type="raw", config="simple"
-    )
+    query = SearchQuery(q, search_type="websearch", config="simple")
+    prefix = " & ".join(f"{w}:*" for w in q.split() if w.isalnum())
+    if prefix:
+        query |= SearchQuery(prefix, search_type="raw", config="simple")
     fts = qs.filter(search_vector=query).annotate(rank=SearchRank("search_vector", query)).order_by("-rank")
     if fts.exists():
         return fts

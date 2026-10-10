@@ -26,6 +26,7 @@ urlpatterns = [
     path("site.webmanifest", store_views.manifest, name="manifest"),
     path("sw.js", store_views.service_worker, name="sw"),
     path("healthz", store_views.healthz),
+    path("readyz", store_views.readyz),
 ]
 
 if settings.DEBUG:

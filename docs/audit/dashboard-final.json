@@ -1,0 +1,205 @@
+[
+  {
+    "route": "/manage/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/orders/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/stock/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/products/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/c/categories/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/c/brands/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/customers/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/subscriptions/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/party-quotes/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/slider/",
+    "metrics": {
+      "scroll": 437,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/c/coupons/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/c/campaigns/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/c/combos/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/c/bulk-prices/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/analytics/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/insights/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/competitors/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/support/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/reviews/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/thandu/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/c/faq/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/c/pages/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/settings/store/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/settings/delivery/",
+    "metrics": {
+      "scroll": 489,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/settings/integrations/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/settings/emails/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/settings/staff/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  },
+  {
+    "route": "/manage/settings/audit/",
+    "metrics": {
+      "scroll": 390,
+      "width": 390
+    }
+  },
+  {
+    "route": "/manage/settings/errors/",
+    "metrics": {
+      "scroll": 375,
+      "width": 375
+    }
+  }
+]

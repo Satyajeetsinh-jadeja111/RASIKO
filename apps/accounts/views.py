@@ -1,5 +1,6 @@
 import base64
 import io
+import logging
 
 import qrcode
 import qrcode.image.svg
@@ -8,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import signing
+from django.db.models import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -23,6 +25,8 @@ from apps.notifications import services as notify
 from .forms import AddressForm, LoginForm, OTPForm, ProfileForm, SignupForm
 from .models import Address, OneTimeCode, User
 from .sms import send_sms
+
+logger = logging.getLogger(__name__)
 
 VERIFY_SALT = "rasiko.email-verify"
 
@@ -95,7 +99,11 @@ def account_home(request):
     return render(
         request,
         "accounts/account.html",
-        {"orders": orders, "coins": coin_balance(request.user), "addresses": request.user.addresses.all()},
+        {
+            "orders": orders,
+            "coins": coin_balance(request.user),
+            "addresses": request.user.addresses.filter(is_archived=False),
+        },
     )
 
 
@@ -115,7 +123,9 @@ def profile_edit(request):
 
 @login_required
 def address_edit(request, public_id=None):
-    address = get_object_or_404(Address, public_id=public_id, user=request.user) if public_id else None
+    address = (
+        get_object_or_404(Address, public_id=public_id, user=request.user, is_archived=False) if public_id else None
+    )
     form = AddressForm(request.POST or None, instance=address)
     if request.method == "POST" and form.is_valid():
         obj = form.save(commit=False)
@@ -131,37 +141,90 @@ def address_edit(request, public_id=None):
 @login_required
 @require_POST
 def address_delete(request, public_id):
-    get_object_or_404(Address, public_id=public_id, user=request.user).delete()
+    address = get_object_or_404(Address, public_id=public_id, user=request.user, is_archived=False)
+    try:
+        address.delete()
+    except ProtectedError:  # used by a past order: keep it for that order, hide it from the customer
+        address.is_archived, address.is_default = True, False
+        address.save(update_fields=["is_archived", "is_default"])
     messages.success(request, _("Address removed."))
-    return redirect("accounts:home")
+    return redirect(_safe_next(request, reverse("accounts:home")))
+
+
+def _clean_phone(raw):
+    digits = "".join(c for c in (raw or "") if c.isdigit())[-10:]
+    return digits if len(digits) == 10 and digits[0] in "6789" else ""
 
 
 @login_required
-@ratelimit("otp", limit=5, window=600)
+@ratelimit("otp", limit=8, window=600)
 def phone_verify(request):
-    """Verify the mobile number before a first Cash on Delivery order (SMS if configured, else email)."""
+    """Verify the mobile number before a first Cash on Delivery order.
+
+    The code goes by SMS when an SMS provider is on, otherwise to the account's email address (sent at once,
+    not queued, so it arrives while the customer waits).
+    """
+    from apps.core.integrations import is_enabled
+
     user = request.user
-    if not user.phone:
-        messages.info(request, _("Add your mobile number first."))
-        return redirect("accounts:profile")
-    target = user.phone
-    form = OTPForm(request.POST or None)
+    back = _safe_next(request, reverse("accounts:home"))
+    if user.phone_verified:
+        messages.info(request, _("Your mobile number is already verified."))
+        return redirect(back)
+    suggested = user.phone or next(
+        (a.phone for a in user.addresses.filter(is_archived=False) if _clean_phone(a.phone)), ""
+    )
+    form = OTPForm(request.POST if request.POST.get("action") == "check" else None)
     if request.method == "POST" and request.POST.get("action") == "send":
-        code = OneTimeCode.issue(OneTimeCode.Purpose.PHONE_VERIFY, target)
-        if send_sms(user.phone, f"Your Rasiko verification code is {code}", otp=code):
-            messages.success(request, _("We sent a code by SMS to your mobile."))
+        phone = _clean_phone(request.POST.get("phone") or user.phone)
+        if not phone:
+            messages.error(request, _("Enter a valid 10-digit Indian mobile number."))
+            return redirect(request.get_full_path())
+        if phone != user.phone:
+            user.phone, user.phone_verified = phone, False
+            user.save(update_fields=["phone", "phone_verified"])
+        code = OneTimeCode.issue(OneTimeCode.Purpose.PHONE_VERIFY, phone)
+        # SMS OTP service on: the code goes to the mobile. Off (or the SMS failed): it goes to the email.
+        if is_enabled("sms") and send_sms(phone, f"Your Rasiko verification code is {code}", otp=code):
+            messages.success(request, _("We sent a 6-digit code by SMS to %(p)s.") % {"p": phone})
         else:
-            notify.customer_email(user.email, "otp", {"user": user, "code": code})
-            messages.success(request, _("We emailed you a 6-digit code."))
-        return redirect(request.path + "?" + request.GET.urlencode())
-    if request.method == "POST" and form.is_valid():
-        if OneTimeCode.verify(OneTimeCode.Purpose.PHONE_VERIFY, target, form.cleaned_data["code"]):
+            if is_enabled("sms"):
+                logger.warning("SMS OTP to %s failed; sent the COD verification code by email instead", phone[-4:])
+            sent, error = notify.send_email_now(user.email, "otp", {"user": user, "code": code})
+            if sent:
+                messages.success(
+                    request,
+                    _("We emailed a 6-digit code to %(e)s. Check your inbox and spam folder.") % {"e": user.email},
+                )
+            elif settings.DEBUG:
+                messages.warning(
+                    request,
+                    _("Developer mode: email is not set up (%(err)s). Your code is %(code)s.")
+                    % {"err": error, "code": code},
+                )
+            else:
+                messages.error(
+                    request,
+                    _("We couldn't send the code right now. Please try again later or choose another payment method."),
+                )
+        return redirect(request.get_full_path())
+    if request.method == "POST" and request.POST.get("action") == "check" and form.is_valid():
+        if user.phone and OneTimeCode.verify(OneTimeCode.Purpose.PHONE_VERIFY, user.phone, form.cleaned_data["code"]):
             user.phone_verified = True
             user.save(update_fields=["phone_verified"])
-            messages.success(request, _("Mobile number verified."))
-            return redirect(_safe_next(request, reverse("accounts:home")))
+            messages.success(request, _("Mobile number verified. You can now pay with Cash on Delivery."))
+            return redirect(back)
         messages.error(request, _("That code is not right or has expired."))
-    return render(request, "accounts/phone_verify.html", {"form": form})
+    return render(
+        request,
+        "accounts/phone_verify.html",
+        {
+            "form": form,
+            "phone": user.phone or suggested,
+            "sends_sms": is_enabled("sms"),
+            "next": _safe_next(request, ""),
+        },
+    )
 
 
 # ---- Two-factor authentication (TOTP) for Owner / Manager ----------------------

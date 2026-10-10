@@ -44,6 +44,8 @@ def variant(shop):
         product=p,
         label="500 ml",
         sku="ML-500",
+        units_per_box=2,
+        volume_ml=500,
         mrp=Decimal("60"),
         price=Decimal("50"),
         cost_price=Decimal("35"),

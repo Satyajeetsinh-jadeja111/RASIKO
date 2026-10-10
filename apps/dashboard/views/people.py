@@ -78,7 +78,7 @@ def customer(request, pk):
             "orders": orders,
             "coins": coin_balance(user),
             "ledger": user.coin_entries.order_by("-created_at")[:20],
-            "addresses": user.addresses.all(),
+            "addresses": user.addresses.filter(is_archived=False),
             "stats": user.orders.filter(status="delivered").aggregate(n=Count("id"), spent=Sum("total")),
         },
     )

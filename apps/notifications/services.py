@@ -1,7 +1,9 @@
 """One place that decides who gets told about what (email, WhatsApp)."""
 
 import logging
+import threading
 
+from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
@@ -71,10 +73,58 @@ def send_email(to, template, ctx, attach_invoice_order_id=None):
     subject = _subject(template, ctx)
     html, text = render_email(template, ctx)
     log = EmailLog.objects.create(to=", ".join(recipients)[:500], subject=subject[:200], template=template)
-    from .tasks import deliver_email
+    args = (log.pk, recipients, subject, html, text, attach_invoice_order_id)
+    if getattr(settings, "EMAIL_SEND_INLINE", False):
+        # Send straight away in a background thread so customers get order updates even when no Celery
+        # worker is running; the worker is only needed to retry a send that failed.
+        transaction.on_commit(lambda: threading.Thread(target=_send_in_thread, args=args, daemon=True).start())
+    else:
+        from .tasks import deliver_email
 
-    transaction.on_commit(lambda: deliver_email.delay(log.pk, recipients, subject, html, text, attach_invoice_order_id))
+        transaction.on_commit(lambda: deliver_email.delay(*args))
     return log
+
+
+def _send_in_thread(log_id, recipients, subject, html, text, attach_invoice_order_id=None):
+    from django.db import close_old_connections
+
+    from .backends import EmailNotConfigured
+    from .tasks import deliver_email, deliver_now, mark_failed
+
+    close_old_connections()
+    try:
+        log = EmailLog.objects.filter(pk=log_id).first()
+        if log is None:
+            return
+        try:
+            deliver_now(log, recipients, subject, html, text, attach_invoice_order_id)
+        except EmailNotConfigured as exc:
+            mark_failed(log, exc)
+        except Exception as exc:  # noqa: BLE001 - network/SMTP hiccup: let the worker retry later
+            mark_failed(log, exc)
+            try:
+                deliver_email.apply_async(
+                    (log_id, recipients, subject, html, text, attach_invoice_order_id), countdown=60
+                )
+            except Exception:  # noqa: BLE001 - broker down too; the failure is already in the error log
+                logger.exception("Could not queue a retry for email %s", log_id)
+    finally:
+        close_old_connections()
+
+
+def send_email_now(to, template, ctx):
+    """Send right away, without the Celery queue (for time-sensitive codes). Returns (sent, error message)."""
+    from .tasks import deliver_now, mark_failed
+
+    subject = _subject(template, ctx)
+    html, text = render_email(template, ctx)
+    log = EmailLog.objects.create(to=to[:500], subject=subject[:200], template=template)
+    try:
+        deliver_now(log, [to], subject, html, text)
+        return True, ""
+    except Exception as exc:  # noqa: BLE001 - the caller tells the customer; details go to the error log
+        mark_failed(log, exc)
+        return False, log.error
 
 
 def customer_email(to, template, ctx, event_key=None, attach_invoice_order_id=None):
@@ -126,6 +176,6 @@ def order_status_changed(order):
     ctx = {"order": order, "subject_vars": {"number": order.number}}
     attach = order.pk if order.status == "delivered" else None
     customer_email(order.user.email, template, ctx, event_key=template, attach_invoice_order_id=attach)
-    from .whatsapp import send_order_update
+    from .tasks import deliver_whatsapp_update
 
-    transaction.on_commit(lambda: send_order_update(order.pk))
+    transaction.on_commit(lambda: deliver_whatsapp_update.delay(order.pk))

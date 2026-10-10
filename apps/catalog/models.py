@@ -207,29 +207,69 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to=RandomUploadPath("products"))
     alt = models.CharField(max_length=120, blank=True)
     sort_order = models.PositiveSmallIntegerField(default=0)
+    responsive_images = models.JSONField(default=dict, blank=True, editable=False)
 
     class Meta:
         ordering = ["sort_order", "pk"]
 
+    def save(self, *args, **kwargs):
+        uploaded = bool(self.image and not self.image._committed)
+        super().save(*args, **kwargs)
+        if uploaded:
+            self.build_responsive_images()
+
+    def build_responsive_images(self):
+        from apps.core.images import reencode
+
+        from .cache import invalidate_catalog
+
+        variants = {}
+        for width in (320, 640):
+            with self.image.storage.open(self.image.name, "rb") as source:
+                content = reencode(source, max_side=width)
+                from PIL import Image
+
+                actual_width = str(Image.open(content).width)
+                content.seek(0)
+                if actual_width in variants:
+                    continue
+                name = self.image.storage.save("products/responsive/" + content.name, content)
+                variants[actual_width] = name
+        self.responsive_images = variants
+        type(self).objects.filter(pk=self.pk).update(responsive_images=variants)
+        invalidate_catalog()
+
+    @property
+    def srcset(self):
+        return ", ".join(f"{self.image.storage.url(name)} {width}w" for width, name in self.responsive_images.items())
+
 
 class ProductVariant(TimeStamped):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="variants")
-    label = models.CharField(max_length=40, help_text=_("e.g. 250 ml, 1 L, Pack of 6"))
+    label = models.CharField(_("Bottle size"), max_length=40, help_text=_("Size of one bottle, e.g. 250 ml, 1 L"))
+    # The shop sells whole boxes only. Prices are per box; stock is counted in bottles.
+    units_per_box = models.PositiveSmallIntegerField(
+        _("Bottles per box"), default=1, validators=[MinValueValidator(1)], help_text=_("e.g. 24")
+    )
     sku = models.CharField(max_length=40, unique=True)
     barcode = models.CharField(max_length=40, blank=True)
-    mrp = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(Decimal("0"))])
-    price = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(Decimal("0"))])
-    cost_price = models.DecimalField(max_digits=9, decimal_places=2, default=Decimal("0"))
+    mrp = models.DecimalField(
+        _("Box MRP"), max_digits=9, decimal_places=2, validators=[MinValueValidator(Decimal("0"))]
+    )
+    price = models.DecimalField(
+        _("Box price"), max_digits=9, decimal_places=2, validators=[MinValueValidator(Decimal("0"))]
+    )
+    cost_price = models.DecimalField(_("Box cost price"), max_digits=9, decimal_places=2, default=Decimal("0"))
     previous_price = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     price_changed_at = models.DateTimeField(null=True, blank=True)
     gst_rate = models.DecimalField(max_digits=4, decimal_places=2, default=Decimal("12.00"))
     hsn_code = models.CharField(max_length=8, default="2202")
     volume_ml = models.PositiveIntegerField(null=True, blank=True)
     weight_g = models.PositiveIntegerField(null=True, blank=True)
-    stock_qty = models.IntegerField(_("Total quantity"), default=0, validators=[MinValueValidator(0)])
+    stock_qty = models.IntegerField(_("Stock (bottles)"), default=0, validators=[MinValueValidator(0)])
     reserved_qty = models.PositiveIntegerField(default=0, editable=False)
-    low_stock_threshold = models.PositiveIntegerField(default=10)
-    max_per_order = models.PositiveSmallIntegerField(default=24)
+    low_stock_threshold = models.PositiveIntegerField(_("Low stock alert (bottles)"), default=10)
+    max_per_order = models.PositiveSmallIntegerField(_("Max boxes per order"), default=24)
     manual_out_of_stock = models.BooleanField(default=False, help_text=_("Force 'Out of stock' even with quantity"))
     is_active = models.BooleanField(default=True)
     sort_order = models.PositiveSmallIntegerField(default=0)
@@ -238,15 +278,31 @@ class ProductVariant(TimeStamped):
         ordering = ["sort_order", "price"]
 
     def __str__(self):
-        return f"{self.product.name} · {self.label}"
+        return f"{self.product.name} · {self.box_label}"
+
+    @property
+    def box_label(self):
+        """What the customer buys, e.g. "Box of 24 × 500 ml"."""
+        if self.units_per_box > 1:
+            return _("Box of %(n)s × %(size)s") % {"n": self.units_per_box, "size": self.label}
+        return self.label
+
+    @property
+    def price_per_bottle(self):
+        return (self.price / self.units_per_box).quantize(Decimal("0.01"))
 
     @property
     def available_qty(self):
+        """Bottles free to sell (stock minus bottles held for unpaid orders)."""
         return max(0, self.stock_qty - self.reserved_qty)
 
     @property
+    def available_boxes(self):
+        return self.available_qty // self.units_per_box if self.units_per_box >= 2 else 0
+
+    @property
     def in_stock(self):
-        return self.is_active and not self.manual_out_of_stock and self.available_qty > 0
+        return self.is_active and not self.manual_out_of_stock and self.available_boxes > 0
 
     @property
     def is_low_stock(self):
@@ -273,7 +329,8 @@ class ProductVariant(TimeStamped):
 
     @property
     def max_orderable(self):
-        return min(self.max_per_order, self.available_qty)
+        """Most boxes one order can take."""
+        return min(self.max_per_order, self.available_boxes)
 
     def set_price(self, new_price):
         if new_price != self.price:

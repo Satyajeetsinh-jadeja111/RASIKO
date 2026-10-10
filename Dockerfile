@@ -2,7 +2,7 @@
 FROM node:22-alpine AS css
 WORKDIR /build/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 COPY frontend/ ./
 COPY templates/ /build/templates/
 COPY apps/ /build/apps/
@@ -21,14 +21,14 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY --chown=rasiko:rasiko . .
 COPY --from=css --chown=rasiko:rasiko /build/static/css/app.css static/css/app.css
-# collectstatic needs settings that import cleanly; these throwaway values never reach production.
-RUN DJANGO_SECRET_KEY=build-only-$(python -c "import secrets;print(secrets.token_hex(32))") \
+# Asset commands load production settings; these temporary values exist only in this RUN.
+RUN export DJANGO_SECRET_KEY=build-only-$(python -c "import secrets;print(secrets.token_hex(32))") \
     FIELD_ENCRYPTION_KEY=$(python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())") \
-    python manage.py collectstatic --noinput
-RUN (cd /app && django-admin compilemessages --ignore=venv >/dev/null 2>&1 || echo "No translations compiled")
-RUN mkdir -p /app/media && chown -R rasiko:rasiko /app/media /app/staticfiles /app/locale
+    && python manage.py collectstatic --noinput \
+    && python manage.py compilemessages --ignore=venv --ignore=node_modules
+RUN mkdir -p /app/media /app/logs /shared-static && chown -R rasiko:rasiko /app/media /app/logs /app/staticfiles /app/locale /shared-static
 USER rasiko
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -fsS http://localhost:8000/healthz || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -fsS -H "Host: ${DOMAIN:-localhost}" http://localhost:8000/readyz || exit 1
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 CMD ["web"]
