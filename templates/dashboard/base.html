@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>{% block title %}Dashboard{% endblock %} · {{ store.name }}</title>
   <link rel="icon" href="{% static 'brand/rasiko-icon.svg' %}" type="image/svg+xml">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=9">
   {% block head %}{% endblock %}
 </head>
 <body class="is-dash" data-ws="{% if request.user.is_authenticated %}1{% endif %}">

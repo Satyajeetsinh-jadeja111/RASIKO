@@ -1,0 +1,10 @@
+{% load rasiko i18n %}
+<section class="empty-state box box--cream" aria-labelledby="empty-title">
+  <div class="empty-state__art">{% drink "cola" %}</div>
+  <h2 id="empty-title">{{ empty_title }}</h2>
+  <p class="muted">{{ empty_message }}</p>
+  <div class="btns empty-state__actions">
+    {% if clear_filters %}<a class="btn btn--ghost" href="{{ request.path }}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Clear filters" %}</a>{% endif %}
+    <a class="btn btn--buy" href="{% url 'storefront:search' %}">{% trans "Browse products" %}</a>
+  </div>
+</section>

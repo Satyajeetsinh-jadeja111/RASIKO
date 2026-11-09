@@ -9,6 +9,7 @@
   {% if children %}<div class="btns" style="margin-bottom:14px">{% for c in children %}<a class="btn btn--ghost btn--sm" href="{{ c.get_absolute_url }}">{{ c.local_name }}</a>{% endfor %}</div>{% endif %}
   <div class="listing">
     {# West (Varun): filters #}
+    <details class="filters-panel"><summary>{% trans "Filters" %}</summary>
     <form class="filters box" method="get" hx-get="{{ request.path }}" hx-target="#results" hx-trigger="change" hx-push-url="true" aria-label="{% trans 'Filters' %}">
       {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
       <input type="hidden" name="sort" value="{{ sort }}">
@@ -24,8 +25,8 @@
       {% for r in "43" %}<label><input type="radio" name="rating" value="{{ r }}" {% if request.GET.rating == r %}checked{% endif %}> {{ r }}★ &amp; {% trans "above" %}</label>{% endfor %}
       <noscript><button class="btn btn--buy btn--sm" style="margin-top:12px">{% trans "Apply" %}</button></noscript>
       <p style="margin-top:12px"><a class="link" href="{{ request.path }}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Clear filters" %}</a></p>
-    </form>
-    <div id="results">{% include "storefront/_results.html" %}</div>
+    </form></details>
+    <div id="results" aria-live="polite" aria-atomic="true" aria-busy="false">{% include "storefront/_results.html" %}</div>
   </div>
 </div>
 {% endblock %}

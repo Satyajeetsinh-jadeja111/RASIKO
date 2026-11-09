@@ -1,0 +1,254 @@
+[
+  {
+    "width": 320,
+    "route": "/manage/slider/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/manage/settings/delivery/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/manage/products/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/manage/settings/integrations/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/search/?q=zznomatchzz",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/p/sweet-lassi/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 320,
+    "route": "/accounts/",
+    "client": 305,
+    "scroll": 305
+  },
+  {
+    "width": 375,
+    "route": "/manage/slider/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/manage/settings/delivery/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/manage/products/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/manage/settings/integrations/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/search/?q=zznomatchzz",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/p/sweet-lassi/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 375,
+    "route": "/accounts/",
+    "client": 360,
+    "scroll": 360
+  },
+  {
+    "width": 390,
+    "route": "/manage/slider/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/manage/settings/delivery/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/manage/products/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/manage/settings/integrations/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/search/?q=zznomatchzz",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/p/sweet-lassi/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 390,
+    "route": "/accounts/",
+    "client": 375,
+    "scroll": 375
+  },
+  {
+    "width": 768,
+    "route": "/manage/slider/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/manage/settings/delivery/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/manage/products/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/manage/settings/integrations/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/search/?q=zznomatchzz",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/p/sweet-lassi/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "route": "/accounts/",
+    "client": 753,
+    "scroll": 753
+  },
+  {
+    "width": 1024,
+    "route": "/manage/slider/",
+    "client": 1024,
+    "scroll": 1024
+  },
+  {
+    "width": 1024,
+    "route": "/manage/settings/delivery/",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1024,
+    "route": "/manage/products/",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1024,
+    "route": "/manage/settings/integrations/",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1024,
+    "route": "/search/?q=zznomatchzz",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1024,
+    "route": "/p/sweet-lassi/",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1024,
+    "route": "/accounts/",
+    "client": 1009,
+    "scroll": 1009
+  },
+  {
+    "width": 1440,
+    "route": "/manage/slider/",
+    "client": 1440,
+    "scroll": 1440
+  },
+  {
+    "width": 1440,
+    "route": "/manage/settings/delivery/",
+    "client": 1425,
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "route": "/manage/products/",
+    "client": 1425,
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "route": "/manage/settings/integrations/",
+    "client": 1425,
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "route": "/search/?q=zznomatchzz",
+    "client": 1425,
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "route": "/p/sweet-lassi/",
+    "client": 1425,
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "route": "/accounts/",
+    "client": 1425,
+    "scroll": 1425
+  }
+]

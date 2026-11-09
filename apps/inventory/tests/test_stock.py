@@ -27,7 +27,7 @@ class TestStock:
     def test_cod_order_deducts(self, place, variant):
         place(qty=3)
         variant.refresh_from_db()
-        assert variant.stock_qty == 17 and variant.reserved_qty == 0
+        assert variant.stock_qty == 14 and variant.reserved_qty == 0
 
     def test_cannot_oversell(self, place, variant):
         variant.stock_qty = 2
@@ -47,7 +47,7 @@ class TestStock:
         order = place(qty=4, method="razorpay")
         variant.refresh_from_db()
         assert order.status == "pending_payment"
-        assert variant.stock_qty == 20 and variant.reserved_qty == 4 and variant.available_qty == 16
+        assert variant.stock_qty == 20 and variant.reserved_qty == 8 and variant.available_qty == 12
         StockReservation.objects.update(expires_at=timezone.now() - timedelta(minutes=1))
         expire_reservations()
         variant.refresh_from_db()
@@ -55,8 +55,38 @@ class TestStock:
         assert variant.reserved_qty == 0 and order.status == "payment_failed"
 
     def test_reservations_block_others(self, place, variant, razorpay_on):
-        variant.stock_qty = 5
+        variant.stock_qty = 10
         variant.save()
         place(qty=4, method="razorpay")
         with pytest.raises(CheckoutError):
             place(qty=2)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_concurrent_customers_cannot_buy_last_stock(place, variant):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    from django.db import close_old_connections
+
+    variant.stock_qty = 6
+    variant.save()
+    barrier = Barrier(2)
+
+    def buy():
+        close_old_connections()
+        try:
+            barrier.wait(timeout=10)
+            try:
+                place(qty=2)
+                return "placed"
+            except CheckoutError:
+                return "unavailable"
+        finally:
+            close_old_connections()
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        outcomes = list(pool.map(lambda _: buy(), range(2)))
+    assert sorted(outcomes) == ["placed", "unavailable"]
+    variant.refresh_from_db()
+    assert variant.stock_qty == 2

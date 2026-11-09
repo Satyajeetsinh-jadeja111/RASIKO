@@ -116,13 +116,16 @@ class ProductForm(forms.ModelForm):
 
 class VariantForm(forms.ModelForm):
     add_stock = forms.IntegerField(
-        required=False, label="Add stock (+/-)", help_text="Changes are logged in stock movements."
+        required=False,
+        label="Add stock in bottles (+/-)",
+        help_text="Count bottles, e.g. 2 boxes of 24 = 48. Changes are logged in stock movements.",
     )
 
     class Meta:
         model = ProductVariant
         fields = [
             "label",
+            "units_per_box",
             "sku",
             "barcode",
             "mrp",
@@ -141,10 +144,22 @@ class VariantForm(forms.ModelForm):
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
         _style(self)
-        self.fields["cost_price"].help_text = "Only managers and owners see profit."
+        self.fields["cost_price"].help_text = "Cost of one box. Only managers and owners see profit."
+        self.fields["price"].help_text = "What the customer pays for one whole box."
+        self.fields["units_per_box"].min_value = 2
+        self.fields["units_per_box"].widget.attrs["min"] = 2
+        self.fields["units_per_box"].initial = None
+        self.fields["volume_ml"].required = True
+        self.fields["volume_ml"].min_value = 1
+        self.fields["volume_ml"].label = "Volume of one bottle (ml)"
+        self.fields["units_per_box"].help_text = "Customers buy whole boxes only. Stock below is counted in bottles."
 
     def clean(self):
         data = super().clean()
+        if data.get("units_per_box") is not None and data["units_per_box"] < 2:
+            self.add_error("units_per_box", "Enter at least 2 bottles per box; individual bottles are not sold.")
+        if data.get("volume_ml") is not None and data["volume_ml"] < 1:
+            self.add_error("volume_ml", "Enter the volume of one bottle in ml.")
         mrp, price = data.get("mrp"), data.get("price")
         if mrp is not None and price is not None and price > mrp:
             raise ValidationError("Selling price can't be more than MRP.")
@@ -183,6 +198,9 @@ def product_list(request):
             "state": state,
             "categories": Category.objects.order_by("name"),
             "brands": Brand.objects.order_by("name"),
+            "not_boxed": ProductVariant.objects.filter(
+                units_per_box=1, is_active=True, product__deleted_at__isnull=True
+            ).count(),
         },
     )
 
@@ -377,6 +395,8 @@ CSV_COLUMNS = [
     "brand",
     "categories",
     "variant_label",
+    "units_per_box",
+    "volume_ml",
     "mrp",
     "price",
     "cost_price",
@@ -415,6 +435,8 @@ def products_export(request):
                     p.brand.name,
                     "|".join(c.slug for c in p.categories.all()),
                     v.label,
+                    v.units_per_box,
+                    v.volume_ml,
                     v.mrp,
                     v.price,
                     v.cost_price,
@@ -473,6 +495,10 @@ def products_import(request):
             mrp, price = _dec(row, "mrp", errors, i), _dec(row, "price", errors, i)
             if mrp is not None and price is not None and price > mrp:
                 errors.append(f"Line {i}: price is more than MRP.")
+            for field, minimum in (("units_per_box", 2), ("volume_ml", 1)):
+                value = (row.get(field) or "").strip()
+                if not value.isdigit() or int(value) < minimum:
+                    errors.append(f"Line {i}: {field} must be a whole number of at least {minimum}.")
             qty = (row.get("stock_qty") or "").strip()
             if qty and not qty.isdigit():
                 errors.append(f"Line {i}: stock_qty must be a whole number.")
@@ -522,7 +548,7 @@ def _import_row(request, sku, row, mrp, price, errors, line):
         val = _dec(row, key, errors, line, required=False)
         if val is not None:
             fields[key] = val
-    for key in ("low_stock_threshold", "max_per_order"):
+    for key in ("units_per_box", "volume_ml", "low_stock_threshold", "max_per_order"):
         if (row.get(key) or "").strip().isdigit():
             fields[key] = int(row[key])
     if (row.get("hsn_code") or "").strip():

@@ -23,7 +23,8 @@
     </aside>
   </div>
   {% else %}
-  <div class="box box--cream" style="text-align:center;padding:40px">{% drink "lemon" %}<p style="font:600 22px var(--font-head)">{% trans "Your cart is empty" %}</p><a class="btn btn--buy" href="{% url 'storefront:home' %}">{% trans "Start shopping" %}</a></div>
+  {% trans "Your cart is empty" as empty_title %}{% trans "Find something you love and add it to your cart." as empty_message %}
+  {% include "partials/empty_state.html" %}
   {% endif %}
 </div>
 {% endblock %}

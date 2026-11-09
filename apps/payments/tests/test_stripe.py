@@ -54,6 +54,7 @@ def test_stripe_payment_flow(place, stripe_on, variant):
                 "id": "pi_1",
                 "object": "payment_intent",
                 "amount": int(order.total * 100),
+                "currency": "inr",
                 "latest_charge": "ch_1",
             }
         },
@@ -89,7 +90,7 @@ def test_stripe_return_checks_intent(place, stripe_on, client, customer):
     assert r["Location"] == order.get_absolute_url()
     with mock.patch("stripe.StripeClient") as sc:
         sc.return_value.v1.payment_intents.retrieve.return_value = SimpleNamespace(
-            status="succeeded", latest_charge="ch_2", id="pi_2"
+            status="succeeded", latest_charge="ch_2", id="pi_2", amount=int(order.total * 100), currency="inr"
         )
         r = client.get(f"/payments/pay/{order.public_id}/stripe/")
     assert r["Location"].endswith("/thank-you/")

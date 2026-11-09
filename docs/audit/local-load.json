@@ -1,0 +1,18 @@
+{
+  "environment": "local Django DEBUG client, PostgreSQL14; not Oracle or HTTP/Lighthouse",
+  "concurrency": 25,
+  "requests": 300,
+  "elapsed_seconds": 21.218124751998403,
+  "browse": {
+    "p95_ms": 2334.8,
+    "status_counts": {
+      "200": 240
+    }
+  },
+  "checkout-page": {
+    "p95_ms": 1914.8,
+    "status_counts": {
+      "200": 60
+    }
+  }
+}

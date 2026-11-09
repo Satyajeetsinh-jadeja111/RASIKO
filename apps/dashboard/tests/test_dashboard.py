@@ -159,9 +159,9 @@ def test_csv_export_blocks_formulas(client, manager, variant):
 def test_csv_import_dry_run_and_save(client, manager, variant):
     c = dash_client(client, manager)
     data = (
-        "sku,product_name,brand,variant_label,mrp,price,stock_qty\n"
-        "ML-500,Mango Lassi,Gir Dairy,500 ml,60,45,30\n"
-        "KC-200,Kokum Sharbat,Rasiko,200 ml,30,25,12\n"
+        "sku,product_name,brand,variant_label,mrp,price,stock_qty,units_per_box,volume_ml\n"
+        "ML-500,Mango Lassi,Gir Dairy,500 ml,60,45,30,24,500\n"
+        "KC-200,Kokum Sharbat,Rasiko,200 ml,30,25,12,24,200\n"
     )
     f = io.BytesIO(data.encode())
     f.name = "p.csv"

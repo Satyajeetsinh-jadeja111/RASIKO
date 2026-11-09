@@ -236,6 +236,14 @@ FAQS = [
     ),
     (
         "products",
+        "How do I find a product?",
+        "Type a drink, brand or flavour in the search bar at the top of any page; suggestions appear as you type. "
+        "You can also open a category or brand from the home page, then sort by price or popularity and use the "
+        "filters on the left.",
+        "search find look browse category brand filter sort product item",
+    ),
+    (
+        "products",
         "Are your products genuine?",
         "Yes. We are FSSAI licensed and source directly from brands and authorised distributors.",
         "genuine fake original fssai",

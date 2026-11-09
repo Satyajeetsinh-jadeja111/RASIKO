@@ -15,6 +15,18 @@
     {% if c.row.last_test_ok is not None %}<div>Last test: <span class="chip {% if c.row.last_test_ok %}chip--green{% else %}chip--red{% endif %}">{% if c.row.last_test_ok %}Passed{% else %}Failed{% endif %}</span> {{ c.row.last_test_message }}</div>{% endif %}
     {% if c.row.updated_by %}<div>Last changed by {{ c.row.updated_by.email }} on {{ c.row.updated_at|date:"d M Y, H:i" }}</div>{% endif %}
   </div>
+  {% if c.readiness %}<div class="gateway-readiness" aria-label="Payment readiness">
+    <h3>Setup checklist · {{ c.readiness.mode }} mode</h3>
+    <ol>
+      <li>Enter matching credentials and save/test: {% if c.readiness.connection %}Passed{% else %}Not verified{% endif %}</li>
+      <li>Public HTTPS URL: {% if c.readiness.https %}Configured{% else %}Required before live payments{% endif %}</li>
+      <li>Configure the webhook URL above and send a signed test event: {% if c.readiness.webhook %}Received since last settings change{% else %}Not received since last settings change{% endif %}</li>
+      {% if c.spec.slug == "razorpay" %}<li>Enable automatic payment capture in Razorpay: {% if c.readiness.capture %}Owner confirmed{% else %}Not confirmed{% endif %}. Subscribe to payment.captured, payment.failed, refund.processed, refund.failed.</li>{% else %}<li>Enable eligible methods in Stripe. Subscribe to payment_intent.succeeded, payment_intent.payment_failed, payment_intent.canceled, refund.created, refund.updated.</li>{% endif %}
+      <li>Choose this gateway in Store settings and complete a sandbox payment/refund before going live.</li>
+    </ol>
+    <p>Methods depend on account approval, currency, customer eligibility, and provider settings. Credentials cannot enable unavailable methods.</p>
+    <p>Needs attention: {{ c.readiness.pending_events }} pending webhooks · {{ c.readiness.uncertain_payments }} uncertain payment creations · {{ c.readiness.uncertain_refunds }} uncertain refunds. Historical processing continues when checkout is switched off; removing keys prevents it.</p>
+  </div>{% endif %}
   <div class="form-grid form-grid--2" data-int-fields>
     {% for f in c.fields %}<div class="field"><label class="label" for="{{ c.spec.slug }}-{{ f.name }}">{{ f.label }}{% if f.required %} *{% endif %}</label>
       {% if f.choices %}<select class="input" id="{{ c.spec.slug }}-{{ f.name }}" name="{{ f.name }}">{% for ch in f.choices %}<option value="{{ ch }}" {% if ch == f.value %}selected{% endif %}>{{ ch }}</option>{% endfor %}</select>

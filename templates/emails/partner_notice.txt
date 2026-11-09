@@ -1,0 +1,3 @@
+{{ title }}
+{{ message }}
+{{ SITE_URL }}/partners/

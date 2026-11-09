@@ -1,9 +1,9 @@
 {% extends "dashboard/base.html" %}{% load rasiko %}
 {% block title %}Competitor watch{% endblock %}{% block heading %}Competitor watch{% endblock %}
 {% block content %}
-<p class="muted">Note prices you see at nearby shops or apps. Green means you are cheaper.</p>
+<p class="muted">Note prices you see at nearby shops or apps for the same box (same number of bottles). Green means you are cheaper.</p>
 <form class="panel-box toolbar" method="post">{% csrf_token %}
-  <label class="sr-only" for="cv">Item</label><select class="input" id="cv" name="variant" required>{% for v in variants %}<option value="{{ v.pk }}">{{ v.product.name }} {{ v.label }} ({{ v.price|rupee }})</option>{% endfor %}</select>
+  <label class="sr-only" for="cv">Item</label><select class="input" id="cv" name="variant" required>{% for v in variants %}<option value="{{ v.pk }}">{{ v.product.name }} {{ v.box_label }} ({{ v.price|rupee }})</option>{% endfor %}</select>
   <label class="sr-only" for="cc">Competitor</label><input class="input" id="cc" name="competitor" placeholder="Shop or app name" required>
   <label class="sr-only" for="cp">Price</label><input class="input qty-input" id="cp" name="price" inputmode="decimal" placeholder="₹" required>
   <label class="sr-only" for="cn">Note</label><input class="input" id="cn" name="note" placeholder="Note (optional)">

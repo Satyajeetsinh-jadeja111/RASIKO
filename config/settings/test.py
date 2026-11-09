@@ -16,3 +16,10 @@ AXES_ENABLED = False
 REST_FRAMEWORK = {**REST_FRAMEWORK, "DEFAULT_THROTTLE_CLASSES": []}  # noqa: F405
 RATELIMIT_ENABLED = False
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+EMAIL_SEND_INLINE = False  # tests run Celery eagerly; a thread would not see the test transaction
+
+# Tests never use real credentials from the developer environment.
+RAZORPAY_KEY_ID = ""
+RAZORPAY_KEY_SECRET = ""  # nosec B105
+RAZORPAY_WEBHOOK_SECRET = ""  # nosec B105
+RAZORPAY_ENABLED = False

@@ -7,6 +7,7 @@ site uses the free fallback described in ``fallback``.
 
 from dataclasses import dataclass, field
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.module_loading import import_string
 
@@ -45,6 +46,14 @@ REGISTRY: dict[str, IntegrationSpec] = {
             where="Razorpay Dashboard -> Account & Settings -> API Keys (webhook secret under Webhooks).",
             fallback="Online payment is hidden at checkout; Cash on Delivery only.",
             fields=(
+                Field(
+                    "capture_confirmed",
+                    "Automatic capture enabled in Razorpay dashboard",
+                    required=False,
+                    choices=("no", "yes"),
+                    default="no",
+                    help="Confirm after enabling automatic capture in Razorpay. Authorization alone does not fulfill orders.",
+                ),
                 Field("key_id", "Key ID"),
                 Field("key_secret", "Key secret", secret=True),
                 Field("webhook_secret", "Webhook secret", secret=True),
@@ -100,6 +109,25 @@ REGISTRY: dict[str, IntegrationSpec] = {
             tester="apps.support.ai.test_connection",
         ),
         IntegrationSpec(
+            slug="gemini",
+            name="Google Gemini AI help chat",
+            cost="Free tier with rate limits, then pay per use (Google AI Studio).",
+            where="aistudio.google.com -> Get API key.",
+            fallback="The FAQ-matching help bot answers from Help Center articles.",
+            fields=(
+                Field("api_key", "API key", secret=True),
+                Field("model", "Model name", default="gemini-flash-latest"),
+                Field(
+                    "insights_summary",
+                    "Also write the daily insights summary (yes/no)",
+                    default="no",
+                    required=False,
+                    choices=("yes", "no"),
+                ),
+            ),
+            tester="apps.support.gemini.test_connection",
+        ),
+        IntegrationSpec(
             slug="sms",
             name="SMS OTP",
             cost="Pay per SMS. Indian SMS needs DLT registration.",
@@ -151,16 +179,22 @@ REGISTRY: dict[str, IntegrationSpec] = {
 }
 
 
-def get_config(slug: str) -> dict | None:
-    """Return the decrypted config for an enabled integration, or None when it is off."""
+def get_config(slug: str, *, allow_disabled=False) -> dict | None:
+    """Decrypt on demand; disabled credentials are only for historical payment processing."""
     from .models import Integration
 
-    cached = cache.get(CACHE_KEY.format(slug=slug))
-    if cached is not None:
-        return cached or None
     row = Integration.objects.filter(slug=slug).first()
-    config = row.config() if row and row.enabled else {}
-    cache.set(CACHE_KEY.format(slug=slug), config, 300)
+    if row and not row.enabled and not allow_disabled:
+        return None
+    config = row.config() if row else {}
+    if slug == "razorpay" and settings.RAZORPAY_KEY_ID and settings.RAZORPAY_KEY_SECRET:
+        if not row and not (settings.RAZORPAY_ENABLED or allow_disabled):
+            return None
+        config.update(key_id=settings.RAZORPAY_KEY_ID, key_secret=settings.RAZORPAY_KEY_SECRET)
+        if settings.RAZORPAY_WEBHOOK_SECRET:
+            config["webhook_secret"] = settings.RAZORPAY_WEBHOOK_SECRET
+    elif not row:
+        return None
     return config or None
 
 
@@ -179,4 +213,22 @@ def run_test(slug: str, config: dict) -> tuple[bool, str]:
     try:
         return import_string(spec.tester)(config)
     except Exception as exc:  # noqa: BLE001 - surface any provider error to the owner
-        return False, f"Connection failed: {exc.__class__.__name__}: {str(exc)[:200]}"
+        return False, f"Connection failed ({exc.__class__.__name__}). Check the credentials and provider dashboard."
+
+
+REGISTRY["google_translate"] = IntegrationSpec(
+    slug="google_translate",
+    name="Google Cloud Translation",
+    cost="Provider usage charges",
+    where="Google Cloud Console: enable Cloud Translation and restrict its API key to the server.",
+    fallback="Original seller content remains visible.",
+    fields=(Field("api_key", "API key", secret=True),),
+)
+REGISTRY["rider_push"] = IntegrationSpec(
+    slug="rider_push",
+    name="Rasiko Rider push (FCM)",
+    cost="Firebase plan dependent",
+    where="Firebase project service account; configure APNs and Android applications separately.",
+    fallback="Foreground rider app polling; background alerts unavailable.",
+    fields=(Field("service_account", "Service account JSON", secret=True),),
+)

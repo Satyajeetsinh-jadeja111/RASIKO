@@ -19,6 +19,13 @@ DEBUG = env.bool("DJANGO_DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 SITE_URL = env("SITE_URL", default="http://localhost:8000").rstrip("/")
+# Railway: accept its free https://<name>.up.railway.app address (and its health checker) without extra settings.
+RAILWAY_PUBLIC_DOMAIN = env("RAILWAY_PUBLIC_DOMAIN", default="")
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS = [*ALLOWED_HOSTS, RAILWAY_PUBLIC_DOMAIN, "healthcheck.railway.app"]
+    CSRF_TRUSTED_ORIGINS = [*CSRF_TRUSTED_ORIGINS, f"https://{RAILWAY_PUBLIC_DOMAIN}"]
+    if not env("SITE_URL", default=""):
+        SITE_URL = f"https://{RAILWAY_PUBLIC_DOMAIN}"
 
 # Fernet key that encrypts integration secrets and SMTP passwords at rest.
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY", default="")
@@ -61,6 +68,7 @@ INSTALLED_APPS = [
     "apps.reviews",
     "apps.notifications",
     "apps.support",
+    "apps.marketplace",
     "apps.analytics",
     "apps.dashboard",
 ]
@@ -111,7 +119,7 @@ DATABASES = {
     "default": env.db("DATABASE_URL", default="postgres://rasiko:rasiko@localhost:5432/rasiko"),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=0)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
@@ -119,12 +127,22 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": REDIS_URL,
-        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient", "IGNORE_EXCEPTIONS": True},
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+            "SOCKET_CONNECT_TIMEOUT": 2,
+            "SOCKET_TIMEOUT": 2,
+        },
         "KEY_PREFIX": "rasiko",
     }
 }
 CHANNEL_LAYERS = {
-    "default": {"BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": {"hosts": [REDIS_URL]}},
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        # redis-py 8 defaults to a 5 s socket timeout, the same as channels_redis's blocking read (BZPOPMIN, 5 s),
+        # so idle websockets crashed with "Timeout reading from localhost:6379". Give reads room to block.
+        "CONFIG": {"hosts": [{"address": env("CHANNEL_REDIS_URL", default=REDIS_URL), "socket_timeout": 30}]},
+    },
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -150,7 +168,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Brute-force protection
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1  # hours
-AXES_LOCKOUT_PARAMETERS = ["ip_address", "username"]
+# Combine identity and IP so one customer cannot lock every user on a shared network.
+AXES_LOCKOUT_PARAMETERS = [["ip_address", "username"]]
 AXES_RESET_ON_SUCCESS = True
 AXES_USERNAME_FORM_FIELD = "username"
 
@@ -185,9 +204,13 @@ REST_FRAMEWORK = {
 }
 
 # Celery
-CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default=REDIS_URL)
+CELERY_RESULT_BACKEND = None
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+EMAIL_SEND_INLINE = env.bool("EMAIL_SEND_INLINE", default=False)
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False  # keep our handlers so worker/beat errors reach logs/errors.log
 CELERY_TASK_ACKS_LATE = True
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
@@ -196,6 +219,7 @@ CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
 from celery.schedules import crontab  # noqa: E402
 
 CELERY_BEAT_SCHEDULE = {
+    "reconcile-payments": {"task": "apps.payments.tasks.reconcile_payments", "schedule": 300.0},
     "expire-stock-reservations": {"task": "apps.inventory.tasks.expire_reservations", "schedule": 60.0},
     "run-subscriptions": {"task": "apps.orders.tasks.run_subscriptions", "schedule": crontab(hour=6, minute=0)},
     "daily-insights": {"task": "apps.analytics.tasks.daily_insights", "schedule": crontab(hour=5, minute=30)},
@@ -249,15 +273,59 @@ CONTENT_SECURITY_POLICY = {
     }
 }
 
+LOG_DIR = Path(env("LOG_DIR", default=str(BASE_DIR / "logs")))
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {"plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"}},
-    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
-    "root": {"handlers": ["console"], "level": env("LOG_LEVEL", default="INFO")},
-    "loggers": {"django.security": {"handlers": ["console"], "level": "WARNING", "propagate": False}},
+    "formatters": {
+        "plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"},
+        # Parsed by apps.core.errorlog for the dashboard's Error log page; keep the " | " layout.
+        "file": {"format": "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"},
+    },
+    "filters": {"skip_client_errors": {"()": "apps.core.errorlog.SkipClientErrors"}},
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "plain"},
+        "errors_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": str(LOG_DIR / "errors.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "encoding": "utf-8",
+            "level": "WARNING",
+            "formatter": "file",
+            "filters": ["skip_client_errors"],
+        },
+    },
+    "root": {"handlers": ["console", "errors_file"], "level": env("LOG_LEVEL", default="INFO")},
+    "loggers": {"django.security": {"handlers": ["console", "errors_file"], "level": "WARNING", "propagate": False}},
 }
 
 # Business defaults (all editable in the dashboard once seeded)
 OWNER_EMAIL = env("OWNER_EMAIL", default="")
 OWNER_PASSWORD = env("OWNER_PASSWORD", default="")
+
+# Optional server-managed Razorpay credentials. Never serialize the secret to clients.
+RAZORPAY_KEY_ID = env("RAZORPAY_KEY_ID", default="")
+RAZORPAY_KEY_SECRET = env("RAZORPAY_KEY_SECRET", default="")
+RAZORPAY_WEBHOOK_SECRET = env("RAZORPAY_WEBHOOK_SECRET", default="")
+RAZORPAY_ENABLED = env.bool("RAZORPAY_ENABLED", default=False)
+
+# Marketplace work is gated by database feature switches (all off initially).
+CELERY_BEAT_SCHEDULE["marketplace-dispatch"] = {
+    "task": "apps.marketplace.tasks.retry_dispatch",
+    "schedule": 15.0,
+}
+
+# Enable only after Route account approval and recovery acceptance checks.
+MARKETPLACE_ROUTE_APPROVED = env.bool("MARKETPLACE_ROUTE_APPROVED", default=False)
+
+CELERY_BEAT_SCHEDULE["marketplace-settlements"] = {
+    "task": "apps.marketplace.tasks.reconcile_settlements",
+    "schedule": 300.0,
+}
+
+CELERY_BEAT_SCHEDULE["marketplace-monitoring"] = {
+    "task": "apps.marketplace.tasks.monitor_marketplace",
+    "schedule": 300.0,
+}

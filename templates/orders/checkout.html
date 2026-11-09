@@ -11,10 +11,16 @@
         <h2><span class="step-no">1</span>{% trans "Deliver to" %}</h2>
         <div style="display:grid;gap:10px">
           {% for a in addresses %}
-          <a class="choice" href="?address={{ a.public_id }}" {% if a.pk == address.pk %}style="border-color:var(--tulsi);background:var(--tulsi-light)"{% endif %}>
-            <svg class="icon" style="flex:0 0 auto;color:var(--kumkum)"><use href="#i-pin"/></svg>
-            <span><b>{{ a.label }}</b> · {{ a.name }} · {{ a.phone }}<br><span class="muted">{{ a.as_text }}</span></span>
-          </a>{% endfor %}
+          <div class="addr-row">
+            <a class="choice" href="?address={{ a.public_id }}" {% if a.pk == address.pk %}style="border-color:var(--tulsi);background:var(--tulsi-light)" aria-current="true"{% endif %}>
+              <svg class="icon" style="flex:0 0 auto;color:var(--kumkum)"><use href="#i-pin"/></svg>
+              <span><b>{{ a.label }}</b> · {{ a.name }} · {{ a.phone }}<br><span class="muted">{{ a.as_text }}</span></span>
+            </a>
+            <div class="addr-row__actions">
+              <a class="link" href="{% url 'accounts:address_edit' a.public_id %}?next={% url 'orders:checkout' %}">{% trans "Edit" %}</a>
+              <button class="linkbtn" type="submit" form="del-{{ a.public_id }}">{% trans "Remove" %}</button>
+            </div>
+          </div>{% endfor %}
         </div>
         <p style="margin:10px 0 0"><a class="link" href="{% url 'accounts:address_new' %}?next={% url 'orders:checkout' %}">+ {% trans "Add a new address" %}</a></p>
         {% if totals.delivery and totals.delivery.ok %}<p class="eta" style="margin-top:12px"><svg class="icon" style="width:18px;height:18px"><use href="#i-bolt"/></svg>{% blocktrans with e=totals.delivery.eta_text %}ASAP delivery {{ e }}{% endblocktrans %}{% if totals.delivery.fast %} · {% trans "Rajkot's fastest" %}{% endif %}</p>{% endif %}
@@ -37,7 +43,7 @@
         {% for value, label, available, reason in methods %}
           <label class="choice{% if not available %} choice--off{% endif %}">
             <input type="radio" name="payment_method" value="{{ value }}" {% if not available %}disabled{% elif forloop.first %}checked{% endif %} required>
-            <span><b>{{ label }}</b>{% if reason %}<br><span class="muted">{{ reason }}</span>{% elif value == "cod" and needs_phone %}<br><span class="muted">{% trans "We'll verify your mobile number once before your first COD order." %} <a class="link" href="{% url 'accounts:phone_verify' %}?next={% url 'orders:checkout' %}">{% trans "Verify now" %}</a></span>{% endif %}</span>
+            <span><b>{{ label }}</b>{% if reason %}<br><span class="muted">{{ reason }}</span>{% elif value == "cod" and needs_phone %}<br><span class="muted">{% if sms_on %}{% trans "First COD order? Verify your mobile once with a 6-digit code sent by SMS." %}{% else %}{% trans "First COD order? Confirm once with a 6-digit code sent to your email." %}{% endif %}</span> <a class="link" href="{% url 'accounts:phone_verify' %}?next={{ request.get_full_path|urlencode }}">{% trans "Verify now" %} →</a>{% endif %}</span>
           </label>
         {% endfor %}
         </div>
@@ -64,5 +70,6 @@
       <p style="text-align:center;font-size:13px"><a class="link" href="{% url 'storefront:page' 'refund-policy' %}">{% trans "Refund & cancellation policy" %}</a></p>
     </aside>
   </form>
+  {% for a in addresses %}<form id="del-{{ a.public_id }}" action="{% url 'accounts:address_delete' a.public_id %}?next={% url 'orders:checkout' %}" method="post" data-confirm="{% trans 'Remove this address?' %}" hidden>{% csrf_token %}</form>{% endfor %}
 </div>
 {% endblock %}

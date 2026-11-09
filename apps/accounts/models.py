@@ -34,6 +34,9 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     class Role(models.TextChoices):
         CUSTOMER = "customer", _("Customer")
+        HEAD = "head", _("Brand Head")
+        SELLER = "seller", _("Seller")
+        RIDER = "rider", _("Rider")
         STAFF = "staff", _("Staff")
         MANAGER = "manager", _("Manager")
         OWNER = "owner", _("Owner")
@@ -61,7 +64,7 @@ class User(AbstractUser):
         self.username = self.email
         if not self.referral_code:
             self.referral_code = secrets.token_hex(4).upper()
-        if self.role != self.Role.CUSTOMER:
+        if self.role in (self.Role.STAFF, self.Role.MANAGER, self.Role.OWNER):
             self.is_staff = True
         super().save(*args, **kwargs)
 
@@ -79,11 +82,13 @@ class User(AbstractUser):
 
     @property
     def is_dashboard_user(self):
-        return self.is_active and (self.is_superuser or self.role != self.Role.CUSTOMER)
+        return self.is_active and (
+            self.is_superuser or self.role in (self.Role.STAFF, self.Role.MANAGER, self.Role.OWNER)
+        )
 
     @property
     def requires_2fa(self):
-        return self.is_manager_or_owner
+        return self.is_manager_or_owner or self.role in (self.Role.HEAD, self.Role.SELLER)
 
     @property
     def display_name(self):
@@ -103,6 +108,8 @@ class Address(models.Model):
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     lng = models.DecimalField(max_digits=9, decimal_places=6)
     is_default = models.BooleanField(default=False)
+    # "Removed" by the customer but still linked to past orders, so it is hidden instead of deleted.
+    is_archived = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

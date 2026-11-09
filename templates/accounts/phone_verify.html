@@ -1,9 +1,22 @@
 {% extends "base.html" %}{% load i18n %}
-{% block title %}{% trans "Verify mobile" %} · {{ store.name }}{% endblock %}
+{% block title %}{% if sends_sms %}{% trans "Verify mobile" %}{% else %}{% trans "Confirm by email" %}{% endif %} · {{ store.name }}{% endblock %}
 {% block content %}<div class="page"><div class="auth box">
-<h1 class="page-title">{% trans "Verify your mobile" %}</h1>
-<p class="page-sub">{% blocktrans with p=user.phone %}We'll send a 6-digit code for {{ p }}. You need this once before your first Cash on Delivery order.{% endblocktrans %}</p>
-<form method="post" style="margin-bottom:14px">{% csrf_token %}<input type="hidden" name="action" value="send"><button class="btn btn--gold btn--sm">{% trans "Send code" %}</button></form>
-<form method="post" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ request.GET.next }}">
+{% if sends_sms %}<h1 class="page-title">{% trans "Verify your mobile" %}</h1>
+<p class="page-sub">{% trans "Before your first Cash on Delivery order we send a 6-digit code by SMS to your mobile. It takes a minute." %}</p>
+{% else %}<h1 class="page-title">{% trans "Confirm with an email code" %}</h1>
+<p class="page-sub">{% blocktrans with e=user.email %}Before your first Cash on Delivery order we email a 6-digit code to {{ e }}. Add the mobile number the rider should call, then enter the code.{% endblocktrans %}</p>{% endif %}
+
+<h2 style="font:600 17px var(--font-head);margin:0 0 8px"><span class="step-no">1</span>{% trans "Get a code" %}</h2>
+<form method="post" style="margin-bottom:18px">{% csrf_token %}<input type="hidden" name="action" value="send"><input type="hidden" name="next" value="{{ next }}">
+  <label class="label" for="phone">{% if sends_sms %}{% trans "Mobile number" %}{% else %}{% trans "Mobile number (for the rider)" %}{% endif %}</label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="input" id="phone" name="phone" value="{{ phone }}" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="98XXXXXXXX" style="flex:1 1 180px" required>
+  <button class="btn btn--gold btn--sm" style="height:46px">{% trans "Send code" %}</button></div>
+  <div class="help" style="font-size:13px;color:var(--kajal-soft);margin-top:6px">{% if sends_sms %}{% trans "We'll send the code by SMS to this number." %}{% else %}{% blocktrans with e=user.email %}We'll email the code to {{ e }}.{% endblocktrans %}{% endif %}</div>
+</form>
+
+<h2 style="font:600 17px var(--font-head);margin:0 0 8px"><span class="step-no">2</span>{% trans "Enter the code" %}</h2>
+<form method="post" novalidate>{% csrf_token %}<input type="hidden" name="action" value="check"><input type="hidden" name="next" value="{{ next }}">
 {% for f in form %}{% include "partials/field.html" %}{% endfor %}
-<button class="btn btn--buy btn--block">{% trans "Verify" %}</button></form></div></div>{% endblock %}
+<button class="btn btn--buy btn--block">{% trans "Verify" %}</button></form>
+{% if next %}<p style="margin-top:14px"><a class="link" href="{{ next }}">← {% trans "Back to checkout" %}</a></p>{% endif %}
+</div></div>{% endblock %}

@@ -13,15 +13,17 @@ class StaffSessionMiddleware:
 
     def __call__(self, request):
         user = getattr(request, "user", None)
-        if user is not None and user.is_authenticated and user.is_dashboard_user:
+        if user is not None and user.is_authenticated and (user.is_dashboard_user or user.requires_2fa):
             now = int(time.time())
             last = request.session.get("staff_last_seen", now)
             if now - last > settings.STAFF_IDLE_TIMEOUT_SECONDS:
                 logout(request)
                 return redirect(f"/accounts/login/?next={request.path}")
             request.session["staff_last_seen"] = now
-            if request.path.startswith("/" + settings.ADMIN_URL) or request.path.startswith(
-                "/" + settings.DJANGO_ADMIN_URL
+            if (
+                request.path.startswith("/" + settings.ADMIN_URL)
+                or request.path.startswith("/" + settings.DJANGO_ADMIN_URL)
+                or request.path.startswith("/partners/")
             ):
                 if user.requires_2fa and not user.is_verified():
                     from django_otp.plugins.otp_totp.models import TOTPDevice

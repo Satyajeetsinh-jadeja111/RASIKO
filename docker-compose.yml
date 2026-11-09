@@ -2,38 +2,60 @@
 # Needs a filled .env (copy .env.example) and DOMAIN set for Nginx, e.g. DOMAIN=rasiko.in docker compose up -d
 x-app: &app
   build: .
-  image: rasiko:latest
+  image: ${RASIKO_IMAGE:-rasiko:latest}
   env_file: .env
   restart: unless-stopped
+  init: true
+  logging: &logging
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
   depends_on:
     db: { condition: service_healthy }
     redis: { condition: service_healthy }
+    redis-cache: { condition: service_healthy }
   volumes:
     - media:/app/media
+    - logs:/app/logs
+    - staticfiles:/shared-static
 
 services:
   web:
     <<: *app
     command: ["web"]
     expose: ["8000"]
+    mem_limit: 2g
+    cpus: 1.5
+
+  release:
+    <<: *app
+    command: ["release"]
+    restart: "no"
+    profiles: ["tools"]
+    healthcheck: { disable: true }
 
   worker:
     <<: *app
     command: ["worker"]
+    mem_limit: 1g
+    cpus: 0.75
     healthcheck: { disable: true }
 
   beat:
     <<: *app
     command: ["beat"]
+    mem_limit: 256m
     healthcheck: { disable: true }
 
   db:
     image: postgres:16-alpine
+    logging: *logging
+    mem_limit: 2g
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-rasiko}
       POSTGRES_USER: ${POSTGRES_USER:-rasiko}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=100", "-c", "work_mem=4MB"]
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -42,8 +64,10 @@ services:
 
   redis:
     image: redis:7-alpine
+    logging: *logging
+    mem_limit: 768m
     restart: unless-stopped
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}", "--appendonly", "yes"]
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "noeviction"]
     volumes: [redisdata:/data]
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a $${REDIS_PASSWORD} ping | grep PONG"]
@@ -52,8 +76,24 @@ services:
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
 
+  redis-cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    logging: *logging
+    mem_limit: 384m
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD}", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$REDIS_PASSWORD redis-cli ping | grep PONG"]
+      interval: 10s
+      retries: 10
+
   nginx:
     image: nginx:1.27-alpine
+    logging: *logging
+    mem_limit: 256m
+    command: ["/bin/sh", "/nginx-start.sh"]
     restart: unless-stopped
     depends_on: [web]
     ports: ["80:80", "443:443"]
@@ -63,12 +103,15 @@ services:
     volumes:
       - ./docker/nginx.conf:/etc/nginx/templates/default.conf.template:ro
       - ./docker/proxy_common.conf:/etc/nginx/proxy_common.conf:ro
+      - staticfiles:/app/staticfiles:ro
+      - ./docker/nginx-start.sh:/nginx-start.sh:ro
       - media:/app/media:ro
       - certbot-www:/var/www/certbot:ro
       - letsencrypt:/etc/letsencrypt:ro
 
   certbot:
     image: certbot/certbot:latest
+    logging: *logging
     profiles: ["tls"]
     volumes:
       - certbot-www:/var/www/certbot
@@ -77,16 +120,29 @@ services:
 
   backup:
     image: postgres:16-alpine
+    logging: *logging
+    mem_limit: 256m
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
     env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rasiko}
+      POSTGRES_DB: ${POSTGRES_DB:-rasiko}
     entrypoint: ["/bin/sh", "/backup.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /backups/last-success && find /backups/last-success -mmin -1500 | grep -q ."]
+      interval: 1h
+      start_period: 5m
+      retries: 1
     volumes:
       - ./docker/backup.sh:/backup.sh:ro
       - ./backups:/backups
+      - media:/media:ro
 
 volumes:
+  staticfiles:
+  logs:
   pgdata:
   redisdata:
   media:

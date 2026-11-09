@@ -1,0 +1,2 @@
+{{ brand }}: {{ code }}
+Share this code only when receiving this delivery.

@@ -10,44 +10,60 @@ from .models import EmailLog
 logger = logging.getLogger(__name__)
 
 
+def deliver_now(log, recipients, subject, html, text, attach_invoice_order_id=None):
+    """Send one email right away and mark its log SENT. Raises EmailNotConfigured or the transport error."""
+    from django.conf import settings
+
+    from apps.core.integrations import get_config
+
+    log.attempts += 1
+    if settings.EMAIL_BACKEND.endswith("DashboardSMTPBackend"):
+        connection = DashboardSMTPBackend()
+        sender = from_address(get_config("smtp"))
+    else:  # tests / custom backends
+        from django.core.mail import get_connection
+
+        connection = get_connection()
+        sender = settings.DEFAULT_FROM_EMAIL
+    msg = EmailMultiAlternatives(subject, text, sender, recipients, connection=connection)
+    msg.attach_alternative(html, "text/html")
+    if attach_invoice_order_id:
+        from apps.orders.invoice import invoice_pdf
+        from apps.orders.models import Order
+
+        order = Order.objects.get(pk=attach_invoice_order_id)
+        msg.attach(f"Rasiko-invoice-{order.number}.pdf", invoice_pdf(order), "application/pdf")
+    msg.send()
+    log.status = EmailLog.Status.SENT
+    log.sent_at = timezone.now()
+    log.error = ""
+    log.save(update_fields=["status", "sent_at", "attempts", "error"])
+
+
+def mark_failed(log, exc):
+    not_configured = isinstance(exc, EmailNotConfigured)
+    log.status = EmailLog.Status.NOT_SENT if not_configured else EmailLog.Status.FAILED
+    log.error = (str(exc) if not_configured else f"{exc.__class__.__name__}: {exc}")[:500]
+    log.save(update_fields=["status", "attempts", "error"])
+    logger.warning("Email '%s' to %s not sent: %s", log.subject, log.to, log.error)
+
+
 @shared_task(bind=True, max_retries=4, default_retry_delay=60)
 def deliver_email(self, log_id, recipients, subject, html, text, attach_invoice_order_id=None):
     log = EmailLog.objects.filter(pk=log_id).first()
     if log is None:
         return
-    log.attempts += 1
     try:
-        from django.conf import settings
-
-        from apps.core.integrations import get_config
-
-        if settings.EMAIL_BACKEND.endswith("DashboardSMTPBackend"):
-            connection = DashboardSMTPBackend()
-            sender = from_address(get_config("smtp"))
-        else:  # tests / custom backends
-            from django.core.mail import get_connection
-
-            connection = get_connection()
-            sender = settings.DEFAULT_FROM_EMAIL
-        msg = EmailMultiAlternatives(subject, text, sender, recipients, connection=connection)
-        msg.attach_alternative(html, "text/html")
-        if attach_invoice_order_id:
-            from apps.orders.invoice import invoice_pdf
-            from apps.orders.models import Order
-
-            order = Order.objects.get(pk=attach_invoice_order_id)
-            msg.attach(f"Rasiko-invoice-{order.number}.pdf", invoice_pdf(order), "application/pdf")
-        msg.send()
-        log.status = EmailLog.Status.SENT
-        log.sent_at = timezone.now()
-        log.error = ""
-        log.save(update_fields=["status", "sent_at", "attempts", "error"])
+        deliver_now(log, recipients, subject, html, text, attach_invoice_order_id)
     except EmailNotConfigured as exc:
-        log.status = EmailLog.Status.NOT_SENT
-        log.error = str(exc)[:500]
-        log.save(update_fields=["status", "attempts", "error"])
+        mark_failed(log, exc)
     except Exception as exc:  # noqa: BLE001 - retry any transport failure
-        log.status = EmailLog.Status.FAILED
-        log.error = f"{exc.__class__.__name__}: {exc}"[:500]
-        log.save(update_fields=["status", "attempts", "error"])
+        mark_failed(log, exc)
         raise self.retry(exc=exc) from exc
+
+
+@shared_task
+def deliver_whatsapp_update(order_id):
+    from .whatsapp import send_order_update
+
+    return send_order_update(order_id)

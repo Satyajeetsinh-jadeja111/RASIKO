@@ -65,6 +65,7 @@ def _org_jsonld(store, cfg):
 def store(request):
     if request.path.startswith(("/static/", "/media/")):
         return {}
+    from apps.catalog.cache import public_fragment
     from apps.delivery.models import DeliverySettings
     from apps.promotions.models import Campaign, coin_balance
 
@@ -79,9 +80,11 @@ def store(request):
         "store": store_settings,
         "delivery_cfg": cfg,
         "org_jsonld": org,
-        "footer_pages": Page.objects.filter(show_in_footer=True).only("slug", "title"),
+        "footer_pages": public_fragment(
+            "footer_pages", lambda: list(Page.objects.filter(show_in_footer=True).only("slug", "title")), ttl=300
+        ),
         "menu_categories": _menu(),
-        "campaign": Campaign.current(),
+        "campaign": public_fragment("current_campaign", lambda: Campaign.current() or False),
         "coins": coin_balance(user) if user and user.is_authenticated else None,
         "whatsapp_api_on": is_enabled("whatsapp"),
         "ADMIN_URL": settings.ADMIN_URL,

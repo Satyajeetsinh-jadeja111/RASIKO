@@ -22,6 +22,9 @@ class LoginForm(StyledMixin, forms.Form):
         label=_("Password"), widget=forms.PasswordInput(attrs={"autocomplete": "current-password"})
     )
 
+    def clean_username(self):
+        return self.cleaned_data["username"].strip().lower()
+
 
 class SignupForm(StyledMixin, forms.ModelForm):
     password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))

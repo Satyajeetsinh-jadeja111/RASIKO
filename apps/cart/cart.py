@@ -39,7 +39,7 @@ class CartLine:
 
     @property
     def label(self):
-        return self.obj.label if self.kind == "v" else "Combo"
+        return self.obj.box_label if self.kind == "v" else "Combo"
 
     @property
     def product(self):
@@ -128,7 +128,7 @@ class Cart:
                 if not v.in_stock:
                     problem = "Out of stock"
                 elif qty > v.max_orderable:
-                    problem = f"Only {v.max_orderable} available"
+                    problem = f"Only {v.max_orderable} boxes available"
                 lines.append(CartLine(key, "v", qty, v, price, v.mrp, problem))
             else:
                 c = combos.get(pk)

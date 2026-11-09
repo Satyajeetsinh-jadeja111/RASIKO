@@ -1,7 +1,7 @@
 {% load rasiko i18n %}
 <div class="sortbar">
   <span class="muted">{% blocktrans count n=page.paginator.count %}{{ n }} product{% plural %}{{ n }} products{% endblocktrans %}</span>
-  <form method="get" hx-get="{{ request.path }}" hx-target="#results" hx-trigger="change" hx-push-url="true">
+  {% if products %}<form method="get" hx-get="{{ request.path }}" hx-target="#results" hx-trigger="change" hx-push-url="true">
     {% for k, vals in request.GET.lists %}{% if k != "sort" and k != "page" %}{% for v in vals %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}{% endif %}{% endfor %}
     <label class="sr-only" for="sort">{% trans "Sort by" %}</label>
     <select class="input" id="sort" name="sort" style="min-height:40px;width:auto">
@@ -11,7 +11,7 @@
       <option value="rating" {% if sort == "rating" %}selected{% endif %}>{% trans "Top rated" %}</option>
       <option value="new" {% if sort == "new" %}selected{% endif %}>{% trans "Newest" %}</option>
     </select>
-  </form>
+  </form>{% endif %}
 </div>
 {% if products %}
 <div class="grid-products">{% for p in products %}{% include "partials/product_card.html" %}{% endfor %}</div>
@@ -21,5 +21,6 @@
   {% if page.has_next %}<a href="{% qs page=page.next_page_number %}" aria-label="{% trans 'Next' %}">→</a>{% endif %}
 </nav>{% endif %}
 {% else %}
-<div class="box box--cream" style="text-align:center;padding:40px">{% drink "cola" %}<p style="font:600 20px var(--font-head)">{% trans "No drinks match that." %}</p><p class="muted">{% trans "Try fewer filters or another search." %}</p></div>
+{% trans "No products found" as empty_title %}{% trans "Try another search or clear your filters." as empty_message %}
+{% include "partials/empty_state.html" with clear_filters=True %}
 {% endif %}
