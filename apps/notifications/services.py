@@ -15,6 +15,8 @@ from .models import EmailLog, NotificationSettings
 logger = logging.getLogger(__name__)
 
 SUBJECTS = {
+    "partner_notice": _l("[Rasiko] {title}"),
+    "marketplace_delivery": _l("Your Rasiko delivery code"),
     # customer
     "welcome": _l("Welcome to Rasiko! Please verify your email"),
     "otp": _l("Your Rasiko verification code"),

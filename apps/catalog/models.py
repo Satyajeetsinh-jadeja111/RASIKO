@@ -121,6 +121,13 @@ class ProductQuerySet(models.QuerySet):
 
 
 class Product(TimeStamped):
+    seller_team = models.ForeignKey(
+        "marketplace.SellerTeam", null=True, blank=True, on_delete=models.PROTECT, related_name="products"
+    )
+    source_language = models.CharField(
+        max_length=2, choices=[("en", "English"), ("hi", "Hindi"), ("gu", "Gujarati")], default="en"
+    )
+
     class Diet(models.TextChoices):
         VEG = "veg", _("Veg")
         NON_VEG = "nonveg", _("Non-veg")
@@ -178,10 +185,55 @@ class Product(TimeStamped):
 
     @property
     def local_name(self):
-        lang = (get_language() or "en")[:2]
-        if lang in ("gu", "hi"):
-            return getattr(self, f"name_{lang}") or self.name
-        return self.name
+        from apps.marketplace.translations import localized
+
+        return localized(self, "name")
+
+    @property
+    def translation_unavailable(self):
+        from apps.marketplace.translations import source_hash
+
+        language = (get_language() or "en")[:2]
+        return (
+            language != self.source_language
+            and not self.translations.filter(language=language, source_hash=source_hash(self), status="ready").exists()
+        )
+
+    @property
+    def local_description(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "description")
+
+    @property
+    def local_ingredients(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "ingredients")
+
+    @property
+    def local_allergens(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "allergens")
+
+    @property
+    def local_storage_instructions(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "storage_instructions")
+
+    @property
+    def local_short_description(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "short_description")
+
+    @property
+    def local_best_before_note(self):
+        from apps.marketplace.translations import localized
+
+        return localized(self, "best_before_note")
 
     @property
     def primary_image(self):
@@ -245,6 +297,8 @@ class ProductImage(models.Model):
 
 
 class ProductVariant(TimeStamped):
+    batch_tracking = models.BooleanField(default=False)
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="variants")
     label = models.CharField(_("Bottle size"), max_length=40, help_text=_("Size of one bottle, e.g. 250 ml, 1 L"))
     # The shop sells whole boxes only. Prices are per box; stock is counted in bottles.
@@ -294,7 +348,12 @@ class ProductVariant(TimeStamped):
     @property
     def available_qty(self):
         """Bottles free to sell (stock minus bottles held for unpaid orders)."""
-        return max(0, self.stock_qty - self.reserved_qty)
+        free = max(0, self.stock_qty - self.reserved_qty)
+        if self.batch_tracking:
+            from apps.marketplace.batches import free_bottles
+
+            free = min(free, free_bottles(self))
+        return free
 
     @property
     def available_boxes(self):

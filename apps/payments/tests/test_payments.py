@@ -109,7 +109,14 @@ class TestWebhooks:
                 "currency": "INR",
                 "status": "captured",
             }
-            assert handle_return(order, {"razorpay_payment_id": "pay_9", "razorpay_signature": sig})
+            assert handle_return(
+                order,
+                {
+                    "razorpay_payment_id": "pay_9",
+                    "razorpay_order_id": payment.gateway_order_id,
+                    "razorpay_signature": sig,
+                },
+            )
         order.refresh_from_db()
         assert order.payment_status == "paid"
 

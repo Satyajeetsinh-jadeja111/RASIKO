@@ -45,7 +45,13 @@ def dash(role="staff"):
 
 # Sidebar: (section, [(label, url name, args, role, icon)])
 NAV = [
-    ("", [("Home", "dashboard:home", (), "staff", "home")]),
+    (
+        "",
+        [
+            ("Home", "dashboard:home", (), "staff", "home"),
+            ("Marketplace", "marketplace:dashboard", (), "owner", "users"),
+        ],
+    ),
     (
         "Sell",
         [

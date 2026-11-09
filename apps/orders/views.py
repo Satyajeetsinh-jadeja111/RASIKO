@@ -47,7 +47,7 @@ def checkout(request):
     use_coins = request.session.get("use_coins", False)
     totals = price_cart(cart, request.user, coupon_code, use_coins, (address.lat, address.lng, address.pincode))
     pin = ServicePincode.objects.filter(code=address.pincode).first()
-    methods = services.payment_methods_for(request.user, totals.total, pin)
+    methods = services.payment_methods_for(request.user, totals.total, pin, totals.marketplace_groups)
     slots = available_slots()
     if request.method == "POST":
         token = request.POST.get("checkout_token", "")
@@ -133,6 +133,8 @@ def invoice(request, public_id):
     order = _own_order(request, public_id)
     if order.status in (Order.Status.PENDING_PAYMENT, Order.Status.PAYMENT_FAILED):
         raise Http404
+    if order.fulfillments.exists():
+        return redirect(order.get_absolute_url())
     resp = HttpResponse(invoice_pdf(order), content_type="application/pdf")
     resp["Content-Disposition"] = f'attachment; filename="Rasiko-invoice-{order.number}.pdf"'
     return resp

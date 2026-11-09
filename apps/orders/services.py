@@ -43,7 +43,7 @@ class CheckoutError(Exception):
     pass
 
 
-def payment_methods_for(user, total, pincode_obj=None):
+def payment_methods_for(user, total, pincode_obj=None, marketplace_groups=None):
     """[(value, label, available, reason)] shown at checkout; enforced again in place_order."""
     store = StoreSettings.load()
     dcfg = DeliverySettings.load()
@@ -61,6 +61,10 @@ def payment_methods_for(user, total, pincode_obj=None):
     elif total > dcfg.cod_limit:
         reason = _("Cash on Delivery is available up to ₹%(v)s.") % {"v": dcfg.cod_limit}
     methods.append(("cod", Order.PaymentMethod.COD.label, not reason, reason))
+    if marketplace_groups:
+        from apps.marketplace.checkout import payment_methods
+
+        return payment_methods(methods, marketplace_groups)
     return methods
 
 
@@ -105,6 +109,10 @@ def place_order(
     existing = Order.objects.filter(checkout_token=checkout_token, user=user).first()
     if existing:
         return existing
+    if coupon_code:
+        from apps.promotions.models import Coupon
+
+        Coupon.objects.select_for_update().filter(code=coupon_code.strip().upper()).first()
     totals = price_cart(cart, user, coupon_code, use_coins, (address.lat, address.lng, address.pincode))
     if not totals.ok:
         raise CheckoutError(" ".join(totals.problems) or totals.delivery.message)
@@ -113,7 +121,7 @@ def place_order(
     from apps.delivery.models import ServicePincode
 
     pin = ServicePincode.objects.filter(code=address.pincode).first()
-    allowed = {m[0]: m for m in payment_methods_for(user, totals.total, pin)}
+    allowed = {m[0]: m for m in payment_methods_for(user, totals.total, pin, totals.marketplace_groups)}
     if payment_method not in allowed or not allowed[payment_method][2]:
         raise CheckoutError(allowed.get(payment_method, (0, 0, 0, _("Choose a payment method.")))[3])
     if payment_method == "cod" and not user.phone_verified:
@@ -185,6 +193,11 @@ def place_order(
     ratio = (totals.subtotal - totals.discount - totals.coins_value) / totals.subtotal if totals.subtotal else 0
     order.gst_total = money(gst * Decimal(ratio))
     order.save(update_fields=["gst_total"])
+
+    if totals.marketplace_groups:
+        from apps.marketplace.checkout import split_order
+
+        split_order(order, totals.marketplace_groups)
 
     if totals.coupon:
         CouponRedemption.objects.create(coupon=totals.coupon, user=user, order=order, amount=totals.discount)
@@ -292,6 +305,17 @@ def set_status(order, new_status, by=None, note="", rider=None):
         return order
     if new_status not in ALLOWED.get(order.status, set()):
         raise ValueError(f"Cannot move order from {order.get_status_display()} to {new_status.label}")
+    children = order.fulfillments.exclude(policy__legacy=True)
+    if children.exists() and new_status in (S.OUT_FOR_DELIVERY, S.DELIVERED):
+        raise ValueError("Marketplace orders are fulfilled through their seller teams and rider assignments.")
+    if children.exists() and new_status == S.CANCELLED:
+        if children.filter(status__in=["picked_up", "delivered"]).exists():
+            raise ValueError("Resolve dispatched seller deliveries and refunds before cancelling this order.")
+        from apps.marketplace.models import DeliveryAssignment, DispatchOffer
+
+        children.update(status="cancelled")
+        DeliveryAssignment.objects.filter(fulfillment__order=order).update(active=False)
+        DispatchOffer.objects.filter(fulfillment__order=order, status="pending").update(status="expired")
     fields = ["status", "updated_at"]
     if rider is not None:
         order.rider = rider

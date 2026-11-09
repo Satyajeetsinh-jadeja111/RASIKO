@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 21:28+0530\n"
+"POT-Creation-Date: 2026-10-24 17:12+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,27 +21,27 @@ msgstr ""
 msgid "Email"
 msgstr "ઈમેલ"
 
-#: apps/accounts/forms.py:22 apps/accounts/forms.py:27
+#: apps/accounts/forms.py:22 apps/accounts/forms.py:30
 msgid "Password"
 msgstr "પાસવર્ડ"
 
-#: apps/accounts/forms.py:28
+#: apps/accounts/forms.py:31
 msgid "Referral code (optional)"
 msgstr ""
 
-#: apps/accounts/forms.py:33
+#: apps/accounts/forms.py:36
 msgid "Your name"
 msgstr "તમારું નામ"
 
-#: apps/accounts/forms.py:38
+#: apps/accounts/forms.py:41
 msgid "An account with this email already exists."
 msgstr ""
 
-#: apps/accounts/forms.py:44
+#: apps/accounts/forms.py:47
 msgid "Enter a 10-digit mobile number."
 msgstr ""
 
-#: apps/accounts/forms.py:87
+#: apps/accounts/forms.py:90
 msgid "6-digit code"
 msgstr "6 અંકનો કોડ"
 
@@ -50,86 +50,117 @@ msgid "Customer"
 msgstr ""
 
 #: apps/accounts/models.py:37
+#, fuzzy
+#| msgid "Brand Heads"
+msgid "Brand Head"
+msgstr "બ્રાન્ડ વડાઓ"
+
+#: apps/accounts/models.py:38 templates/marketplace/dashboard.html:7
+msgid "Seller"
+msgstr "વિક્રેતા"
+
+#: apps/accounts/models.py:39 templates/orders/_track_card.html:13
+msgid "Rider"
+msgstr ""
+
+#: apps/accounts/models.py:40
 msgid "Staff"
 msgstr ""
 
-#: apps/accounts/models.py:38
+#: apps/accounts/models.py:41
 msgid "Manager"
 msgstr ""
 
-#: apps/accounts/models.py:39
+#: apps/accounts/models.py:42
 msgid "Owner"
 msgstr ""
 
-#: apps/accounts/models.py:42
+#: apps/accounts/models.py:45
 msgid "email"
 msgstr ""
 
-#: apps/accounts/models.py:99
+#: apps/accounts/models.py:104
 msgid "House / flat, building"
 msgstr "ઘર / ફ્લેટ, બિલ્ડિંગ"
 
-#: apps/accounts/models.py:100
+#: apps/accounts/models.py:105
 msgid "Area, street, landmark"
 msgstr "વિસ્તાર, શેરી, નિશાની"
 
-#: apps/accounts/views.py:54
+#: apps/accounts/views.py:61
 msgid "Email or password is incorrect."
 msgstr ""
 
-#: apps/accounts/views.py:73
+#: apps/accounts/views.py:80
 msgid "Welcome to Rasiko! Please check your email to verify your address."
 msgstr ""
 
-#: apps/accounts/views.py:82
+#: apps/accounts/views.py:89
 msgid "This verification link is invalid or has expired."
 msgstr ""
 
-#: apps/accounts/views.py:85
+#: apps/accounts/views.py:92
 msgid "Your email is verified. Thank you!"
 msgstr ""
 
-#: apps/accounts/views.py:111
+#: apps/accounts/views.py:122
 msgid "Profile saved."
 msgstr "પ્રોફાઇલ સાચવી."
 
-#: apps/accounts/views.py:126
+#: apps/accounts/views.py:139
 msgid "Address saved."
 msgstr "સરનામું સાચવ્યું."
 
-#: apps/accounts/views.py:135
+#: apps/accounts/views.py:153
 msgid "Address removed."
 msgstr "સરનામું કાઢી નાખ્યું."
 
-#: apps/accounts/views.py:145
-msgid "Add your mobile number first."
-msgstr ""
-
-#: apps/accounts/views.py:152
-msgid "We sent a code by SMS to your mobile."
-msgstr ""
-
-#: apps/accounts/views.py:155
-msgid "We emailed you a 6-digit code."
-msgstr ""
-
-#: apps/accounts/views.py:161
-msgid "Mobile number verified."
+#: apps/accounts/views.py:175
+#, fuzzy
+#| msgid "Mobile number verified."
+msgid "Your mobile number is already verified."
 msgstr "મોબાઇલ નંબર ચકાસાયો."
 
-#: apps/accounts/views.py:163 apps/orders/views.py:207
-msgid "That code is not right or has expired."
-msgstr ""
-
 #: apps/accounts/views.py:184
-msgid "Two-factor authentication is on."
+msgid "Enter a valid 10-digit Indian mobile number."
 msgstr ""
 
-#: apps/accounts/views.py:186
-msgid "That code did not match. Try the newest code in your app."
+#: apps/accounts/views.py:192
+#, python-format
+msgid "We sent a 6-digit code by SMS to %(p)s."
+msgstr ""
+
+#: apps/accounts/views.py:200
+#, python-format
+msgid "We emailed a 6-digit code to %(e)s. Check your inbox and spam folder."
 msgstr ""
 
 #: apps/accounts/views.py:205
+#, python-format
+msgid "Developer mode: email is not set up (%(err)s). Your code is %(code)s."
+msgstr ""
+
+#: apps/accounts/views.py:211
+msgid "We couldn't send the code right now. Please try again later or choose another payment method."
+msgstr ""
+
+#: apps/accounts/views.py:218
+msgid "Mobile number verified. You can now pay with Cash on Delivery."
+msgstr ""
+
+#: apps/accounts/views.py:220 apps/orders/views.py:221
+msgid "That code is not right or has expired."
+msgstr ""
+
+#: apps/accounts/views.py:250
+msgid "Two-factor authentication is on."
+msgstr ""
+
+#: apps/accounts/views.py:252
+msgid "That code did not match. Try the newest code in your app."
+msgstr ""
+
+#: apps/accounts/views.py:278
 msgid "That code did not match."
 msgstr "કોડ મેળ ખાતો નથી."
 
@@ -160,48 +191,91 @@ msgstr ""
 msgid "Illustration used when there is no image"
 msgstr ""
 
-#: apps/catalog/models.py:125
+#: apps/catalog/models.py:132
 msgid "Veg"
 msgstr "શાકાહારી"
 
-#: apps/catalog/models.py:126
+#: apps/catalog/models.py:133
 msgid "Non-veg"
 msgstr "માંસાહારી"
 
-#: apps/catalog/models.py:129
+#: apps/catalog/models.py:136
 msgid "Name in Gujarati"
 msgstr ""
 
-#: apps/catalog/models.py:130
+#: apps/catalog/models.py:137
 msgid "Name in Hindi"
 msgstr ""
 
-#: apps/catalog/models.py:139
+#: apps/catalog/models.py:146
 msgid "e.g. {\"Energy\": \"45 kcal\", \"Sugar\": \"10 g\"}"
 msgstr ""
 
-#: apps/catalog/models.py:145
+#: apps/catalog/models.py:152
 msgid "Flexible, e.g. {\"sugar_free\": true}"
 msgstr ""
 
-#: apps/catalog/models.py:147
+#: apps/catalog/models.py:154
 msgid "Drink illustration used until a photo is uploaded"
 msgstr ""
 
-#: apps/catalog/models.py:152
+#: apps/catalog/models.py:159
 msgid "Shown in Fresh Picks"
 msgstr ""
 
-#: apps/catalog/models.py:217
-msgid "e.g. 250 ml, 1 L, Pack of 6"
+#: apps/catalog/models.py:303
+#, fuzzy
+#| msgid "Bottle adjustment"
+msgid "Bottle size"
+msgstr "બોટલોનો ફેરફાર"
+
+#: apps/catalog/models.py:303
+msgid "Size of one bottle, e.g. 250 ml, 1 L"
 msgstr ""
 
-#: apps/catalog/models.py:229
-msgid "Total quantity"
+#: apps/catalog/models.py:306
+#, fuzzy
+#| msgid "Bottles in stock"
+msgid "Bottles per box"
+msgstr "સ્ટોકમાં બોટલો"
+
+#: apps/catalog/models.py:306
+msgid "e.g. 24"
 msgstr ""
 
-#: apps/catalog/models.py:233
+#: apps/catalog/models.py:311
+msgid "Box MRP"
+msgstr ""
+
+#: apps/catalog/models.py:314
+#, fuzzy
+#| msgid "Bulk prices"
+msgid "Box price"
+msgstr "જથ્થાબંધ ભાવ"
+
+#: apps/catalog/models.py:316
+msgid "Box cost price"
+msgstr ""
+
+#: apps/catalog/models.py:323
+msgid "Stock (bottles)"
+msgstr ""
+
+#: apps/catalog/models.py:325
+msgid "Low stock alert (bottles)"
+msgstr ""
+
+#: apps/catalog/models.py:326
+msgid "Max boxes per order"
+msgstr ""
+
+#: apps/catalog/models.py:327
 msgid "Force 'Out of stock' even with quantity"
+msgstr ""
+
+#: apps/catalog/models.py:341
+#, python-format
+msgid "Box of %(n)s × %(size)s"
 msgstr ""
 
 #: apps/catalog/seo.py:5
@@ -209,9 +283,7 @@ msgid "Cold drinks delivery in Rajkot"
 msgstr ""
 
 #: apps/catalog/seo.py:7
-msgid ""
-"Chilled soft drinks, soda and energy drinks delivered across Rajkot in 30 to"
-" 60 minutes. Cash on Delivery available, free delivery above ₹499."
+msgid "Chilled soft drinks, soda and energy drinks delivered across Rajkot in 30 to 60 minutes. Cash on Delivery available, free delivery above ₹499."
 msgstr ""
 
 #: apps/catalog/seo.py:13
@@ -219,9 +291,7 @@ msgid "Juice home delivery in Rajkot"
 msgstr ""
 
 #: apps/catalog/seo.py:14
-msgid ""
-"Mango ras, kokum, orange and more juices delivered chilled to your door "
-"anywhere in Rajkot."
+msgid "Mango ras, kokum, orange and more juices delivered chilled to your door anywhere in Rajkot."
 msgstr ""
 
 #: apps/catalog/seo.py:18
@@ -229,9 +299,7 @@ msgid "Lassi & chaas delivery in Rajkot"
 msgstr ""
 
 #: apps/catalog/seo.py:19
-msgid ""
-"Fresh lassi, chaas and flavoured milk from trusted brands, delivered in "
-"under an hour."
+msgid "Fresh lassi, chaas and flavoured milk from trusted brands, delivered in under an hour."
 msgstr ""
 
 #: apps/catalog/seo.py:23
@@ -239,34 +307,32 @@ msgid "Party & wedding drinks supply in Rajkot"
 msgstr ""
 
 #: apps/catalog/seo.py:24
-msgid ""
-"Crates and cases for weddings, functions, offices and shops with bulk "
-"prices."
+msgid "Crates and cases for weddings, functions, offices and shops with bulk prices."
 msgstr ""
 
-#: apps/catalog/views.py:154
+#: apps/catalog/views.py:163
 #, python-format
 msgid "Results for “%(q)s”"
 msgstr ""
 
-#: apps/catalog/views.py:154
+#: apps/catalog/views.py:163
 msgid "All products"
 msgstr "બધી પ્રોડક્ટ્સ"
 
-#: apps/catalog/views.py:283
+#: apps/catalog/views.py:292
 msgid "We'll email you when it's back in stock."
 msgstr ""
 
-#: apps/catalog/views.py:285
+#: apps/catalog/views.py:294
 msgid "Enter a valid email."
 msgstr "સાચો ઈમેલ લખો."
 
-#: apps/catalog/views.py:365
+#: apps/catalog/views.py:392
 #, python-format
 msgid "Cold drinks & juice delivery in %(a)s, Rajkot"
 msgstr ""
 
-#: apps/catalog/views.py:366
+#: apps/catalog/views.py:393
 #, python-format
 msgid "Chilled beverages delivered to %(a)s (%(c)s) in 30 to 60 minutes."
 msgstr ""
@@ -287,15 +353,19 @@ msgstr ""
 msgid "GST state code (Gujarat = 24)"
 msgstr ""
 
-#: apps/core/models.py:79
+#: apps/core/models.py:74
+msgid "Allow the other enabled gateway when the selected gateway is disabled."
+msgstr ""
+
+#: apps/core/models.py:82
 msgid "Muhurat go-live. Before this time visitors see the coming soon page."
 msgstr ""
 
-#: apps/core/models.py:100
+#: apps/core/models.py:103
 msgid "Store settings"
 msgstr ""
 
-#: apps/core/models.py:177
+#: apps/core/models.py:180
 msgid "Plain text. Blank lines start new paragraphs."
 msgstr ""
 
@@ -360,6 +430,489 @@ msgstr "આજે"
 msgid "Tomorrow"
 msgstr "આવતીકાલે"
 
+#: apps/marketplace/extended_views.py:42 templates/marketplace/dashboard.html:8
+msgid "Business and invoice details"
+msgstr "વ્યવસાય અને બિલની વિગતો"
+
+#: apps/marketplace/extended_views.py:58
+msgid "Batch code already exists."
+msgstr "બેચ કોડ પહેલેથી છે."
+
+#: apps/marketplace/extended_views.py:60 templates/marketplace/products.html:1
+msgid "Receive expiry-tracked stock"
+msgstr "સમાપ્તિ તારીખવાળો સ્ટોક મેળવો"
+
+#: apps/marketplace/extended_views.py:87 apps/marketplace/views.py:227
+#: apps/marketplace/views.py:296 apps/marketplace/views.py:394
+#: apps/marketplace/views.py:453
+msgid "Saved successfully."
+msgstr "સફળતાપૂર્વક સાચવ્યું."
+
+#: apps/marketplace/extended_views.py:101
+msgid "Complete business details before onboarding."
+msgstr "નોંધણી પહેલાં વ્યવસાયની વિગતો પૂર્ણ કરો."
+
+#: apps/marketplace/extended_views.py:103
+msgid "An onboarding submission already exists. Use refresh or ask admin to recover it."
+msgstr "નોંધણી પહેલેથી મોકલાઈ છે. સ્થિતિ તાજી કરો અથવા એડમિનને પુનઃપ્રાપ્તિ માટે કહો."
+
+#: apps/marketplace/extended_views.py:116
+msgid "Onboarding submitted. Provider verification may require additional documents."
+msgstr "નોંધણી મોકલાઈ છે. પ્રદાતા ચકાસણી માટે વધારાના દસ્તાવેજો માંગી શકે છે."
+
+#: apps/marketplace/extended_views.py:130
+msgid "Provider status refreshed."
+msgstr "પ્રદાતાની સ્થિતિ તાજી કરી."
+
+#: apps/marketplace/extended_views.py:134
+msgid "Provider status could not be verified. Try again later."
+msgstr "પ્રદાતાની સ્થિતિ ચકાસી શકાઈ નથી. પછી પ્રયાસ કરો."
+
+#: apps/marketplace/extended_views.py:148
+msgid "Privacy, retention and grievance settings"
+msgstr "ગોપનીયતા, રેકોર્ડ અવધિ અને ફરિયાદ સેટિંગ"
+
+#: apps/marketplace/extended_views.py:192 templates/orders/detail.html:9
+msgid "Contact seller support"
+msgstr "વિક્રેતા સહાયનો સંપર્ક કરો"
+
+#: apps/marketplace/extended_views.py:221
+msgid "Invoice is available after payment capture."
+msgstr "ચુકવણીની પુષ્ટિ પછી બિલ ઉપલબ્ધ થશે."
+
+#: apps/marketplace/extended_views.py:226
+msgid "The seller has not issued this invoice yet."
+msgstr "વિક્રેતાએ હજી આ બિલ જારી કર્યું નથી."
+
+#: apps/marketplace/extended_views.py:243
+msgid "Invoice issued."
+msgstr "બિલ જારી કર્યું."
+
+#: apps/marketplace/extended_views.py:266
+msgid "Provider reference verified; onboarding resumed."
+msgstr "પ્રદાતાનો સંદર્ભ ચકાસ્યો; નોંધણી ફરી શરૂ કરી."
+
+#: apps/marketplace/extended_views.py:270
+msgid "Recovery could not be verified. Check the provider reference."
+msgstr "પુનઃપ્રાપ્તિ ચકાસી શકાઈ નથી. પ્રદાતાનો સંદર્ભ તપાસો."
+
+#: apps/marketplace/extended_views.py:281
+msgid "Onboarding queued for reconciliation."
+msgstr "નોંધણી મેળવણી માટે કતારમાં છે."
+
+#: apps/marketplace/extended_views.py:295 apps/marketplace/forms.py:437
+msgid "Product photo"
+msgstr "ઉત્પાદનનો ફોટો"
+
+#: apps/marketplace/forms.py:17 apps/support/models.py:18
+#: templates/base.html:57
+msgid "Account"
+msgstr "એકાઉન્ટ"
+
+#: apps/marketplace/forms.py:18 templates/base.html:66
+#: templates/storefront/brands.html:2 templates/storefront/brands.html:4
+msgid "Brands"
+msgstr "બ્રાન્ડ્સ"
+
+#: apps/marketplace/forms.py:19 apps/marketplace/forms.py:136
+msgid "Territories"
+msgstr "વિસ્તારો"
+
+#: apps/marketplace/forms.py:20 apps/orders/models.py:207
+#: templates/marketplace/dashboard.html:8
+msgid "Active"
+msgstr "ચાલુ"
+
+#: apps/marketplace/forms.py:21 templates/marketplace/dashboard.html:9
+#: templates/marketplace/products.html:1
+msgid "Reason"
+msgstr "કારણ"
+
+#: apps/marketplace/forms.py:31
+msgid "Create a separate Head account instead of changing its identity."
+msgstr "ઓળખ બદલવાને બદલે અલગ હેડ ખાતું બનાવો."
+
+#: apps/marketplace/forms.py:33 apps/marketplace/forms.py:248
+msgid "A suspension reason is required."
+msgstr "સ્થગિત કરવાનું કારણ જરૂરી છે."
+
+#: apps/marketplace/forms.py:39
+msgid "Pincodes"
+msgstr "પિનકોડ"
+
+#: apps/marketplace/forms.py:39
+msgid "Comma-separated six-digit pincodes. Each pincode belongs to one area."
+msgstr "અલ્પવિરામથી અલગ છ અંકના પિનકોડ. દરેક પિનકોડ એક વિસ્તારમાં આવે છે."
+
+#: apps/marketplace/forms.py:53
+msgid "A pincode already belongs to an area."
+msgstr "પિનકોડ પહેલેથી એક વિસ્તારમાં છે."
+
+#: apps/marketplace/forms.py:79 apps/marketplace/forms.py:101
+msgid "Brand is outside this Head's authority."
+msgstr "આ બ્રાન્ડ આ હેડના અધિકારમાં નથી."
+
+#: apps/marketplace/forms.py:84 apps/marketplace/forms.py:284
+msgid "Seller name"
+msgstr "વિક્રેતાનું નામ"
+
+#: apps/marketplace/forms.py:85
+msgid "Seller email"
+msgstr "વિક્રેતાનું ઈમેલ"
+
+#: apps/marketplace/forms.py:86 apps/marketplace/forms.py:285
+#: templates/marketplace/dashboard.html:7 templates/storefront/listing.html:20
+msgid "Brand"
+msgstr "બ્રાન્ડ"
+
+#: apps/marketplace/forms.py:87 apps/marketplace/forms.py:138
+msgid "Head"
+msgstr "વડા"
+
+#: apps/marketplace/forms.py:104
+msgid "Use a new seller email. Existing sellers must be linked by admin after consent."
+msgstr "નવા વિક્રેતાનું ઇમેઇલ વાપરો. હાલના વિક્રેતાઓને સંમતિ પછી એડમિન જોડશે."
+
+#: apps/marketplace/forms.py:110 apps/marketplace/forms.py:269
+#: templates/marketplace/dashboard.html:5
+msgid "Seller team"
+msgstr "વિક્રેતા ટીમ"
+
+#: apps/marketplace/forms.py:111
+msgid "Territory"
+msgstr "વિસ્તાર"
+
+#: apps/marketplace/forms.py:134 templates/marketplace/dashboard.html:8
+msgid "Seller teams"
+msgstr "વિક્રેતા ટીમો"
+
+#: apps/marketplace/forms.py:172
+
+#| msgid "Enter a valid email."
+msgid "Enter a valid positive discount."
+msgstr "માન્ય હકારાત્મક છૂટ દાખલ કરો."
+
+#: apps/marketplace/forms.py:236
+msgid "At least two bottles per box are required."
+msgstr "દરેક બોક્સમાં ઓછામાં ઓછી બે બોટલ જરૂરી છે."
+
+#: apps/marketplace/forms.py:252
+msgid "Verify the seller and approved linked account before enabling payments."
+msgstr "ચુકવણી ચાલુ કરતાં પહેલાં વિક્રેતા અને મંજૂર જોડાયેલ ખાતું ચકાસો."
+
+#: apps/marketplace/forms.py:265
+msgid "I checked quantities, ingredients and allergens against the original."
+msgstr "મેં મૂળ માહિતી સાથે માત્રા, ઘટકો અને એલર્જીની માહિતી ચકાસી છે."
+
+#: apps/marketplace/forms.py:270
+msgid "CSV file"
+msgstr "સીએસવી ફાઇલ"
+
+#: apps/marketplace/forms.py:279
+msgid "CSV files must be smaller than 2 MB."
+msgstr "CSV ફાઇલ 2 MB કરતાં નાની હોવી જોઈએ."
+
+#: apps/marketplace/forms.py:286
+msgid "Requested territory"
+msgstr "વિનંતી કરેલો વિસ્તાર"
+
+#: apps/marketplace/forms.py:291
+msgid "Legal name"
+msgstr "કાનૂની નામ"
+
+#: apps/marketplace/forms.py:292
+msgid "Business address"
+msgstr "વ્યવસાયનું સરનામું"
+
+#: apps/marketplace/forms.py:293
+msgid "GST state code"
+msgstr "GST રાજ્ય કોડ"
+
+#: apps/marketplace/forms.py:294
+msgid "GSTIN"
+msgstr "GSTIN"
+
+#: apps/marketplace/forms.py:295
+msgid "FSSAI number"
+msgstr "FSSAI નંબર"
+
+#: apps/marketplace/forms.py:296
+msgid "Business phone"
+msgstr "વ્યવસાયનો ફોન"
+
+#: apps/marketplace/forms.py:297
+msgid "Tax registration"
+msgstr "કર નોંધણી"
+
+#: apps/marketplace/forms.py:298
+msgid "Invoice prefix"
+msgstr "બિલનો ઉપસર્ગ"
+
+#: apps/marketplace/forms.py:299
+msgid "Authorized signatory"
+msgstr "અધિકૃત સહી કરનાર"
+
+#: apps/marketplace/forms.py:300
+msgid "Business type"
+msgstr "વ્યવસાયનો પ્રકાર"
+
+#: apps/marketplace/forms.py:301 apps/marketplace/forms.py:403
+msgid "Registered street address"
+msgstr "નોંધાયેલ શેરીનું સરનામું"
+
+#: apps/marketplace/forms.py:302
+msgid "Address line 2"
+msgstr "સરનામાની બીજી પંક્તિ"
+
+#: apps/marketplace/forms.py:303 apps/marketplace/forms.py:404
+msgid "City"
+msgstr "શહેર"
+
+#: apps/marketplace/forms.py:304 apps/marketplace/forms.py:405
+#: templates/marketplace/dashboard.html:5
+msgid "State"
+msgstr "રાજ્ય"
+
+#: apps/marketplace/forms.py:305 apps/marketplace/forms.py:406
+
+#| msgid "Pincodes"
+msgid "Pincode"
+msgstr "પિનકોડ"
+
+#: apps/marketplace/forms.py:306 apps/marketplace/forms.py:407
+msgid "Authorized person's PAN name"
+msgstr "અધિકૃત વ્યક્તિનું PAN મુજબ નામ"
+
+#: apps/marketplace/forms.py:307 apps/marketplace/forms.py:408
+msgid "Business PAN"
+msgstr "વ્યવસાય PAN"
+
+#: apps/marketplace/forms.py:308 apps/marketplace/forms.py:410
+msgid "Authorized person's PAN"
+msgstr "અધિકૃત વ્યક્તિનું PAN"
+
+#: apps/marketplace/forms.py:309 apps/marketplace/forms.py:412
+msgid "Bank account number"
+msgstr "બેંક ખાતા નંબર"
+
+#: apps/marketplace/forms.py:310 apps/marketplace/forms.py:413
+msgid "IFSC"
+msgstr "IFSC"
+
+#: apps/marketplace/forms.py:311 apps/marketplace/forms.py:414
+msgid "Bank beneficiary name"
+msgstr "બેંક લાભાર્થીનું નામ"
+
+#: apps/marketplace/forms.py:312
+msgid "Location retention days"
+msgstr "સ્થાનના રેકોર્ડ રાખવાના દિવસો"
+
+#: apps/marketplace/forms.py:313
+msgid "Activity retention days"
+msgstr "પ્રવૃત્તિના રેકોર્ડ રાખવાના દિવસો"
+
+#: apps/marketplace/forms.py:314
+msgid "Grievance contact name"
+msgstr "ફરિયાદ સંપર્કનું નામ"
+
+#: apps/marketplace/forms.py:315
+msgid "Grievance email"
+msgstr "ફરિયાદ ઇમેઇલ"
+
+#: apps/marketplace/forms.py:316
+msgid "Grievance phone"
+msgstr "ફરિયાદ ફોન"
+
+#: apps/marketplace/forms.py:317 templates/marketplace/policies.html:1
+
+#| msgid "Privacy Policy"
+msgid "Privacy notice"
+msgstr "ગોપનીયતા સૂચના"
+
+#: apps/marketplace/forms.py:318 templates/marketplace/policies.html:1
+
+#| msgid "Seller teams"
+msgid "Seller terms"
+msgstr "વિક્રેતાની શરતો"
+
+#: apps/marketplace/forms.py:346
+
+#| msgid "That code did not match."
+msgid "GSTIN and state code must match."
+msgstr "GSTIN અને રાજ્ય કોડ સરખા હોવા જોઈએ."
+
+#: apps/marketplace/forms.py:348
+msgid "GSTIN is required for this registration type."
+msgstr "આ નોંધણી પ્રકાર માટે GSTIN જરૂરી છે."
+
+#: apps/marketplace/forms.py:353
+msgid "Batch code"
+msgstr "બેચ કોડ"
+
+#: apps/marketplace/forms.py:354
+
+#| msgid "Every day"
+msgid "Expiry date"
+msgstr "સમાપ્તિ તારીખ"
+
+#: apps/marketplace/forms.py:355
+msgid "Bottles received"
+msgstr "મળેલી બોટલો"
+
+#: apps/marketplace/forms.py:356
+msgid "Assign all existing stock to this opening batch"
+msgstr "હાલનો બધો સ્ટોક આ શરૂઆતના બેચમાં મૂકો"
+
+#: apps/marketplace/forms.py:360 templates/support/tickets.html:4
+msgid "Subject"
+msgstr "વિષય"
+
+#: apps/marketplace/forms.py:361 apps/marketplace/forms.py:365
+#: templates/support/chat_widget.html:5
+msgid "Message"
+msgstr "સંદેશ"
+
+#: apps/marketplace/forms.py:367 apps/support/models.py:39
+msgid "Open"
+msgstr "ખુલ્લું"
+
+#: apps/marketplace/forms.py:367
+
+#| msgid "Rating"
+msgid "Waiting"
+msgstr "રાહમાં"
+
+#: apps/marketplace/forms.py:367 apps/orders/models.py:236
+#: apps/support/models.py:41 apps/support/models.py:62
+msgid "Closed"
+msgstr "બંધ"
+
+#: apps/marketplace/forms.py:367 templates/accounts/account.html:12
+#: templates/marketplace/dashboard.html:9 templates/support/tickets.html:4
+msgid "Status"
+msgstr "સ્થિતિ"
+
+#: apps/marketplace/forms.py:389
+msgid "Proprietorship"
+msgstr "એકલ માલિકી"
+
+#: apps/marketplace/forms.py:390
+
+#| msgid "Partner workspace"
+msgid "Partnership"
+msgstr "ભાગીદારી"
+
+#: apps/marketplace/forms.py:391
+msgid "Private limited company"
+msgstr "પ્રાઇવેટ લિમિટેડ કંપની"
+
+#: apps/marketplace/forms.py:392
+msgid "Limited liability partnership"
+msgstr "મર્યાદિત જવાબદારી ભાગીદારી"
+
+#: apps/marketplace/forms.py:393
+msgid "Public limited company"
+msgstr "પબ્લિક લિમિટેડ કંપની"
+
+#: apps/marketplace/forms.py:394
+msgid "Not yet registered"
+msgstr "હજુ નોંધાયેલ નથી"
+
+#: apps/marketplace/forms.py:401
+
+#| msgid "Shop by category"
+msgid "Razorpay business category"
+msgstr "Razorpay વ્યવસાય શ્રેણી"
+
+#: apps/marketplace/forms.py:402
+msgid "Razorpay business subcategory"
+msgstr "Razorpay વ્યવસાય ઉપશ્રેણી"
+
+#: apps/marketplace/forms.py:416
+msgid "I am authorized for this business and accept Razorpay's linked-account terms."
+msgstr "હું આ વ્યવસાય માટે અધિકૃત છું અને Razorpayના જોડાયેલ ખાતાની શરતો સ્વીકારું છું."
+
+#: apps/marketplace/forms.py:438
+msgid "Image description"
+msgstr "ફોટાનું વર્ણન"
+
+#: apps/marketplace/models.py:62
+msgid "Not started"
+msgstr "શરૂ થયું નથી"
+
+#: apps/marketplace/models.py:63
+
+#| msgid "Submit application"
+msgid "Queued for verification"
+msgstr "ચકાસણીની કતારમાં"
+
+#: apps/marketplace/models.py:64
+
+#| msgid "Submit application"
+msgid "Submitted for verification"
+msgstr "ચકાસણી માટે મોકલ્યું"
+
+#: apps/marketplace/models.py:65 apps/reviews/models.py:13
+msgid "Approved"
+msgstr "મંજૂર"
+
+#: apps/marketplace/models.py:66
+msgid "Additional details needed"
+msgstr "વધારાની વિગતો જરૂરી"
+
+#: apps/marketplace/models.py:67
+
+#| msgid "Your review"
+msgid "Under review"
+msgstr "સમીક્ષા હેઠળ"
+
+#: apps/marketplace/models.py:68
+
+#| msgid "Territory requests"
+msgid "Verification requested"
+msgstr "ચકાસણીની વિનંતી કરી"
+
+#: apps/marketplace/models.py:69 apps/orders/models.py:256
+msgid "Pending review"
+msgstr "સમીક્ષા બાકી"
+
+#: apps/marketplace/views.py:234 apps/marketplace/views.py:460
+msgid "This conflicts with an existing record."
+msgstr "આ હાલના રેકોર્ડ સાથે વિરોધાભાસ ધરાવે છે."
+
+#: apps/marketplace/views.py:298
+
+#| msgid "No pending requests."
+msgid "Invalid request."
+msgstr "અમાન્ય વિનંતી."
+
+#: apps/marketplace/views.py:360 apps/orders/forms.py:62
+#: templates/orders/bulk.html:13
+msgid "Product"
+msgstr "ઉત્પાદન"
+
+#: apps/marketplace/views.py:376
+
+#| msgid "Add box variant"
+msgid "Box variant"
+msgstr "બોક્સનો પ્રકાર"
+
+#: apps/marketplace/views.py:396
+msgid "Enter a valid stock adjustment and reason."
+msgstr "માન્ય સ્ટોક ફેરફાર અને કારણ દાખલ કરો."
+
+#: apps/marketplace/views.py:410 templates/marketplace/dashboard.html:8
+msgid "Seller verification and linked account"
+msgstr "વિક્રેતા ચકાસણી અને જોડાયેલ ખાતું"
+
+#: apps/marketplace/views.py:428
+msgid "Product content changed. Reload and review the latest version."
+msgstr "ઉત્પાદનની વિગતો બદલાઈ છે. ફરી લોડ કરીને નવી આવૃત્તિ તપાસો."
+
+#: apps/marketplace/views.py:462 templates/marketplace/products.html:1
+msgid "Import new products from CSV"
+msgstr "સીએસવીથી નવા ઉત્પાદનો ઉમેરો"
+
 #: apps/notifications/models.py:7
 msgid "New order"
 msgstr ""
@@ -380,9 +933,9 @@ msgstr ""
 msgid "Product out of stock"
 msgstr ""
 
-#: apps/notifications/models.py:12
+#: apps/notifications/models.py:12 templates/marketplace/products.html:1
 msgid "Low stock"
-msgstr ""
+msgstr "ઓછો સ્ટોક"
 
 #: apps/notifications/models.py:13
 msgid "Product added"
@@ -501,7 +1054,7 @@ msgid "Sent"
 msgstr ""
 
 #: apps/notifications/models.py:67 apps/orders/models.py:36
-#: apps/payments/models.py:15 apps/payments/models.py:37
+#: apps/payments/models.py:15 apps/payments/models.py:41
 msgid "Failed"
 msgstr ""
 
@@ -509,7 +1062,7 @@ msgstr ""
 msgid "Not sent (email not set up)"
 msgstr ""
 
-#: apps/notifications/services.py:107
+#: apps/notifications/services.py:159
 #, python-format
 msgid "%(n)s failed logins from %(ip)s"
 msgstr ""
@@ -532,10 +1085,6 @@ msgstr ""
 
 #: apps/orders/forms.py:40
 msgid "Choose a future date."
-msgstr ""
-
-#: apps/orders/forms.py:62 templates/orders/bulk.html:13
-msgid "Product"
 msgstr ""
 
 #: apps/orders/forms.py:62
@@ -562,7 +1111,7 @@ msgstr "ચુકવણીની રાહ"
 msgid "Placed"
 msgstr "ઓર્ડર થયો"
 
-#: apps/orders/models.py:20 apps/orders/models.py:233
+#: apps/orders/models.py:20 apps/orders/models.py:235
 msgid "Confirmed"
 msgstr "કન્ફર્મ થયો"
 
@@ -570,17 +1119,18 @@ msgstr "કન્ફર્મ થયો"
 msgid "Packed"
 msgstr "પેક થયો"
 
-#: apps/orders/models.py:23
+#: apps/orders/models.py:23 templates/marketplace/dashboard.html:7
+#: templates/marketplace/dashboard.html:8
 msgid "Delivered"
 msgstr "પહોંચી ગયો"
 
-#: apps/orders/models.py:24 apps/orders/models.py:207
+#: apps/orders/models.py:24 apps/orders/models.py:209
 #: apps/payments/models.py:16
 msgid "Cancelled"
 msgstr "રદ થયો"
 
 #: apps/orders/models.py:26 apps/orders/models.py:40
-#: templates/orders/detail.html:39
+#: templates/orders/detail.html:40
 msgid "Refunded"
 msgstr "રિફંડ થયું"
 
@@ -596,7 +1146,7 @@ msgstr ""
 msgid "Card (Stripe)"
 msgstr ""
 
-#: apps/orders/models.py:34 apps/payments/models.py:35
+#: apps/orders/models.py:34 apps/payments/models.py:39
 msgid "Pending"
 msgstr "બાકી"
 
@@ -616,160 +1166,159 @@ msgstr ""
 msgid "Partially refunded"
 msgstr ""
 
-#: apps/orders/models.py:201
+#: apps/orders/models.py:203
 msgid "Every day"
 msgstr "દરરોજ"
 
-#: apps/orders/models.py:202
+#: apps/orders/models.py:204
 msgid "Every week"
 msgstr "દર અઠવાડિયે"
 
-#: apps/orders/models.py:205
-msgid "Active"
-msgstr "ચાલુ"
-
-#: apps/orders/models.py:206
+#: apps/orders/models.py:208
 msgid "Paused"
 msgstr "થોભાવેલ"
 
-#: apps/orders/models.py:225
+#: apps/orders/models.py:227
 msgid "Wedding / function"
 msgstr ""
 
-#: apps/orders/models.py:226
+#: apps/orders/models.py:228
 msgid "Office"
 msgstr ""
 
-#: apps/orders/models.py:227
+#: apps/orders/models.py:229
 msgid "Shop / resale"
 msgstr ""
 
-#: apps/orders/models.py:228
+#: apps/orders/models.py:230
 msgid "Other"
 msgstr ""
 
-#: apps/orders/models.py:231 templates/partials/product_card.html:8
+#: apps/orders/models.py:233 templates/partials/product_card.html:8
 msgid "New"
 msgstr ""
 
-#: apps/orders/models.py:232
+#: apps/orders/models.py:234
 msgid "Quoted"
 msgstr ""
 
-#: apps/orders/models.py:234 apps/support/models.py:41
-#: apps/support/models.py:62
-msgid "Closed"
-msgstr ""
-
-#: apps/orders/models.py:243
+#: apps/orders/models.py:245
 msgid "What do you need? e.g. 20 crates of soft drinks, 300 lassi"
 msgstr ""
 
-#: apps/orders/models.py:254
-msgid "Pending review"
-msgstr ""
-
-#: apps/orders/models.py:255
+#: apps/orders/models.py:257
 msgid "Approved: coupon sent"
 msgstr ""
 
-#: apps/orders/models.py:256
+#: apps/orders/models.py:258
 msgid "Rejected"
 msgstr ""
 
-#: apps/orders/services.py:57
+#: apps/orders/services.py:58
 msgid "Cash on Delivery is not available right now."
 msgstr ""
 
-#: apps/orders/services.py:59
+#: apps/orders/services.py:60
 msgid "Cash on Delivery is not available for this account or area."
 msgstr ""
 
-#: apps/orders/services.py:61
+#: apps/orders/services.py:62
 #, python-format
 msgid "Cash on Delivery is available up to ₹%(v)s."
 msgstr ""
 
-#: apps/orders/services.py:117
+#: apps/orders/services.py:126
 msgid "Choose a payment method."
 msgstr "ચુકવણીની રીત પસંદ કરો."
 
-#: apps/orders/services.py:119
-msgid ""
-"Please verify your mobile number before your first Cash on Delivery order."
+#: apps/orders/services.py:128
+msgid "Please verify your mobile number before your first Cash on Delivery order."
 msgstr ""
 
-#: apps/orders/services.py:121
+#: apps/orders/services.py:130
 #, python-format
 msgid "ASAP %(eta)s"
 msgstr ""
 
-#: apps/orders/services.py:127
+#: apps/orders/services.py:136
 msgid "That delivery slot is no longer available."
 msgstr ""
 
-#: apps/orders/services.py:199
+#: apps/orders/services.py:214
 #, python-format
-msgid "Sorry, only %(n)s left of %(item)s. Please update your cart."
+msgid "Sorry, only %(n)s boxes left of %(item)s. Please update your cart."
 msgstr ""
 
-#: apps/orders/services.py:344
+#: apps/orders/services.py:366
 msgid "This order can no longer be cancelled. Please contact us."
 msgstr ""
 
-#: apps/orders/views.py:36 templates/cart/_drawer.html:5
+#: apps/orders/views.py:38 templates/cart/_drawer.html:5
 msgid "Your cart is empty."
 msgstr "તમારું કાર્ટ ખાલી છે."
 
-#: apps/orders/views.py:40
+#: apps/orders/views.py:42
 msgid "Add your delivery address to continue."
 msgstr ""
 
-#: apps/orders/views.py:53
+#: apps/orders/views.py:55
 msgid "Please review your order and try again."
 msgstr ""
 
-#: apps/orders/views.py:135
+#: apps/orders/views.py:60
+#, fuzzy
+#| msgid "Verify your mobile number"
+msgid "verify your mobile with an SMS code"
+msgstr "તમારો મોબાઇલ નંબર ચકાસો"
+
+#: apps/orders/views.py:62
+msgid "confirm with a code sent to your email"
+msgstr ""
+
+#: apps/orders/views.py:64
+#, python-format
+msgid "One quick step: %(how)s, then place your Cash on Delivery order."
+msgstr ""
+
+#: apps/orders/views.py:149
 msgid "Your order is cancelled."
 msgstr "તમારો ઓર્ડર રદ થયો છે."
 
-#: apps/orders/views.py:147
+#: apps/orders/views.py:161
 #, python-format
 msgid "Added %(n)s items from your last order."
 msgstr ""
 
-#: apps/orders/views.py:149
+#: apps/orders/views.py:163
 msgid "Those items are out of stock right now."
 msgstr ""
 
-#: apps/orders/views.py:159
+#: apps/orders/views.py:173
 msgid "A complaint can be sent once for a delivered order."
 msgstr ""
 
-#: apps/orders/views.py:172
+#: apps/orders/views.py:186
 msgid "Sorry about that! We'll review your photo and send a coupon."
 msgstr ""
 
-#: apps/orders/views.py:174
+#: apps/orders/views.py:188
 msgid "Please attach a photo."
 msgstr ""
 
-#: apps/orders/views.py:201
-msgid ""
-"If the details match an order, we emailed a 6-digit code to the registered "
-"email."
+#: apps/orders/views.py:215
+msgid "If the details match an order, we emailed a 6-digit code to the registered email."
 msgstr ""
 
-#: apps/orders/views.py:232
+#: apps/orders/views.py:246
 msgid "Thank you! Our team will call you with a quote shortly."
 msgstr ""
 
-#: apps/orders/views.py:255
+#: apps/orders/views.py:269
 #, python-format
 msgid "Subscription started. First delivery on %(d)s."
 msgstr ""
 
-#: apps/orders/views.py:274
+#: apps/orders/views.py:289
 msgid "Subscription updated."
 msgstr ""
 
@@ -777,46 +1326,40 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: apps/payments/models.py:14 apps/payments/models.py:36
+#: apps/payments/models.py:14 apps/payments/models.py:40
 msgid "Succeeded"
 msgstr ""
 
-#: apps/payments/models.py:40
+#: apps/payments/models.py:44
 msgid "Original payment method"
 msgstr ""
 
-#: apps/payments/models.py:41
+#: apps/payments/models.py:45
 msgid "UPI (manual)"
 msgstr ""
 
-#: apps/payments/models.py:42
+#: apps/payments/models.py:46
 msgid "Cash (manual)"
 msgstr ""
 
-#: apps/payments/models.py:43
+#: apps/payments/models.py:47
 msgid "Bank transfer (manual)"
 msgstr ""
 
-#: apps/payments/views.py:29
-msgid ""
-"We couldn't start the online payment. Please try again or choose Cash on "
-"Delivery."
-msgstr ""
-
 #: apps/payments/views.py:41
-msgid ""
-"Payment could not be verified. If money was taken it will be confirmed "
-"automatically."
+msgid "We couldn't start the online payment. Please try again or choose Cash on Delivery."
 msgstr ""
 
-#: apps/payments/views.py:50
+#: apps/payments/views.py:57
+msgid "Payment could not be verified. If money was taken it will be confirmed automatically."
+msgstr ""
+
+#: apps/payments/views.py:71
 msgid "We're confirming your payment. This page will update shortly."
 msgstr ""
 
-#: apps/payments/views.py:59
-msgid ""
-"Payment cancelled. Your items are back in stock; you can order again "
-"anytime."
+#: apps/payments/views.py:80
+msgid "Payment cancelled. Your items are back in stock; you can order again anytime."
 msgstr ""
 
 #: apps/promotions/models.py:17
@@ -834,6 +1377,20 @@ msgstr ""
 #: apps/promotions/models.py:35
 msgid "Personal coupon (e.g. Thandu guarantee)"
 msgstr ""
+
+#: apps/promotions/models.py:103
+msgid "Boxes"
+msgstr ""
+
+#: apps/promotions/models.py:108
+msgid "From boxes"
+msgstr ""
+
+#: apps/promotions/models.py:109
+#, fuzzy
+#| msgid "Price drop"
+msgid "Price per box"
+msgstr "ભાવ ઘટ્યો"
 
 #: apps/promotions/models.py:120
 msgid "Second line in the sunrise gradient"
@@ -889,33 +1446,33 @@ msgstr ""
 msgid "Adjustment"
 msgstr ""
 
-#: apps/promotions/services.py:27 apps/promotions/services.py:29
+#: apps/promotions/services.py:27 apps/promotions/services.py:31
 msgid "This coupon is not valid."
 msgstr "આ કૂપન માન્ય નથી."
 
-#: apps/promotions/services.py:32
+#: apps/promotions/services.py:29
+msgid "This offer applies only to its seller teams."
+msgstr ""
+
+#: apps/promotions/services.py:34
 #, python-format
 msgid "Add items worth ₹%(v)s more to use %(c)s."
 msgstr ""
 
-#: apps/promotions/services.py:35
+#: apps/promotions/services.py:37
 msgid "This coupon has been fully used."
 msgstr ""
 
-#: apps/promotions/services.py:39
+#: apps/promotions/services.py:41
 msgid "You have already used this coupon."
 msgstr ""
 
-#: apps/promotions/services.py:41
+#: apps/promotions/services.py:43
 msgid "This coupon is for your first order only."
 msgstr ""
 
 #: apps/reviews/models.py:12
 msgid "Waiting for approval"
-msgstr ""
-
-#: apps/reviews/models.py:13
-msgid "Approved"
 msgstr ""
 
 #: apps/reviews/models.py:14
@@ -942,12 +1499,12 @@ msgstr ""
 msgid "Thanks! Your review will appear after a quick check."
 msgstr ""
 
-#: apps/support/models.py:14
+#: apps/support/models.py:14 templates/marketplace/dashboard.html:7
 msgid "Orders"
 msgstr "ઓર્ડર"
 
 #: apps/support/models.py:15 templates/cart/_summary.html:8
-#: templates/cart/_summary.html:12 templates/orders/detail.html:35
+#: templates/cart/_summary.html:12 templates/orders/detail.html:36
 msgid "Delivery"
 msgstr "ડિલિવરી"
 
@@ -955,13 +1512,9 @@ msgstr "ડિલિવરી"
 msgid "Payments"
 msgstr "ચુકવણી"
 
-#: apps/support/models.py:17
+#: apps/support/models.py:17 templates/marketplace/dashboard.html:6
 msgid "Refunds"
 msgstr ""
-
-#: apps/support/models.py:18 templates/base.html:54
-msgid "Account"
-msgstr "એકાઉન્ટ"
 
 #: apps/support/models.py:19
 msgid "Products"
@@ -969,10 +1522,6 @@ msgstr "પ્રોડક્ટ્સ"
 
 #: apps/support/models.py:24
 msgid "Extra words customers might use"
-msgstr ""
-
-#: apps/support/models.py:39
-msgid "Open"
 msgstr ""
 
 #: apps/support/models.py:40
@@ -983,11 +1532,11 @@ msgstr ""
 msgid "Assistant"
 msgstr ""
 
-#: apps/support/models.py:61
+#: apps/support/models.py:61 templates/marketplace/dashboard.html:9
 msgid "Team"
-msgstr ""
+msgstr "ટીમ"
 
-#: apps/support/models.py:80 templates/storefront/product.html:89
+#: apps/support/models.py:80 templates/storefront/product.html:90
 msgid "Rasiko Team"
 msgstr ""
 
@@ -1004,10 +1553,7 @@ msgid "Turn on two-factor sign in"
 msgstr ""
 
 #: templates/accounts/2fa_setup.html:5
-msgid ""
-"The dashboard needs this for owners and managers. Scan the code with Google "
-"Authenticator, Microsoft Authenticator or any TOTP app, then type the "
-"6-digit code it shows."
+msgid "The dashboard needs this for owners and managers. Scan the code with Google Authenticator, Microsoft Authenticator or any TOTP app, then type the 6-digit code it shows."
 msgstr ""
 
 #: templates/accounts/2fa_setup.html:6
@@ -1052,30 +1598,24 @@ msgid "Open dashboard"
 msgstr ""
 
 #: templates/accounts/account.html:9
-msgid ""
-"Please verify your email using the link we sent, so you get order updates "
-"and invoices."
+msgid "Please verify your email using the link we sent, so you get order updates and invoices."
 msgstr ""
 
 #: templates/accounts/account.html:11
 msgid "Your orders"
 msgstr "તમારા ઓર્ડર"
 
-#: templates/accounts/account.html:12 templates/orders/_track_card.html:4
-#: templates/orders/detail.html:2 templates/payments/pay.html:6
-#: templates/reviews/write.html:4
+#: templates/accounts/account.html:12 templates/marketplace/dashboard.html:9
+#: templates/orders/_track_card.html:4 templates/orders/detail.html:2
+#: templates/payments/pay.html:6 templates/reviews/write.html:4
 msgid "Order"
 msgstr "ઓર્ડર"
 
-#: templates/accounts/account.html:12
+#: templates/accounts/account.html:12 templates/marketplace/dashboard.html:8
 msgid "Date"
 msgstr "તારીખ"
 
-#: templates/accounts/account.html:12 templates/support/tickets.html:4
-msgid "Status"
-msgstr "સ્થિતિ"
-
-#: templates/accounts/account.html:12 templates/orders/detail.html:38
+#: templates/accounts/account.html:12 templates/orders/detail.html:39
 msgid "Total"
 msgstr "કુલ"
 
@@ -1087,11 +1627,11 @@ msgstr "ફરી ઓર્ડર કરો"
 msgid "No orders yet."
 msgstr "હજુ કોઈ ઓર્ડર નથી."
 
-#: templates/accounts/account.html:15 templates/cart/cart.html:26
+#: templates/accounts/account.html:15
 msgid "Start shopping"
 msgstr "ખરીદી શરૂ કરો"
 
-#: templates/accounts/account.html:18 templates/orders/detail.html:34
+#: templates/accounts/account.html:18 templates/orders/detail.html:35
 msgid "Rasiko Coins"
 msgstr "રસિકો કોઇન્સ"
 
@@ -1115,15 +1655,16 @@ msgstr "સરનામાં"
 msgid "Default"
 msgstr "મુખ્ય"
 
-#: templates/accounts/account.html:23
+#: templates/accounts/account.html:23 templates/orders/checkout.html:20
 msgid "Edit"
 msgstr "ફેરફાર"
 
-#: templates/accounts/account.html:24
+#: templates/accounts/account.html:24 templates/orders/checkout.html:73
 msgid "Remove this address?"
 msgstr "આ સરનામું કાઢી નાખવું છે?"
 
 #: templates/accounts/account.html:24 templates/cart/cart.html:14
+#: templates/orders/checkout.html:21
 msgid "Remove"
 msgstr "કાઢો"
 
@@ -1248,9 +1789,7 @@ msgid "Check your email"
 msgstr "તમારો ઈમેલ જુઓ"
 
 #: templates/accounts/password_reset_done.html:5
-msgid ""
-"If an account exists for that email, a reset link is on its way. It works "
-"for 3 days."
+msgid "If an account exists for that email, a reset link is on its way. It works for 3 days."
 msgstr ""
 
 #: templates/accounts/password_reset_done.html:6
@@ -1261,24 +1800,73 @@ msgstr "સાઇન ઇન પર પાછા"
 msgid "Verify mobile"
 msgstr "મોબાઇલ ચકાસો"
 
+#: templates/accounts/phone_verify.html:2
+#, fuzzy
+#| msgid "Confirmed"
+msgid "Confirm by email"
+msgstr "કન્ફર્મ થયો"
+
 #: templates/accounts/phone_verify.html:4
 msgid "Verify your mobile"
 msgstr "તમારો મોબાઇલ ચકાસો"
 
 #: templates/accounts/phone_verify.html:5
-#, python-format
-msgid ""
-"We'll send a 6-digit code for %(p)s. You need this once before your first "
-"Cash on Delivery order."
+msgid "Before your first Cash on Delivery order we send a 6-digit code by SMS to your mobile. It takes a minute."
 msgstr ""
 
-#: templates/accounts/phone_verify.html:6 templates/orders/track.html:9
+#: templates/accounts/phone_verify.html:6
+msgid "Confirm with an email code"
+msgstr ""
+
+#: templates/accounts/phone_verify.html:7
+#, python-format
+msgid "Before your first Cash on Delivery order we email a 6-digit code to %(e)s. Add the mobile number the rider should call, then enter the code."
+msgstr ""
+
+#: templates/accounts/phone_verify.html:9
+#, fuzzy
+#| msgid "Send code"
+msgid "Get a code"
+msgstr "કોડ મોકલો"
+
+#: templates/accounts/phone_verify.html:11
+#, fuzzy
+#| msgid "Mobile number verified."
+msgid "Mobile number"
+msgstr "મોબાઇલ નંબર ચકાસાયો."
+
+#: templates/accounts/phone_verify.html:11
+#, fuzzy
+#| msgid "Mobile number verified."
+msgid "Mobile number (for the rider)"
+msgstr "મોબાઇલ નંબર ચકાસાયો."
+
+#: templates/accounts/phone_verify.html:13 templates/orders/track.html:9
 msgid "Send code"
 msgstr "કોડ મોકલો"
 
-#: templates/accounts/phone_verify.html:9
+#: templates/accounts/phone_verify.html:14
+msgid "We'll send the code by SMS to this number."
+msgstr ""
+
+#: templates/accounts/phone_verify.html:14
+#, python-format
+msgid "We'll email the code to %(e)s."
+msgstr ""
+
+#: templates/accounts/phone_verify.html:17
+msgid "Enter the code"
+msgstr ""
+
+#: templates/accounts/phone_verify.html:20
 msgid "Verify"
 msgstr "ચકાસો"
+
+#: templates/accounts/phone_verify.html:21
+#, fuzzy
+#| msgid "at checkout"
+msgid "Back to checkout"
+msgstr "ચેકઆઉટ વખતે"
 
 #: templates/accounts/profile.html:2
 msgid "Profile"
@@ -1288,7 +1876,8 @@ msgstr "પ્રોફાઇલ"
 msgid "Your profile"
 msgstr "તમારી પ્રોફાઇલ"
 
-#: templates/accounts/profile.html:7 templates/storefront/home.html:66
+#: templates/accounts/profile.html:7 templates/marketplace/form.html:1
+#: templates/storefront/home.html:66
 msgid "Save"
 msgstr "સાચવો"
 
@@ -1336,106 +1925,105 @@ msgstr "પહેલેથી એકાઉન્ટ છે?"
 msgid "Cold drinks & juices delivered in Rajkot"
 msgstr ""
 
-#: templates/base.html:28 templates/dashboard/base.html:13
+#: templates/base.html:31 templates/dashboard/base.html:13
 msgid "Skip to content"
 msgstr "મુખ્ય ભાગ પર જાઓ"
 
-#: templates/base.html:35
+#: templates/base.html:38
 #, python-format
 msgid "Free delivery above <b>%(v)s</b> in Rajkot"
 msgstr ""
 
-#: templates/base.html:35
+#: templates/base.html:38
 msgid "Cash on Delivery available"
 msgstr "કેશ ઓન ડિલિવરી ઉપલબ્ધ"
 
-#: templates/base.html:35
+#: templates/base.html:38
 #, python-format
 msgid "Delivery in %(a)s–%(b)s min"
 msgstr ""
 
-#: templates/base.html:44 templates/support/help.html:5
+#: templates/base.html:47 templates/support/help.html:5
 msgid "Search"
 msgstr "શોધો"
 
-#: templates/base.html:46
+#: templates/base.html:49
 msgid "Search juices, soda, milkshakes, brands…"
 msgstr ""
 
-#: templates/base.html:53
+#: templates/base.html:56
 msgid "Coins"
 msgstr "કોઇન્સ"
 
-#: templates/base.html:55
+#: templates/base.html:58
 msgid "Cart"
 msgstr "કાર્ટ"
 
-#: templates/base.html:58
+#: templates/base.html:61
 msgid "Categories"
 msgstr "કેટેગરી"
 
-#: templates/base.html:61
+#: templates/base.html:64
 msgid "All"
 msgstr "બધું"
 
-#: templates/base.html:63 templates/storefront/brands.html:2
-#: templates/storefront/brands.html:4
-msgid "Brands"
-msgstr "બ્રાન્ડ્સ"
-
-#: templates/base.html:64
+#: templates/base.html:67
 msgid "Party orders"
 msgstr "પાર્ટી ઓર્ડર"
 
-#: templates/base.html:68
+#: templates/base.html:71 templates/marketplace/base.html:1
 msgid "Language"
 msgstr "ભાષા"
 
-#: templates/base.html:89
+#: templates/base.html:92
 msgid "Order on WhatsApp"
 msgstr "વોટ્સએપ પર ઓર્ડર કરો"
 
-#: templates/base.html:91
+#: templates/base.html:94
 msgid "Shop"
 msgstr "શોપ"
 
-#: templates/base.html:93 templates/storefront/home.html:4
+#: templates/base.html:96 templates/storefront/home.html:4
 #: templates/storefront/offers.html:2
 msgid "Offers"
 msgstr "ઓફર્સ"
 
-#: templates/base.html:94 templates/orders/bulk.html:2
+#: templates/base.html:97 templates/orders/bulk.html:2
 #: templates/orders/bulk.html:5
 msgid "Party & bulk orders"
 msgstr "પાર્ટી અને જથ્થાબંધ ઓર્ડર"
 
-#: templates/base.html:96
+#: templates/base.html:98 templates/marketplace/application.html:1
+msgid "Sell with Rasiko"
+msgstr "રાસિકો પર વેચો"
+
+#: templates/base.html:100
 msgid "Help"
 msgstr "મદદ"
 
-#: templates/base.html:97 templates/support/help.html:2
+#: templates/base.html:101 templates/support/help.html:2
 msgid "24×7 Help Center"
 msgstr "24×7 મદદ કેન્દ્ર"
 
-#: templates/base.html:98 templates/orders/success.html:21
+#: templates/base.html:102 templates/orders/success.html:21
 #: templates/orders/track.html:2 templates/support/help.html:10
 msgid "Track order"
 msgstr "ઓર્ડર ટ્રેક કરો"
 
-#: templates/base.html:108 templates/orders/checkout.html:47
+#: templates/base.html:112 templates/orders/checkout.html:53
 #: templates/storefront/home.html:96
 msgid "Secure payments"
 msgstr "સુરક્ષિત ચુકવણી"
 
-#: templates/base.html:108
+#: templates/base.html:112
 msgid "Prices include GST"
 msgstr "કિંમતમાં GST સામેલ"
 
-#: templates/base.html:113
+#: templates/base.html:117
 msgid "Open 24×7 help chat"
 msgstr "24×7 મદદ ચેટ ખોલો"
 
-#: templates/base.html:113
+#: templates/base.html:117
 msgid "Help 24×7"
 msgstr "મદદ 24×7"
 
@@ -1457,12 +2045,21 @@ msgstr "કાર્ટ જુઓ"
 msgid "Checkout"
 msgstr "ચેકઆઉટ"
 
+#: templates/cart/_lines.html:7 templates/partials/product_card.html:25
+#: templates/storefront/product.html:34
+msgid "per box"
+msgstr ""
+
 #: templates/cart/_lines.html:11
-msgid "Remove one"
+#, fuzzy
+#| msgid "Remove one"
+msgid "Remove one box"
 msgstr "એક ઓછું કરો"
 
 #: templates/cart/_lines.html:11
-msgid "Add one more"
+#, fuzzy
+#| msgid "Add one more"
+msgid "Add one more box"
 msgstr "એક વધારે ઉમેરો"
 
 #: templates/cart/_summary.html:2
@@ -1477,11 +2074,11 @@ msgstr "રસિકો ભાવમાં બચત"
 msgid "included"
 msgstr "સામેલ"
 
-#: templates/cart/_summary.html:4 templates/orders/detail.html:32
+#: templates/cart/_summary.html:4 templates/orders/detail.html:33
 msgid "Item total"
 msgstr "વસ્તુઓનો કુલ"
 
-#: templates/cart/_summary.html:5 templates/orders/detail.html:33
+#: templates/cart/_summary.html:5 templates/orders/detail.html:34
 msgid "Coupon"
 msgstr "કૂપન"
 
@@ -1490,11 +2087,11 @@ msgstr "કૂપન"
 msgid "Rasiko Coins (%(n)s)"
 msgstr ""
 
-#: templates/cart/_summary.html:8 templates/orders/detail.html:35
+#: templates/cart/_summary.html:8 templates/orders/detail.html:36
 msgid "FREE"
 msgstr "મફત"
 
-#: templates/cart/_summary.html:9 templates/orders/detail.html:36
+#: templates/cart/_summary.html:9 templates/orders/detail.html:37
 msgid "Small order fee"
 msgstr "નાના ઓર્ડરની ફી"
 
@@ -1520,7 +2117,7 @@ msgstr ""
 msgid "Continue shopping"
 msgstr "ખરીદી ચાલુ રાખો"
 
-#: templates/cart/cart.html:11 templates/orders/checkout.html:56
+#: templates/cart/cart.html:11 templates/orders/checkout.html:62
 msgid "Order summary"
 msgstr "ઓર્ડર સારાંશ"
 
@@ -1532,7 +2129,8 @@ msgstr "કૂપન કોડ"
 msgid "applied"
 msgstr "લાગુ થયો"
 
-#: templates/cart/cart.html:15 templates/storefront/listing.html:25
+#: templates/cart/cart.html:15 templates/marketplace/base.html:1
+#: templates/storefront/listing.html:26
 msgid "Apply"
 msgstr "લાગુ કરો"
 
@@ -1557,33 +2155,556 @@ msgstr ""
 msgid "Your cart is empty"
 msgstr "તમારું કાર્ટ ખાલી છે"
 
+#: templates/cart/cart.html:26
+msgid "Find something you love and add it to your cart."
+msgstr ""
+
 #: templates/dashboard/base.html:22
 msgid "View shop"
 msgstr "શોપ જુઓ"
+
+#: templates/emails/marketplace_delivery.html:1
+#: templates/orders/_track_card.html:14 templates/orders/detail.html:9
+msgid "Delivery code"
+msgstr "ડિલિવરી કોડ"
+
+#: templates/emails/marketplace_delivery.html:1 templates/orders/detail.html:9
+msgid "Share this code only when receiving this delivery."
+msgstr "આ કોડ માત્ર ડિલિવરી મેળવતી વખતે આપો."
+
+#: templates/marketplace/alerts.html:1 templates/marketplace/case.html:1
+#: templates/marketplace/cases.html:1
+#: templates/marketplace/customer_form.html:1 templates/marketplace/form.html:1
+#: templates/marketplace/invitation.html:1
+#: templates/marketplace/onboarding.html:1
+#: templates/marketplace/policies.html:1
+msgid "Dashboard"
+msgstr "ડેશબોર્ડ"
+
+#: templates/marketplace/alerts.html:1 templates/marketplace/dashboard.html:4
+msgid "Operational alerts"
+msgstr "કામગીરીની ચેતવણીઓ"
+
+#: templates/marketplace/alerts.html:1
+msgid "No active alerts."
+msgstr "કોઈ સક્રિય ચેતવણી નથી."
+
+#: templates/marketplace/application.html:1
+msgid "Apply for a seller account. Your store opens after admin approval and verification."
+msgstr "વિક્રેતા ખાતા માટે અરજી કરો. એડમિનની મંજૂરી અને ચકાસણી પછી તમારી દુકાન ખુલશે."
+
+#: templates/marketplace/application.html:1
+msgid "Submit application"
+msgstr "અરજી સબમિટ કરો"
+
+#: templates/marketplace/base.html:1
+msgid "Rasiko Partners"
+msgstr "રાસિકો પાર્ટનર્સ"
+
+#: templates/marketplace/base.html:1
+msgid "Partner workspace"
+msgstr "પાર્ટનર કાર્યક્ષેત્ર"
+
+#: templates/marketplace/base.html:1
+msgid "Your business, clearly in view."
+msgstr "તમારા વ્યવસાયની સ્પષ્ટ માહિતી."
+
+#: templates/marketplace/case.html:1 templates/marketplace/customer_form.html:1
+#: templates/support/chat_widget.html:5
+msgid "Send"
+msgstr "મોકલો"
+
+#: templates/marketplace/cases.html:1 templates/marketplace/dashboard.html:4
+
+#| msgid "Seller team"
+msgid "Seller support"
+msgstr "વિક્રેતા સહાય"
+
+#: templates/marketplace/cases.html:1
+msgid "No support cases."
+msgstr "કોઈ સહાય કેસ નથી."
+
+#: templates/marketplace/dashboard.html:2
+msgid "Your network. Your progress."
+msgstr "તમારું નેટવર્ક. તમારી પ્રગતિ."
+
+#: templates/marketplace/dashboard.html:2
+msgid "Track teams, deliveries and money across your territories."
+msgstr "તમારા વિસ્તારોમાં ટીમ, ડિલિવરી અને આવક પર નજર રાખો."
+
+#: templates/marketplace/dashboard.html:2
+msgid "Export orders"
+msgstr "ઓર્ડર નિકાસ કરો"
+
+#: templates/marketplace/dashboard.html:3
+msgid "Marketplace is off. Complete setup and verification before enabling checkout."
+msgstr "માર્કેટપ્લેસ બંધ છે. ચેકઆઉટ ચાલુ કરતાં પહેલાં સેટઅપ અને ચકાસણી પૂર્ણ કરો."
+
+#: templates/marketplace/dashboard.html:4
+msgid "Privacy and retention settings"
+msgstr "ગોપનીયતા અને રેકોર્ડ અવધિ સેટિંગ"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Workspace actions"
+msgstr "કાર્યક્ષેત્રનાં કાર્યો"
+
+#: templates/marketplace/dashboard.html:4 templates/marketplace/products.html:1
+msgid "Products and stock"
+msgstr "ઉત્પાદનો અને સ્ટોક"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Add brand Head"
+msgstr "બ્રાન્ડ વડા ઉમેરો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Add area"
+msgstr "વિસ્તાર ઉમેરો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Global policies"
+msgstr "વૈશ્વિક નીતિઓ"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Add seller"
+msgstr "વિક્રેતા ઉમેરો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Add brand team"
+msgstr "બ્રાન્ડ ટીમ ઉમેરો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Assign territory"
+msgstr "વિસ્તાર ફાળવો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Create seller-funded offer"
+msgstr "વિક્રેતાના ખર્ચે ઓફર બનાવો"
+
+#: templates/marketplace/dashboard.html:4
+msgid "Request territory"
+msgstr "વિસ્તારની વિનંતી કરો"
+
+#: templates/marketplace/dashboard.html:5
+msgid "Region"
+msgstr "પ્રદેશ"
+
+#: templates/marketplace/dashboard.html:5
+msgid "Area"
+msgstr "વિસ્તાર"
+
+#: templates/marketplace/dashboard.html:5
+msgid "All teams"
+msgstr "બધી ટીમો"
+
+#: templates/marketplace/dashboard.html:5
+msgid "Filter"
+msgstr "ફિલ્ટર કરો"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Performance"
+msgstr "કામગીરી"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Delivered revenue"
+msgstr "ડિલિવરીથી આવક"
+
+#: templates/marketplace/dashboard.html:6
+msgid "COD revenue"
+msgstr "રોકડ ડિલિવરી આવક"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Online revenue"
+msgstr "ઓનલાઇન આવક"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Rider cash outstanding"
+msgstr "રાઇડર પાસે બાકી રોકડ"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Pending payout"
+msgstr "બાકી ચુકવણી"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Settled payout"
+msgstr "પ્રાપ્ત ચુકવણી"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Seller-funded discounts"
+msgstr "વિક્રેતાના ખર્ચે છૂટ"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Platform fees"
+msgstr "પ્લેટફોર્મ ફી"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Delivered orders"
+msgstr "પહોંચાડેલા ઓર્ડર"
+
+#: templates/marketplace/dashboard.html:6
+msgid "Cancelled orders"
+msgstr "રદ થયેલા ઓર્ડર"
+
+#: templates/marketplace/dashboard.html:7
+msgid "Team performance"
+msgstr "ટીમની કામગીરી"
+
+#: templates/marketplace/dashboard.html:7
+msgid "State / region"
+msgstr "રાજ્ય / પ્રદેશ"
+
+#: templates/marketplace/dashboard.html:7
+#: templates/marketplace/dashboard.html:8
+msgid "Revenue"
+msgstr "આવક"
+
+#: templates/marketplace/dashboard.html:7
+msgid "Your team performance will appear after your first order."
+msgstr "પ્રથમ ઓર્ડર પછી તમારી ટીમની કામગીરી અહીં દેખાશે."
+
+#: templates/marketplace/dashboard.html:8
+msgid "Daily progress"
+msgstr "દૈનિક પ્રગતિ"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Average ready-to-delivered time"
+msgstr "તૈયારીથી ડિલિવરી સુધીનો સરેરાશ સમય"
+
+#: templates/marketplace/dashboard.html:8
+msgid "No delivered orders yet."
+msgstr "હજુ કોઈ ઓર્ડરની ડિલિવરી થઈ નથી."
+
+#: templates/marketplace/dashboard.html:8
+msgid "Suspended"
+msgstr "સ્થગિત"
+
+#: templates/marketplace/dashboard.html:8
+#: templates/marketplace/onboarding.html:1
+msgid "Seller payout onboarding"
+msgstr "વિક્રેતા ચુકવણી નોંધણી"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Online payments"
+msgstr "ઓનલાઇન ચુકવણી"
+
+#: templates/marketplace/dashboard.html:8
+msgid "COD"
+msgstr "ડિલિવરી પર રોકડ"
+
+#: templates/marketplace/dashboard.html:8 templates/storefront/product.html:55
+msgid "Standard delivery"
+msgstr "સામાન્ય ડિલિવરી"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Edit brand team"
+msgstr "બ્રાન્ડ ટીમ સંપાદિત કરો"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Toggle online payments"
+msgstr "ઓનલાઇન ચુકવણી બદલો"
+
+#: templates/marketplace/dashboard.html:8
+#: templates/marketplace/dashboard.html:10
+#: templates/marketplace/dashboard.html:13
+msgid "Suspension reason"
+msgstr "સ્થગિત કરવાનું કારણ"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Suspend team"
+msgstr "ટીમ સ્થગિત કરો"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Activate team"
+msgstr "ટીમ સક્રિય કરો"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Confirm seller verification"
+msgstr "વિક્રેતાની ચકાસણીની પુષ્ટિ કરો"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Rider email"
+msgstr "રાઇડરનું ઈમેલ"
+
+#: templates/marketplace/dashboard.html:8
+msgid "Invite rider"
+msgstr "રાઇડરને આમંત્રિત કરો"
+
+#: templates/marketplace/dashboard.html:8
+msgid "No seller teams yet."
+msgstr "હજુ કોઈ વિક્રેતા ટીમ નથી."
+
+#: templates/marketplace/dashboard.html:9
+msgid "Fulfillment queue"
+msgstr "ઓર્ડર પૂર્તિની કતાર"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Amount"
+msgstr "રકમ"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Action"
+msgstr "કાર્ય"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Needs attention"
+msgstr "ધ્યાન જરૂરી છે"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Contact support"
+msgstr "સહાયનો સંપર્ક કરો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "GST invoice"
+msgid "Issue invoice"
+msgstr "બિલ જારી કરો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Download GST invoice"
+msgid "Download invoice"
+msgstr "બિલ ડાઉનલોડ કરો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Out for delivery"
+msgid "Resolve delivery"
+msgstr "ડિલિવરીની સમસ્યા ઉકેલો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Decision reason"
+msgid "Cancellation reason"
+msgstr "રદ કરવાનું કારણ"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Cancel order"
+msgid "Cancel seller order"
+msgstr "વિક્રેતાનો ઓર્ડર રદ કરો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Ready for pickup"
+msgid "Release before pickup"
+msgstr "પિકઅપ પહેલાં રાઇડરને મુક્ત કરો"
+
+#: templates/marketplace/dashboard.html:9
+
+#| msgid "Your delivery code"
+msgid "Reset buyer delivery code"
+msgstr "ખરીદદારનો ડિલિવરી કોડ ફરી બનાવો"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Ready for pickup"
+msgstr "પિકઅપ માટે તૈયાર"
+
+#: templates/marketplace/dashboard.html:9
+msgid "Confirm cash received"
+msgstr "રોકડ મળ્યાની પુષ્ટિ કરો"
+
+#: templates/marketplace/dashboard.html:9
+msgid "No orders in this view."
+msgstr "આ દૃશ્યમાં કોઈ ઓર્ડર નથી."
+
+#: templates/marketplace/dashboard.html:10
+msgid "Rider availability"
+msgstr "રાઇડરની ઉપલબ્ધતા"
+
+#: templates/marketplace/dashboard.html:10
+msgid "Suspend rider"
+msgstr "રાઇડર સ્થગિત કરો"
+
+#: templates/marketplace/dashboard.html:10
+msgid "Invite riders to start deliveries."
+msgstr "ડિલિવરી શરૂ કરવા રાઇડરને આમંત્રિત કરો."
+
+#: templates/marketplace/dashboard.html:11
+msgid "Territory requests"
+msgstr "વિસ્તારની વિનંતીઓ"
+
+#: templates/marketplace/dashboard.html:11
+msgid "Decision reason"
+msgstr "નિર્ણયનું કારણ"
+
+#: templates/marketplace/dashboard.html:11
+msgid "Approve"
+msgstr "મંજૂર કરો"
+
+#: templates/marketplace/dashboard.html:11
+msgid "Reject"
+msgstr "નકારો"
+
+#: templates/marketplace/dashboard.html:11
+msgid "No pending requests."
+msgstr "કોઈ બાકી વિનંતી નથી."
+
+#: templates/marketplace/dashboard.html:13
+msgid "Platform fee schedule"
+msgstr "પ્લેટફોર્મ ફીનું સમયપત્રક"
+
+#: templates/marketplace/dashboard.html:13
+msgid "New fees need at least seven days of notice. Existing orders keep their original fees."
+msgstr "નવી ફી માટે ઓછામાં ઓછી સાત દિવસની સૂચના જરૂરી છે. જૂના ઓર્ડરની ફી બદલાશે નહીં."
+
+#: templates/marketplace/dashboard.html:13
+msgid "Percent"
+msgstr "ટકાવારી"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Effective at"
+msgstr "લાગુ થવાનો સમય"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Disabled"
+msgstr "બંધ"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Enabled"
+msgstr "ચાલુ"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Schedule and notify sellers"
+msgstr "સમય નક્કી કરો અને વિક્રેતાઓને સૂચિત કરો"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Brand Heads"
+msgstr "બ્રાન્ડ વડાઓ"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Edit Head and jurisdictions"
+msgstr "વડા અને અધિકારક્ષેત્ર બદલો"
+
+#: templates/marketplace/dashboard.html:13
+msgid "Suspend Head"
+msgstr "વડાને સ્થગિત કરો"
+
+#: templates/marketplace/form.html:1
+msgid "Manage your network"
+msgstr "તમારું નેટવર્ક સંચાલિત કરો"
+
+#: templates/marketplace/invitation.html:1
+msgid "Rider invitation"
+msgstr "રાઇડરનું આમંત્રણ"
+
+#: templates/marketplace/invitation.html:1
+msgid "Share this code privately with the invited rider. It expires in 48 hours and can be used once."
+msgstr "આ કોડ માત્ર આમંત્રિત રાઇડરને આપો. તે 48 કલાકમાં સમાપ્ત થાય છે અને એક વાર વાપરી શકાય છે."
+
+#: templates/marketplace/invitation.html:1
+msgid "The rider signs in using the invited email and enters this code in Rasiko Rider."
+msgstr "રાઇડર આમંત્રિત ઈમેલથી સાઇન ઇન કરીને રાસિકો રાઇડરમાં આ કોડ દાખલ કરે છે."
+
+#: templates/marketplace/onboarding.html:1
+msgid "Submit accurate legal and bank details for provider verification. Heads cannot change your payout destination."
+msgstr "પ્રદાતા ચકાસણી માટે સાચી કાનૂની અને બેંક વિગતો મોકલો. હેડ તમારું ચુકવણી ખાતું બદલી શકતા નથી."
+
+#: templates/marketplace/onboarding.html:1
+
+#| msgid "Submit application"
+msgid "Submit for verification"
+msgstr "ચકાસણી માટે મોકલો"
+
+#: templates/marketplace/onboarding.html:1
+msgid "Refresh provider status"
+msgstr "પ્રદાતાની સ્થિતિ તાજી કરો"
+
+#: templates/marketplace/onboarding.html:1
+
+#| msgid "Review translations"
+msgid "Resume reconciliation"
+msgstr "મેળવણી ફરી શરૂ કરો"
+
+#: templates/marketplace/onboarding.html:1
+msgid "Recover uncertain onboarding"
+msgstr "અનિશ્ચિત નોંધણીની પુનઃપ્રાપ્તિ"
+
+#: templates/marketplace/onboarding.html:1
+msgid "Look up the existing record in Razorpay. A missing response must never create a duplicate account."
+msgstr "Razorpayમાં હાલનો રેકોર્ડ શોધો. જવાબ ન મળવાથી બીજું ખાતું ક્યારેય બનાવશો નહીં."
+
+#: templates/marketplace/onboarding.html:1
+msgid "Step"
+msgstr "પગલું"
+
+#: templates/marketplace/onboarding.html:1
+msgid "Existing provider reference"
+msgstr "હાલનો પ્રદાતા સંદર્ભ"
+
+#: templates/marketplace/onboarding.html:1
+
+#| msgid "Verified reviews"
+msgid "Verify and recover"
+msgstr "ચકાસીને પુનઃપ્રાપ્તિ કરો"
+
+#: templates/marketplace/policies.html:1
+msgid "Marketplace policies and contact"
+msgstr "માર્કેટપ્લેસ નીતિઓ અને સંપર્ક"
+
+#: templates/marketplace/policies.html:1
+msgid "Grievance contact"
+msgstr "ફરિયાદ સંપર્ક"
+
+#: templates/marketplace/products.html:1
+msgid "Add product"
+msgstr "ઉત્પાદન ઉમેરો"
+
+#: templates/marketplace/products.html:1
+msgid "Review translations"
+msgstr "અનુવાદની સમીક્ષા કરો"
+
+#: templates/marketplace/products.html:1
+msgid "Edit product"
+msgstr "ઉત્પાદન સંપાદિત કરો"
+
+#: templates/marketplace/products.html:1
+msgid "Add product photo"
+msgstr "ઉત્પાદનનો ફોટો ઉમેરો"
+
+#: templates/marketplace/products.html:1
+msgid "Add box variant"
+msgstr "બોક્સનો પ્રકાર ઉમેરો"
+
+#: templates/marketplace/products.html:1
+msgid "Bottles in stock"
+msgstr "સ્ટોકમાં બોટલો"
+
+#: templates/marketplace/products.html:1
+msgid "Edit box variant"
+msgstr "બોક્સનો પ્રકાર બદલો"
+
+#: templates/marketplace/products.html:1
+
+#| msgid "Suspension reason"
+msgid "Quarantine reason"
+msgstr "સ્ટોક અલગ રાખવાનું કારણ"
+
+#: templates/marketplace/products.html:1
+msgid "Quarantine remaining batch"
+msgstr "બાકી બેચને અલગ રાખો"
+
+#: templates/marketplace/products.html:1
+msgid "Bottle adjustment"
+msgstr "બોટલોનો ફેરફાર"
+
+#: templates/marketplace/products.html:1
+msgid "Update stock"
+msgstr "સ્ટોક બદલો"
+
+#: templates/marketplace/products.html:1
+msgid "Add your first product in English, Hindi or Gujarati."
+msgstr "તમારું પ્રથમ ઉત્પાદન અંગ્રેજી, હિન્દી અથવા ગુજરાતીમાં ઉમેરો."
 
 #: templates/orders/_track_card.html:12
 #, python-format
 msgid "Expected by %(t)s"
 msgstr ""
 
-#: templates/orders/_track_card.html:13
-msgid "Rider"
-msgstr ""
-
-#: templates/orders/_track_card.html:14
-msgid "Delivery code"
-msgstr "ડિલિવરી કોડ"
-
 #: templates/orders/bulk.html:3
-msgid ""
-"Crates and cases of cold drinks, juices and lassi for weddings, functions, "
-"offices and shops in Rajkot with bulk prices."
+msgid "Crates and cases of cold drinks, juices and lassi for weddings, functions, offices and shops in Rajkot with bulk prices."
 msgstr ""
 
 #: templates/orders/bulk.html:6
-msgid ""
-"Weddings, functions, offices and shops: tell us what you need and we'll call"
-" you with a quote."
+msgid "Weddings, functions, offices and shops: tell us what you need and we'll call you with a quote."
 msgstr ""
 
 #: templates/orders/bulk.html:10
@@ -1614,145 +2735,151 @@ msgstr "વોટ્સએપ પર ચેટ કરો"
 msgid "Deliver to"
 msgstr "અહીં પહોંચાડો"
 
-#: templates/orders/checkout.html:19
+#: templates/orders/checkout.html:25
 msgid "Add a new address"
 msgstr "નવું સરનામું ઉમેરો"
 
-#: templates/orders/checkout.html:20
+#: templates/orders/checkout.html:26
 #, python-format
 msgid "ASAP delivery %(e)s"
 msgstr ""
 
-#: templates/orders/checkout.html:20
+#: templates/orders/checkout.html:26
 msgid "Rajkot's fastest"
 msgstr ""
 
-#: templates/orders/checkout.html:24
+#: templates/orders/checkout.html:30
 msgid "When"
 msgstr "ક્યારે"
 
-#: templates/orders/checkout.html:25
+#: templates/orders/checkout.html:31
 msgid "Delivery time"
 msgstr "ડિલિવરીનો સમય"
 
-#: templates/orders/checkout.html:27
+#: templates/orders/checkout.html:33
 msgid "As soon as possible"
 msgstr "બને તેટલું જલ્દી"
 
-#: templates/orders/checkout.html:30
+#: templates/orders/checkout.html:36
 msgid "Note for the rider (optional)"
 msgstr ""
 
-#: templates/orders/checkout.html:31
+#: templates/orders/checkout.html:37
 msgid "e.g. Ring the bell twice"
 msgstr ""
 
-#: templates/orders/checkout.html:35
+#: templates/orders/checkout.html:41
 msgid "Pay with"
 msgstr "આ રીતે ચૂકવો"
 
-#: templates/orders/checkout.html:40
-msgid "We'll verify your mobile number once before your first COD order."
+#: templates/orders/checkout.html:46
+msgid "First COD order? Verify your mobile once with a 6-digit code sent by SMS."
 msgstr ""
 
-#: templates/orders/checkout.html:40
+#: templates/orders/checkout.html:46
+msgid "First COD order? Confirm once with a 6-digit code sent to your email."
+msgstr ""
+
+#: templates/orders/checkout.html:46
 msgid "Verify now"
 msgstr "હમણાં ચકાસો"
 
-#: templates/orders/checkout.html:46
+#: templates/orders/checkout.html:52
 msgid "Why shop with us"
 msgstr "અમારી પાસે શા માટે ખરીદો"
 
-#: templates/orders/checkout.html:49
+#: templates/orders/checkout.html:55
 msgid "GST invoice"
 msgstr "GST બિલ"
 
-#: templates/orders/checkout.html:50 templates/orders/detail.html:23
+#: templates/orders/checkout.html:56 templates/orders/detail.html:24
 #: templates/storefront/home.html:97
 msgid "Thandu guarantee"
 msgstr "ઠંડુ ગેરંટી"
 
-#: templates/orders/checkout.html:62
+#: templates/orders/checkout.html:68
 msgid "Place order"
 msgstr "ઓર્ડર કરો"
 
-#: templates/orders/checkout.html:63
-msgid ""
-"Prices, delivery fee and discounts are checked again on our server when you "
-"place the order."
+#: templates/orders/checkout.html:69
+msgid "Prices, delivery fee and discounts are checked again on our server when you place the order."
 msgstr ""
 
-#: templates/orders/checkout.html:64
+#: templates/orders/checkout.html:70
 msgid "Refund & cancellation policy"
 msgstr "રિફંડ અને રદ કરવાની નીતિ"
 
 #: templates/orders/detail.html:9
+#, fuzzy
+#| msgid "Download GST invoice"
+msgid "Download seller invoice"
+msgstr "GST બિલ ડાઉનલોડ કરો"
+
+#: templates/orders/detail.html:10
 msgid "This order is waiting for payment."
 msgstr ""
 
-#: templates/orders/detail.html:9
+#: templates/orders/detail.html:10
 msgid "Pay now"
 msgstr "હમણાં ચૂકવો"
 
-#: templates/orders/detail.html:11
+#: templates/orders/detail.html:12
 msgid "Items"
 msgstr "વસ્તુઓ"
 
-#: templates/orders/detail.html:13
+#: templates/orders/detail.html:14
 #, python-format
 msgid "%(n)s refunded"
 msgstr ""
 
-#: templates/orders/detail.html:15 templates/reviews/write.html:4
+#: templates/orders/detail.html:16 templates/reviews/write.html:4
 msgid "Rate"
 msgstr ""
 
-#: templates/orders/detail.html:19
+#: templates/orders/detail.html:20
 msgid "Not chilled? Thandu guarantee"
 msgstr ""
 
-#: templates/orders/detail.html:22
+#: templates/orders/detail.html:23
 msgid "Send complaint"
 msgstr ""
 
-#: templates/orders/detail.html:25
+#: templates/orders/detail.html:26
 msgid "Download GST invoice"
 msgstr "GST બિલ ડાઉનલોડ કરો"
 
-#: templates/orders/detail.html:26
+#: templates/orders/detail.html:27
 msgid "Buy again"
 msgstr "ફરી ખરીદો"
 
-#: templates/orders/detail.html:27
+#: templates/orders/detail.html:28
 msgid "Cancel this order?"
 msgstr "આ ઓર્ડર રદ કરવો છે?"
 
-#: templates/orders/detail.html:27
+#: templates/orders/detail.html:28
 msgid "Cancel order"
 msgstr "ઓર્ડર રદ કરો"
 
-#: templates/orders/detail.html:31
+#: templates/orders/detail.html:32
 msgid "Bill"
 msgstr "બિલ"
 
-#: templates/orders/detail.html:40
+#: templates/orders/detail.html:41
 #, python-format
 msgid "You saved %(s)s"
 msgstr ""
 
-#: templates/orders/detail.html:42
+#: templates/orders/detail.html:43
 #, python-format
 msgid "You earned %(n)s Rasiko Coins"
 msgstr ""
 
-#: templates/orders/detail.html:44
+#: templates/orders/detail.html:45
 msgid "Need help with this order?"
 msgstr "આ ઓર્ડરમાં મદદ જોઈએ છે?"
 
 #: templates/orders/subscriptions.html:4
-msgid ""
-"Daily or weekly milk, water cans or cold drinks for your shop. Pay by Cash "
-"on Delivery; pause or skip anytime."
+msgid "Daily or weekly milk, water cans or cold drinks for your shop. Pay by Cash on Delivery; pause or skip anytime."
 msgstr ""
 
 #: templates/orders/subscriptions.html:9 templates/storefront/_results.html:21
@@ -1841,6 +2968,14 @@ msgstr ""
 msgid "Log in to see all your orders"
 msgstr ""
 
+#: templates/partials/empty_state.html:7 templates/storefront/listing.html:27
+msgid "Clear filters"
+msgstr "ફિલ્ટર હટાવો"
+
+#: templates/partials/empty_state.html:8
+msgid "Browse products"
+msgstr "પ્રોડક્ટ જુઓ"
+
 #: templates/partials/product_card.html:4 templates/storefront/product.html:31
 #: templates/storefront/product.html:40
 msgid "Out of stock"
@@ -1854,28 +2989,36 @@ msgstr "ભાવ ઘટ્યો"
 msgid "Bestseller"
 msgstr "સૌથી વધુ વેચાતું"
 
-#: templates/partials/product_card.html:16
-#: templates/storefront/listing.html:20
+#: templates/partials/product_card.html:14
+msgid "Demo price"
+msgstr ""
+
+#: templates/partials/product_card.html:17 templates/storefront/listing.html:21
 msgid "Size"
 msgstr "સાઇઝ"
 
-#: templates/partials/product_card.html:21
+#: templates/partials/product_card.html:22 templates/storefront/product.html:39
+#, python-format
+msgid "%(p)s per bottle"
+msgstr ""
+
+#: templates/partials/product_card.html:23
 #, python-format
 msgid "You save %(s)s"
 msgstr ""
 
-#: templates/partials/product_card.html:25
+#: templates/partials/product_card.html:27
 #, python-format
-msgid "Add %(n)s to cart"
+msgid "Add a box of %(n)s to cart"
 msgstr ""
 
-#: templates/partials/product_card.html:25 templates/storefront/home.html:69
-#: templates/storefront/offers.html:11
-msgid "Add"
-msgstr "ઉમેરો"
+#: templates/partials/product_card.html:27
+#, fuzzy
+#| msgid "Add box variant"
+msgid "Add box"
+msgstr "બોક્સનો પ્રકાર ઉમેરો"
 
-#: templates/partials/product_card.html:26
-#: templates/storefront/product.html:51
+#: templates/partials/product_card.html:28 templates/storefront/product.html:51
 msgid "Notify me"
 msgstr "મને જાણ કરો"
 
@@ -1895,11 +3038,11 @@ msgstr ""
 msgid "Pay with UPI / card / netbanking"
 msgstr ""
 
-#: templates/payments/pay.html:23
+#: templates/payments/pay.html:24
 msgid "Cancel payment"
 msgstr ""
 
-#: templates/payments/pay.html:24
+#: templates/payments/pay.html:25
 msgid "Card details never touch our servers"
 msgstr ""
 
@@ -1951,12 +3094,12 @@ msgid "Previous"
 msgstr "પાછળ"
 
 #: templates/storefront/_results.html:24
-msgid "No drinks match that."
-msgstr ""
+msgid "No products found"
+msgstr "કોઈ પ્રોડક્ટ મળી નથી"
 
 #: templates/storefront/_results.html:24
-msgid "Try fewer filters or another search."
-msgstr ""
+msgid "Try another search or clear your filters."
+msgstr "બીજું શોધો અથવા તમારા ફિલ્ટર દૂર કરો."
 
 #: templates/storefront/_suggest.html:4
 #, python-format
@@ -2029,6 +3172,10 @@ msgstr "કોમ્બો પેક"
 msgid "All offers"
 msgstr "બધી ઓફર્સ"
 
+#: templates/storefront/home.html:69 templates/storefront/offers.html:11
+msgid "Add"
+msgstr "ઉમેરો"
+
 #: templates/storefront/home.html:76
 msgid "Recently viewed"
 msgstr "હમણાં જોયેલું"
@@ -2046,9 +3193,7 @@ msgid "About Rasiko"
 msgstr "રસિકો વિશે"
 
 #: templates/storefront/home.html:92
-msgid ""
-"A family-run Rajkot business bringing you genuine brands at honest prices, "
-"delivered fresh to your door."
+msgid "A family-run Rajkot business bringing you genuine brands at honest prices, delivered fresh to your door."
 msgstr ""
 
 #: templates/storefront/home.html:94
@@ -2087,57 +3232,50 @@ msgstr ""
 msgid "Home"
 msgstr "હોમ"
 
-#: templates/storefront/listing.html:12 templates/storefront/listing.html:15
+#: templates/storefront/listing.html:12 templates/storefront/listing.html:13
+#: templates/storefront/listing.html:16
 msgid "Filters"
 msgstr "ફિલ્ટર"
 
-#: templates/storefront/listing.html:16
+#: templates/storefront/listing.html:17
 msgid "Availability"
 msgstr ""
 
-#: templates/storefront/listing.html:17
+#: templates/storefront/listing.html:18
 msgid "In stock only"
 msgstr "ફક્ત સ્ટોકમાં હોય તે"
 
-#: templates/storefront/listing.html:18
+#: templates/storefront/listing.html:19
 msgid "Veg only"
 msgstr "ફક્ત શાકાહારી"
 
-#: templates/storefront/listing.html:19
-msgid "Brand"
-msgstr "બ્રાન્ડ"
-
-#: templates/storefront/listing.html:21
+#: templates/storefront/listing.html:22
 msgid "Price"
 msgstr "ભાવ"
 
-#: templates/storefront/listing.html:22
+#: templates/storefront/listing.html:23
 msgid "Min"
 msgstr ""
 
-#: templates/storefront/listing.html:22
+#: templates/storefront/listing.html:23
 msgid "Minimum price"
 msgstr ""
 
-#: templates/storefront/listing.html:22
+#: templates/storefront/listing.html:23
 msgid "Max"
 msgstr ""
 
-#: templates/storefront/listing.html:22
+#: templates/storefront/listing.html:23
 msgid "Maximum price"
 msgstr ""
 
-#: templates/storefront/listing.html:23
+#: templates/storefront/listing.html:24
 msgid "Rating"
 msgstr "રેટિંગ"
 
-#: templates/storefront/listing.html:24
+#: templates/storefront/listing.html:25
 msgid "above"
 msgstr ""
-
-#: templates/storefront/listing.html:26
-msgid "Clear filters"
-msgstr "ફિલ્ટર હટાવો"
 
 #: templates/storefront/offers.html:4
 msgid "Offers & coupons"
@@ -2168,8 +3306,15 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: templates/storefront/product.html:28
-msgid "Choose size"
+#, fuzzy
+#| msgid "Choose size"
+msgid "Choose box"
 msgstr "સાઇઝ પસંદ કરો"
+
+#: templates/storefront/product.html:31
+#, python-format
+msgid "%(p)s/bottle"
+msgstr ""
 
 #: templates/storefront/product.html:38
 #, python-format
@@ -2180,9 +3325,13 @@ msgstr ""
 msgid "Inclusive of all taxes"
 msgstr "બધા ટેક્સ સહિત"
 
+#: templates/storefront/product.html:39
+msgid "Sold in whole boxes only"
+msgstr ""
+
 #: templates/storefront/product.html:40
 #, python-format
-msgid "Only %(n)s left"
+msgid "Only %(n)s boxes left"
 msgstr ""
 
 #: templates/storefront/product.html:40
@@ -2190,7 +3339,9 @@ msgid "In stock"
 msgstr "સ્ટોકમાં છે"
 
 #: templates/storefront/product.html:43
-msgid "Add to cart"
+#, fuzzy
+#| msgid "Add to cart"
+msgid "Add box to cart"
 msgstr "કાર્ટમાં ઉમેરો"
 
 #: templates/storefront/product.html:44
@@ -2215,9 +3366,11 @@ msgid "Delivery %(eta)s in Rajkot"
 msgstr ""
 
 #: templates/storefront/product.html:55
-msgid ""
-"Exact time shows at checkout after you pin your address. 30-minute delivery "
-"in nearby areas."
+msgid "Exact time shows at checkout after you pin your address."
+msgstr "સરનામું પસંદ કર્યા પછી ચેકઆઉટ પર અંદાજિત સમય દેખાશે."
+
+#: templates/storefront/product.html:55
+msgid "Exact time shows at checkout after you pin your address. 30-minute delivery in nearby areas."
 msgstr ""
 
 #: templates/storefront/product.html:56
@@ -2226,7 +3379,7 @@ msgstr "જથ્થાબંધ ભાવ"
 
 #: templates/storefront/product.html:56
 #, python-format
-msgid "%(q)s+ units: %(p)s each"
+msgid "%(q)s+ boxes: %(p)s per box"
 msgstr ""
 
 #: templates/storefront/product.html:56
@@ -2241,71 +3394,74 @@ msgstr ""
 msgid "Product details"
 msgstr "પ્રોડક્ટની વિગતો"
 
-#: templates/storefront/product.html:61
+#: templates/storefront/product.html:60
+msgid "Showing original seller content while translation is unavailable."
+msgstr "અનુવાદ ઉપલબ્ધ નથી તેથી વિક્રેતાની મૂળ માહિતી બતાવવામાં આવે છે."
+
+#: templates/storefront/product.html:62
 msgid "About"
 msgstr "વિશે"
 
-#: templates/storefront/product.html:62
+#: templates/storefront/product.html:63
 msgid "Ingredients"
 msgstr "સામગ્રી"
 
-#: templates/storefront/product.html:63
+#: templates/storefront/product.html:64
 msgid "Allergens"
 msgstr "એલર્જન"
 
-#: templates/storefront/product.html:64
+#: templates/storefront/product.html:65
 msgid "Nutrition"
 msgstr "પોષણ"
 
-#: templates/storefront/product.html:65
+#: templates/storefront/product.html:66
 msgid "Shelf life"
 msgstr "શેલ્ફ લાઇફ"
 
-#: templates/storefront/product.html:66
+#: templates/storefront/product.html:67
 msgid "Storage"
 msgstr "સંગ્રહ"
 
-#: templates/storefront/product.html:67
+#: templates/storefront/product.html:68
 msgid "Best before"
 msgstr "આ તારીખ પહેલાં વાપરો"
 
-#: templates/storefront/product.html:68
+#: templates/storefront/product.html:69
 msgid "Country of origin"
 msgstr "મૂળ દેશ"
 
-#: templates/storefront/product.html:69
+#: templates/storefront/product.html:70
 msgid "Diet"
 msgstr "આહાર"
 
-#: templates/storefront/product.html:75
+#: templates/storefront/product.html:76
 msgid "Frequently bought together"
 msgstr "સાથે વારંવાર ખરીદાય છે"
 
-#: templates/storefront/product.html:78
+#: templates/storefront/product.html:79
 msgid "Ratings & reviews"
 msgstr "રેટિંગ અને રિવ્યૂ"
 
-#: templates/storefront/product.html:81
+#: templates/storefront/product.html:82
 #, python-format
 msgid "%(n)s verified review"
 msgid_plural "%(n)s verified reviews"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/storefront/product.html:86
+#: templates/storefront/product.html:87
 msgid "Verified buyer"
 msgstr "ચકાસાયેલ ખરીદનાર"
 
-#: templates/storefront/product.html:88
+#: templates/storefront/product.html:89
 msgid "Customer photo"
 msgstr "ગ્રાહકનો ફોટો"
 
-#: templates/storefront/product.html:91
-msgid ""
-"No reviews yet. Only customers who received this product can review it."
+#: templates/storefront/product.html:92
+msgid "No reviews yet. Only customers who received this product can review it."
 msgstr ""
 
-#: templates/storefront/product.html:94
+#: templates/storefront/product.html:95
 msgid "Goes well with"
 msgstr "આની સાથે સરસ લાગે"
 
@@ -2326,9 +3482,7 @@ msgid "Close chat"
 msgstr "ચેટ બંધ કરો"
 
 #: templates/support/chat_widget.html:3
-msgid ""
-"Namaste! Ask me about delivery areas, timings, payments, refunds or your "
-"order."
+msgid "Namaste! Ask me about delivery areas, timings, payments, refunds or your order."
 msgstr ""
 
 #: templates/support/chat_widget.html:4
@@ -2340,16 +3494,8 @@ msgid "Talk to a person"
 msgstr "વ્યક્તિ સાથે વાત કરો"
 
 #: templates/support/chat_widget.html:5
-msgid "Message"
-msgstr "સંદેશ"
-
-#: templates/support/chat_widget.html:5
 msgid "Type your question…"
 msgstr "તમારો પ્રશ્ન લખો…"
-
-#: templates/support/chat_widget.html:5
-msgid "Send"
-msgstr "મોકલો"
 
 #: templates/support/help.html:4
 msgid "How can we help?"
@@ -2392,10 +3538,6 @@ msgid "Continue in chat"
 msgstr ""
 
 #: templates/support/tickets.html:4
-msgid "Subject"
-msgstr "વિષય"
-
-#: templates/support/tickets.html:4
 msgid "Updated"
 msgstr ""
 
@@ -2403,11 +3545,190 @@ msgstr ""
 msgid "No help requests yet."
 msgstr "હજુ કોઈ મદદ વિનંતી નથી."
 
-msgid "No products found"
-msgstr "કોઈ પ્રોડક્ટ મળી નથી"
+#~ msgid "Seller-funded offer"
+#~ msgstr "વિક્રેતાના ખર્ચે ઓફર"
 
-msgid "Try another search or clear your filters."
-msgstr "બીજું શોધો અથવા તમારા ફિલ્ટર દૂર કરો."
 
-msgid "Browse products"
-msgstr "પ્રોડક્ટ જુઓ"
+
+#: marketplace seller shop
+msgid "Seller shop"
+msgstr "વિક્રેતાની દુકાન"
+
+
+#: marketplace seller shop
+msgid "Your catalog, service areas and delivery team in one place."
+msgstr "તમારા ઉત્પાદનો, સેવા વિસ્તારો અને ડિલિવરી ટીમ એક જ જગ્યાએ."
+
+
+#: marketplace seller shop
+msgid "View buyer shop"
+msgstr "ગ્રાહકોની દુકાન જુઓ"
+
+
+#: marketplace seller shop
+msgid "Your shop has been created. It becomes visible to buyers after verification, brand activation, service-area approval and publication."
+msgstr "તમારી દુકાન બની ગઈ છે. ચકાસણી, બ્રાન્ડ સક્રિયકરણ, સેવા વિસ્તારની મંજૂરી અને પ્રકાશન પછી ગ્રાહકો તેને જોઈ શકશે."
+
+
+#: marketplace seller shop
+msgid "Shop overview"
+msgstr "દુકાનનો સારાંશ"
+
+
+#: marketplace seller shop
+msgid "Account status"
+msgstr "ખાતાની સ્થિતિ"
+
+
+#: marketplace seller shop
+msgid "Approved service areas"
+msgstr "મંજૂર સેવા વિસ્તારો"
+
+
+#: marketplace seller shop
+msgid "Active riders"
+msgstr "સક્રિય રાઇડર"
+
+
+#: marketplace seller shop
+msgid "Shop tools"
+msgstr "દુકાનનાં સાધનો"
+
+
+#: marketplace seller shop
+msgid "Bulk product import"
+msgstr "એકસાથે ઉત્પાદનો આયાત કરો"
+
+
+#: marketplace seller shop
+msgid "Orders, income and rider activity"
+msgstr "ઓર્ડર, આવક અને રાઇડરની પ્રવૃત્તિ"
+
+
+#: marketplace seller shop
+msgid "Shop profile"
+msgstr "દુકાનની માહિતી"
+
+
+#: marketplace seller shop
+msgid "Save shop details"
+msgstr "દુકાનની માહિતી સાચવો"
+
+
+#: marketplace seller shop
+msgid "Setup checklist"
+msgstr "સેટઅપની યાદી"
+
+
+#: marketplace seller shop
+msgid "Business verification"
+msgstr "વ્યવસાયની ચકાસણી"
+
+
+#: marketplace seller shop
+msgid "Account activation"
+msgstr "ખાતું સક્રિયકરણ"
+
+
+#: marketplace seller shop
+msgid "Only approved brand teams can add products. Stock is counted in bottles; buyers purchase boxes."
+msgstr "માત્ર મંજૂર બ્રાન્ડ ટીમો ઉત્પાદનો ઉમેરી શકે છે. સ્ટોક બોટલોમાં ગણાય છે; ગ્રાહકો બોક્સ ખરીદે છે."
+
+
+#: marketplace seller shop
+msgid "Riders register in Rasiko Rider using your invitation. They must use the same server as this shop."
+msgstr "રાઇડર તમારા આમંત્રણથી Rasiko Rider માં નોંધણી કરે છે. તેમણે આ દુકાનનો જ સર્વર વાપરવો જરૂરી છે."
+
+
+#: marketplace seller shop
+msgid "Brands and service areas"
+msgstr "બ્રાન્ડ અને સેવા વિસ્તારો"
+
+
+#: marketplace seller shop
+msgid "Request another brand"
+msgstr "બીજી બ્રાન્ડ માટે વિનંતી કરો"
+
+
+#: marketplace seller shop
+msgid "Independent shops can request multiple brands. Head-managed shops need admin permission for additional brands. Every service area requires approval."
+msgstr "સ્વતંત્ર દુકાનો અનેક બ્રાન્ડ માટે વિનંતી કરી શકે છે. હેડ હેઠળની દુકાનોને વધારાની બ્રાન્ડ માટે એડમિનની મંજૂરી જોઈએ. દરેક સેવા વિસ્તાર માટે મંજૂરી જરૂરી છે."
+
+
+#: marketplace seller shop
+msgid "Pending or suspended"
+msgstr "બાકી અથવા સ્થગિત"
+
+
+#: marketplace seller shop
+msgid "No approved areas yet."
+msgstr "હજુ કોઈ મંજૂર વિસ્તાર નથી."
+
+
+#: marketplace seller shop
+msgid "Shop name"
+msgstr "દુકાનનું નામ"
+
+
+#: marketplace seller shop
+msgid "About your shop"
+msgstr "તમારી દુકાન વિશે"
+
+
+#: marketplace seller shop
+msgid "Show my approved shop to buyers"
+msgstr "મારી મંજૂર દુકાન ગ્રાહકોને બતાવો"
+
+
+#: marketplace seller shop
+msgid "Your shop is visible only after seller verification, brand approval and service-area assignment."
+msgstr "વિક્રેતાની ચકાસણી, બ્રાન્ડની મંજૂરી અને સેવા વિસ્તારની ફાળવણી પછી જ તમારી દુકાન દેખાશે."
+
+
+#: marketplace seller shop
+msgid "Requested service areas"
+msgstr "વિનંતી કરેલા સેવા વિસ્તારો"
+
+
+#: marketplace seller shop
+msgid "Shop details saved."
+msgstr "દુકાનની માહિતી સાચવાઈ."
+
+
+#: marketplace seller shop
+msgid "Ask admin for multi-brand permission before requesting another brand."
+msgstr "બીજી બ્રાન્ડ માટે વિનંતી કરતાં પહેલાં એડમિન પાસેથી અનેક બ્રાન્ડની મંજૂરી મેળવો."
+
+
+#: marketplace seller shop
+msgid "Brand and service areas submitted for approval."
+msgstr "બ્રાન્ડ અને સેવા વિસ્તારો મંજૂરી માટે મોકલ્યા."
+
+
+#: marketplace seller shop
+msgid "This brand is already linked to your shop."
+msgstr "આ બ્રાન્ડ પહેલેથી તમારી દુકાન સાથે જોડાયેલી છે."
+
+
+#: marketplace seller shop
+msgid "Request another brand and service areas"
+msgstr "બીજી બ્રાન્ડ અને સેવા વિસ્તારો માટે વિનંતી કરો"
+
+
+#: marketplace seller shop
+msgid "Delivery availability is checked against your address at checkout."
+msgstr "ચેકઆઉટ વખતે તમારા સરનામા મુજબ ડિલિવરીની ઉપલબ્ધતા તપાસાય છે."
+
+
+#: marketplace seller shop
+msgid "No products available yet."
+msgstr "હજુ કોઈ ઉત્પાદન ઉપલબ્ધ નથી."
+
+
+#: marketplace seller shop
+msgid "Manage my shop"
+msgstr "મારી દુકાનનું સંચાલન કરો"
+
+
+msgid "Complete,Pending"
+msgstr "પૂર્ણ,બાકી"

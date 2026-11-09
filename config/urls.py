@@ -7,10 +7,14 @@ from django.views.i18n import set_language
 
 from apps.catalog import views as store_views
 from apps.catalog.sitemaps import SITEMAPS
+from apps.marketplace.shops import public_shop
 
 admin.site.site_header = "Rasiko data admin"
 
 urlpatterns = [
+    path("shops/<int:pk>/", public_shop, name="seller_shop"),
+    path("partners/", include("apps.marketplace.urls")),
+    path("api/v1/", include("apps.marketplace.api_urls")),
     path("", include("apps.catalog.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("cart/", include("apps.cart.urls")),

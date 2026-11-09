@@ -38,7 +38,8 @@ def _safe_next(request, default):
     return default
 
 
-@ratelimit("login", limit=10, window=60)
+# Broad IP throttle complements the stricter per-email/IP Axes failure lockout.
+@ratelimit("login", limit=60, window=60)
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -52,6 +53,8 @@ def login_view(request):
                 if user.requires_2fa:
                     has_device = TOTPDevice.objects.filter(user=user, confirmed=True).exists()
                     return redirect("accounts:2fa_verify" if has_device else "accounts:2fa_setup")
+            if user.role in ("head", "seller"):
+                return redirect(_safe_next(request, reverse("marketplace:dashboard")))
             return redirect(_safe_next(request, reverse("storefront:home")))
         audit.log(request, "login.failed", summary=f"Failed login for {form.cleaned_data['username'][:80]}")
         notify.failed_login(form.cleaned_data["username"], audit.client_ip(request))
@@ -263,7 +266,14 @@ def twofa_verify(request):
         for device in TOTPDevice.objects.filter(user=request.user, confirmed=True):
             if device.verify_token(form.cleaned_data["code"]):
                 otp_login(request, device)
-                return redirect(_safe_next(request, reverse("dashboard:home")))
+                return redirect(
+                    _safe_next(
+                        request,
+                        reverse(
+                            "marketplace:dashboard" if request.user.role in ("head", "seller") else "dashboard:home"
+                        ),
+                    )
+                )
         audit.log(request, "staff.2fa_failed", request.user, "Wrong 2FA code")
         messages.error(request, _("That code did not match."))
     return render(request, "accounts/2fa_verify.html", {"form": form})

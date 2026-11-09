@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "apps.reviews",
     "apps.notifications",
     "apps.support",
+    "apps.marketplace",
     "apps.analytics",
     "apps.dashboard",
 ]
@@ -167,7 +168,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Brute-force protection
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1  # hours
-AXES_LOCKOUT_PARAMETERS = ["ip_address", "username"]
+# Combine identity and IP so one customer cannot lock every user on a shared network.
+AXES_LOCKOUT_PARAMETERS = [["ip_address", "username"]]
 AXES_RESET_ON_SUCCESS = True
 AXES_USERNAME_FORM_FIELD = "username"
 
@@ -302,3 +304,28 @@ LOGGING = {
 # Business defaults (all editable in the dashboard once seeded)
 OWNER_EMAIL = env("OWNER_EMAIL", default="")
 OWNER_PASSWORD = env("OWNER_PASSWORD", default="")
+
+# Optional server-managed Razorpay credentials. Never serialize the secret to clients.
+RAZORPAY_KEY_ID = env("RAZORPAY_KEY_ID", default="")
+RAZORPAY_KEY_SECRET = env("RAZORPAY_KEY_SECRET", default="")
+RAZORPAY_WEBHOOK_SECRET = env("RAZORPAY_WEBHOOK_SECRET", default="")
+RAZORPAY_ENABLED = env.bool("RAZORPAY_ENABLED", default=False)
+
+# Marketplace work is gated by database feature switches (all off initially).
+CELERY_BEAT_SCHEDULE["marketplace-dispatch"] = {
+    "task": "apps.marketplace.tasks.retry_dispatch",
+    "schedule": 15.0,
+}
+
+# Enable only after Route account approval and recovery acceptance checks.
+MARKETPLACE_ROUTE_APPROVED = env.bool("MARKETPLACE_ROUTE_APPROVED", default=False)
+
+CELERY_BEAT_SCHEDULE["marketplace-settlements"] = {
+    "task": "apps.marketplace.tasks.reconcile_settlements",
+    "schedule": 300.0,
+}
+
+CELERY_BEAT_SCHEDULE["marketplace-monitoring"] = {
+    "task": "apps.marketplace.tasks.monitor_marketplace",
+    "schedule": 300.0,
+}

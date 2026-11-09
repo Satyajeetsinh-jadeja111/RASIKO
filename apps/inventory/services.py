@@ -30,6 +30,14 @@ def _after_change(variant, before_available, user=None):
         transaction.on_commit(lambda: notify.admin_event("out_of_stock", {"variant": str(variant)}))
     elif after >= box and after <= variant.low_stock_threshold < before_available:
         transaction.on_commit(lambda: notify.admin_event("low_stock", {"variant": str(variant), "qty": after}))
+    if variant.product.seller_team_id and after <= variant.low_stock_threshold < before_available:
+        from apps.marketplace.services import notice
+
+        transaction.on_commit(
+            lambda: notice(
+                variant.product.seller_team.seller, "Low stock", f"{variant.sku}: {after} bottles available."
+            )
+        )
     if before_available < box <= after and not variant.manual_out_of_stock:
         from .tasks import send_back_in_stock
 
@@ -82,6 +90,9 @@ def _check_available(lines, variants):
 def reserve_for_order(order, minutes=RESERVATION_MINUTES):
     lines = list(order.lines.all())
     variants = _locked_variants(lines)
+    from apps.marketplace.batches import allocate_order
+
+    allocate_order(order)
     expires = timezone.now() + timedelta(minutes=minutes)
     _check_available(lines, variants)
     for line in lines:
@@ -121,6 +132,11 @@ def release_reservations(order):
     reservations = list(
         StockReservation.objects.select_for_update().filter(order=order, released=False, committed=False)
     )
+    if reservations:
+        from apps.marketplace.batches import restore_line
+
+        for line in order.lines.all():
+            restore_line(line, line.qty * line.units_per_box)
     for r in reservations:
         ProductVariant.objects.filter(pk=r.variant_id).update(reserved_qty=F("reserved_qty") - r.qty)
         r.released = True
@@ -136,6 +152,9 @@ def deduct_for_cod(order):
     lines = list(order.lines.all())
     variants = _locked_variants(lines)
     _check_available(lines, variants)
+    from apps.marketplace.batches import allocate_order
+
+    allocate_order(order)
     for line in lines:
         v = variants[line.variant_id]
         before = v.available_qty
@@ -159,6 +178,9 @@ def restock_lines(order, qty_by_line: dict, reason, user=None):
         qty = min(requested[line.pk], line.qty - line.restocked_qty)
         if qty > 0:
             bottles = qty * (line.units_per_box or 1)
+            from apps.marketplace.batches import restore_line
+
+            restore_line(line, bottles)
             adjust_stock(line.variant_id, bottles, reason, user=user, note=f"Order {order.number}", order=order)
             line.restocked_qty += qty
             line.save(update_fields=["restocked_qty"])

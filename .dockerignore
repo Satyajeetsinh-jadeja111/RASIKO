@@ -18,3 +18,11 @@ ssh keys
 *.pem
 *.csv
 docs/audit
+
+# Local Flutter tool/build artifacts never enter the Django deployment image.
+mobile/**/.dart_tool
+mobile/**/build
+mobile/**/.idea
+mobile/**/ios/Pods
+mobile/**/ios/.symlinks
+mobile/**/android/.gradle

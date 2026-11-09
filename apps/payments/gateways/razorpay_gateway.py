@@ -23,6 +23,8 @@ class RazorpayGateway(PaymentGateway):
         return razorpay.Client(auth=(self.config["key_id"], self.config["key_secret"]), session=TimeoutSession())
 
     def create_payment(self, order, payment):
+        if to_paise(payment.amount) < 100:
+            raise GatewayError("The minimum Razorpay payment is 100 paise.")
         if payment.gateway_order_id:
             rp_order = self.client.order.fetch(payment.gateway_order_id)
         else:
@@ -65,7 +67,13 @@ class RazorpayGateway(PaymentGateway):
         sig = data.get("razorpay_signature", "")
         msg = f"{payment.gateway_order_id}|{pid}".encode()
         expected = hmac.new(self.config["key_secret"].encode(), msg, hashlib.sha256).hexdigest()
-        if not pid or not hmac.compare_digest(expected, sig):
+        if (
+            not isinstance(pid, str)
+            or not isinstance(sig, str)
+            or data.get("razorpay_order_id") != payment.gateway_order_id
+            or not pid
+            or not hmac.compare_digest(expected, sig)
+        ):
             return False
         pay = self.client.payment.fetch(pid)
         if (

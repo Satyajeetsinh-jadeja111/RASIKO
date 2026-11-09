@@ -35,7 +35,7 @@
   {# North: Kuber offer strip #}
   <div class="strip">
     <svg class="icon" style="width:16px;height:16px;display:inline;vertical-align:-3px;margin-right:4px"><use href="#i-truck"/></svg>
-    {% blocktrans with v=delivery_cfg.free_near_threshold|rupee %}Free delivery above <b>{{ v }}</b> in Rajkot{% endblocktrans %}<span class="more">{% if store.cod_enabled %}<span class="sep">·</span>{% trans "Cash on Delivery available" %}{% endif %}<span class="sep">·</span>{% blocktrans with a=delivery_cfg.asap_min_minutes b=delivery_cfg.asap_max_minutes %}Delivery in {{ a }}–{{ b }} min{% endblocktrans %}</span>
+    {% if seller_shop_context %}{% trans "Standard delivery" %} · {% trans "Delivery availability is checked against your address at checkout." %}{% else %}{% blocktrans with v=delivery_cfg.free_near_threshold|rupee %}Free delivery above <b>{{ v }}</b> in Rajkot{% endblocktrans %}<span class="more">{% if store.cod_enabled %}<span class="sep">·</span>{% trans "Cash on Delivery available" %}{% endif %}<span class="sep">·</span>{% blocktrans with a=delivery_cfg.asap_min_minutes b=delivery_cfg.asap_max_minutes %}Delivery in {{ a }}–{{ b }} min{% endblocktrans %}</span>{% endif %}
   </div>
 
   <header class="header">
@@ -95,6 +95,7 @@
           {% for c in menu_categories|slice:":5" %}<li><a href="{{ c.get_absolute_url }}">{{ c.local_name }}</a></li>{% endfor %}
           <li><a href="{% url 'storefront:offers' %}">{% trans "Offers" %}</a></li>
           <li><a href="{% url 'orders:bulk' %}">{% trans "Party & bulk orders" %}</a></li>
+          <li><a href="{% url 'marketplace:apply' %}">{% trans "Sell with Rasiko" %}</a></li>
         </ul></div>
         <div><h3>{% trans "Help" %}</h3><ul>
           <li><a href="{% url 'support:help' %}">{% trans "24×7 Help Center" %}</a></li>

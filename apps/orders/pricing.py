@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
+
 from apps.delivery.services import DeliveryQuote, money, quote
 from apps.promotions.services import CouponError, coins_redeemable, validate_coupon
 
@@ -22,6 +24,7 @@ class Totals:
     coins_value: Decimal = ZERO
     delivery: DeliveryQuote | None = None
     problems: list = field(default_factory=list)
+    marketplace_groups: dict = field(default_factory=dict)
 
     @property
     def delivery_total(self):
@@ -48,11 +51,28 @@ def price_cart(cart, user, coupon_code="", use_coins=False, location=None, now=N
     for line in cart.lines():
         if line.problem:
             t.problems.append(f"{line.name}: {line.problem}")
+    from apps.marketplace.models import MarketplaceSettings
+
+    marketplace = MarketplaceSettings.load().enabled
+    if marketplace:
+        from apps.marketplace.checkout import cart_groups, validate_groups
+
+        try:
+            t.marketplace_groups = cart_groups(cart)
+            if location:
+                validate_groups(t.marketplace_groups, location[2])
+        except ValidationError as exc:
+            t.problems.extend(exc.messages)
     if coupon_code:
         try:
-            t.coupon, t.discount = validate_coupon(coupon_code, user, t.subtotal)
+            t.coupon, t.discount = validate_coupon(coupon_code, user, t.subtotal, marketplace_scope=marketplace)
+            if marketplace and t.coupon:
+                from apps.marketplace.checkout import coupon_subtotal
+
+                eligible_subtotal, _ = coupon_subtotal(t.coupon, t.marketplace_groups)
+                t.coupon, t.discount = validate_coupon(coupon_code, user, eligible_subtotal, marketplace_scope=True)
             t.coupon_code = t.coupon.code if t.coupon else ""
-        except CouponError as exc:
+        except (CouponError, ValidationError) as exc:
             t.coupon_error = str(exc)
     after_discount = t.subtotal - t.discount
     t.coins_available, max_value = coins_redeemable(user, after_discount)
@@ -60,5 +80,13 @@ def price_cart(cart, user, coupon_code="", use_coins=False, location=None, now=N
         t.coins_used, t.coins_value = t.coins_available, max_value
     if location:
         # Delivery rules use the item value after coupon (not coins) for thresholds.
-        t.delivery = quote(after_discount, *location, now=now)
+        if marketplace:
+            from apps.marketplace.checkout import quote_cart
+
+            try:
+                t.delivery, t.marketplace_groups = quote_cart(cart, location[2])
+            except ValidationError as exc:
+                t.delivery = DeliveryQuote(False, " ".join(exc.messages))
+        else:
+            t.delivery = quote(after_discount, *location, now=now)
     return t

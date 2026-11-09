@@ -21,6 +21,14 @@ ZERO = Decimal("0")
 
 
 def start_payment(order):
+    from django.core.exceptions import ValidationError
+
+    from apps.marketplace.checkout import revalidate_online_order
+
+    try:
+        revalidate_online_order(order)
+    except ValidationError as exc:
+        raise GatewayError(" ".join(exc.messages)) from exc
     if online_gateway() != order.payment_method:
         raise GatewayError("This gateway is no longer selected for checkout. Please create a new order.")
     gw = get_gateway(order.payment_method)
@@ -197,6 +205,15 @@ def _reserve_refund(
         if lid not in order_lines or qty > order_lines[lid].refundable_qty:
             raise RefundError("Selected quantities are more than what can be refunded.")
 
+    from django.core.exceptions import ValidationError
+
+    from apps.marketplace.settlements import validate_refund_allocation
+
+    try:
+        validate_refund_allocation(order, amount, lines)
+    except ValidationError as exc:
+        raise RefundError(" ".join(exc.messages)) from exc
+
     online = order.is_online and order.payment_status in (
         Order.PaymentStatus.PAID,
         Order.PaymentStatus.PARTIALLY_REFUNDED,
@@ -303,6 +320,9 @@ def _finish_refund(refund, ok, reason=""):
         )
         refund.restocked = True
         refund.save(update_fields=["restocked"])
+    from apps.marketplace.settlements import record_refund
+
+    record_refund(refund)
     order.refunded_total += refund.amount
     full = order.refunded_total >= order.total
     order.payment_status = Order.PaymentStatus.REFUNDED if full else Order.PaymentStatus.PARTIALLY_REFUNDED

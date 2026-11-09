@@ -1,0 +1,1 @@
+{% extends 'marketplace/base.html' %}{% load i18n %}{% block content %}<a href="{% url 'marketplace:dashboard' %}">← {% trans 'Dashboard' %}</a><h1>{{ title }}</h1><form method="post" class="panel editor">{% csrf_token %}{{ form.as_p }}<button>{% trans 'Send' %}</button></form>{% endblock %}

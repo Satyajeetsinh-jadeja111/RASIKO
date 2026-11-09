@@ -63,7 +63,13 @@ class TestCheckoutFlow:
                 "currency": "INR",
             }
             page = client.get(r["Location"]).content.decode()
-        assert "order_R1" in page and "rzp_test_abc" in page and "test_secret" not in page
+            rc.return_value.order.create.assert_not_called()
+            created = client.post(f"/payments/pay/{order.public_id}/create-order/")
+        assert "data-create" in page and "test_secret" not in page
+        assert created.status_code == 200
+        assert created.json()["order_id"] == "order_R1"
+        assert created.json()["key_id"] == "rzp_test_abc"
+        assert "test_secret" not in created.content.decode()
         r = client.post(f"/payments/pay/{order.public_id}/cancel/")
         order.refresh_from_db()
         variant.refresh_from_db()

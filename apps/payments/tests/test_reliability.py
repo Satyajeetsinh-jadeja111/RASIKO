@@ -42,7 +42,14 @@ def test_authorized_return_does_not_fulfill(online_order):
             "currency": "INR",
             "status": "authorized",
         }
-        assert not handle_return(order, {"razorpay_payment_id": "pay_9", "razorpay_signature": signature})
+        assert not handle_return(
+            order,
+            {
+                "razorpay_payment_id": "pay_9",
+                "razorpay_order_id": payment.gateway_order_id,
+                "razorpay_signature": signature,
+            },
+        )
     order.refresh_from_db()
     assert order.status == Order.Status.PENDING_PAYMENT
 

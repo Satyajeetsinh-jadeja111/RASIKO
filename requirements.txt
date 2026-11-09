@@ -1,6 +1,6 @@
 # Runtime dependencies (pinned). Update with: pip install -U <pkg> && pip-audit
 Django==5.2.17
-djangorestframework==3.17.2
+djangorestframework==3.18.3
 django-environ==0.14.0
 psycopg[binary]==3.3.6
 redis==8.1.0
@@ -10,7 +10,8 @@ django-celery-beat==2.9.0
 channels==4.3.2
 channels-redis==4.3.0
 daphne==4.2.3
-autobahn==26.7.1
+Twisted==26.10.0
+autobahn==26.10.1
 gunicorn==26.2.0
 uvicorn==0.54.0
 whitenoise==6.12.0
@@ -21,12 +22,13 @@ django-otp==1.7.3
 qrcode==8.2
 argon2-cffi==25.1.0
 cryptography==50.0.1
-Pillow==12.3.0
+Pillow==13.0.0
 reportlab==5.0.1
+uharfbuzz==0.56.4
 openpyxl==3.1.5
 stripe==15.6.1
 razorpay==2.0.1
 anthropic==1.8.0
-requests>=2.31
+requests==2.34.2
 boto3==1.43.103
 django-storages==1.14.6
