@@ -169,3 +169,62 @@ def test_head_can_manage_multiple_brands_across_states(shop_bundle, owner):
     assert set(teams_for(user).values_list("pk", flat=True)) == {first_team.pk, second_team.pk}
     assert second_team.assignments.filter(active=True).count() == 2
     assert head.territories.values("state").distinct().count() == 2
+
+
+def test_marketplace_off_hides_seller_inventory_and_blocks_existing_cart(shop_bundle, customer, variant):
+    from apps.cart.cart import DictCart
+    from apps.catalog.models import Product
+    from apps.orders.pricing import price_cart
+
+    cfg = MarketplaceSettings.load()
+    cfg.enabled = False
+    cfg.save()
+    assert not Product.objects.live().filter(pk=variant.product_id).exists()
+    totals = price_cart(DictCart({f"v:{variant.pk}": 1}), customer)
+    assert not totals.ok
+    assert any("temporarily unavailable" in problem for problem in totals.problems)
+    # Legacy inventory remains usable while staged marketplace rollout is off.
+    Product.objects.filter(pk=variant.product_id).update(seller_team=None)
+    assert Product.objects.live().filter(pk=variant.product_id).exists()
+    assert price_cart(DictCart({f"v:{variant.pk}": 1}), customer).ok
+
+
+def test_public_catalog_hides_suspended_and_unverified_sellers(shop_bundle, variant):
+    from apps.catalog.models import Product
+
+    seller, team, _ = shop_bundle
+    assert Product.objects.live().filter(pk=variant.product_id).exists()
+    seller.verified = False
+    seller.save()
+    assert not Product.objects.live().filter(pk=variant.product_id).exists()
+    seller.verified = True
+    seller.save()
+    team.active = False
+    team.save()
+    assert not Product.objects.live().filter(pk=variant.product_id).exists()
+
+
+def test_disabled_marketplace_rejects_combo_with_seller_items(shop_bundle, customer, variant):
+    from apps.cart.cart import DictCart
+    from apps.orders.pricing import price_cart
+    from apps.promotions.models import Combo, ComboItem
+
+    combo = Combo.objects.create(name="Seller bundle", price=variant.price)
+    ComboItem.objects.create(combo=combo, variant=variant, qty=1)
+    cfg = MarketplaceSettings.load()
+    cfg.enabled = False
+    cfg.save()
+    totals = price_cart(DictCart({f"c:{combo.pk}": 1}), customer)
+    assert not totals.ok
+    assert any("temporarily unavailable" in problem for problem in totals.problems)
+
+
+def test_inactive_owner_blocks_catalog_and_checkout_policy(shop_bundle, variant):
+    from apps.catalog.models import Product
+    from apps.marketplace.services import effective_policy
+
+    seller, team, _ = shop_bundle
+    seller.owner.is_active = False
+    seller.owner.save(update_fields=["is_active"])
+    assert not Product.objects.live().filter(pk=variant.product_id).exists()
+    assert not effective_policy(team)["operational"]

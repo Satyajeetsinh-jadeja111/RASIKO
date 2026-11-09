@@ -3732,3 +3732,7 @@ msgstr "मेरी दुकान प्रबंधित करें"
 
 msgid "Complete,Pending"
 msgstr "पूरा,लंबित"
+
+
+msgid "Seller ordering is temporarily unavailable. Please update your cart."
+msgstr "विक्रेता से ऑर्डर अभी उपलब्ध नहीं है। कृपया अपना कार्ट अपडेट करें।"

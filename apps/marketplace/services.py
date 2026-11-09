@@ -38,7 +38,9 @@ def notice(seller, title, message):
 
 def effective_policy(team):
     cfg = MarketplaceSettings.load()
-    operational = team.active and team.seller.status == "active" and team.seller.verified
+    operational = (
+        team.active and team.seller.status == "active" and team.seller.verified and team.seller.owner.is_active
+    )
     if team.head_id:
         operational = (
             operational

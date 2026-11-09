@@ -20,6 +20,6 @@ EMAIL_SEND_INLINE = False  # tests run Celery eagerly; a thread would not see th
 
 # Tests never use real credentials from the developer environment.
 RAZORPAY_KEY_ID = ""
-RAZORPAY_KEY_SECRET = ""
-RAZORPAY_WEBHOOK_SECRET = ""
+RAZORPAY_KEY_SECRET = ""  # nosec B105
+RAZORPAY_WEBHOOK_SECRET = ""  # nosec B105
 RAZORPAY_ENABLED = False

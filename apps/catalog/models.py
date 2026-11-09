@@ -6,6 +6,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Exists, F, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -114,7 +115,19 @@ class Brand(TimeStamped):
 
 class ProductQuerySet(models.QuerySet):
     def live(self):
-        return self.filter(is_active=True, deleted_at__isnull=True, brand__is_active=True)
+        from apps.marketplace.models import MarketplaceSettings, SellerTeam
+
+        eligible_teams = SellerTeam.objects.filter(
+            active=True, seller__status="active", seller__verified=True, seller__owner__is_active=True
+        ).filter(Q(head__isnull=True) | Q(head__active=True, head__user__is_active=True, head__brands=F("brand_id")))
+        # Keep the legacy catalog available; seller inventory must respect the kill switch.
+        return self.filter(is_active=True, deleted_at__isnull=True, brand__is_active=True).filter(
+            Q(seller_team__isnull=True)
+            | (
+                Q(seller_team_id__in=eligible_teams, seller_team__brand_id=F("brand_id"))
+                & Q(Exists(MarketplaceSettings.objects.filter(enabled=True)))
+            )
+        )
 
     def with_listing(self):
         return self.select_related("brand").prefetch_related("images", "variants")

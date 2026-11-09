@@ -48,6 +48,11 @@ jobs:
         run: |
           ruff check .
           ruff format --check .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Payment checkout browser-contract checks
+        run: node scripts/test_payment_checkout.cjs
       - name: Migrations are complete
         run: python manage.py makemigrations --check --dry-run --settings=config.settings.test
       - name: Tests

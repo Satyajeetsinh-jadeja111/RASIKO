@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext
 
 from apps.delivery.services import DeliveryQuote, money, quote
 from apps.promotions.services import CouponError, coins_redeemable, validate_coupon
@@ -54,6 +55,11 @@ def price_cart(cart, user, coupon_code="", use_coins=False, location=None, now=N
     from apps.marketplace.models import MarketplaceSettings
 
     marketplace = MarketplaceSettings.load().enabled
+    if not marketplace:
+        from .services import _expand_lines
+
+        if any(variant.product.seller_team_id is not None for variant, *_rest in _expand_lines(cart)):
+            t.problems.append(gettext("Seller ordering is temporarily unavailable. Please update your cart."))
     if marketplace:
         from apps.marketplace.checkout import cart_groups, validate_groups
 
