@@ -1,0 +1,21 @@
+{% extends "dashboard/base.html" %}{% load rasiko %}
+{% block title %}Error log{% endblock %}{% block heading %}Error log{% endblock %}
+{% block content %}<p class="muted">Warnings, errors and crashes from the website, the background worker and the scheduler, newest first. Visitor mistakes like missing pages (404) are left out. File: <code>{{ path }}</code> ({{ size_kb }} KB; older entries rotate into errors.log.1 to .5).</p>
+<div class="toolbar">
+  <a class="btn btn--sm {% if not level %}btn--buy{% else %}btn--ghost{% endif %}" href="{% qs level='' page=None %}">All ({{ counts.all }})</a>
+  <a class="btn btn--sm {% if level == 'error' %}btn--buy{% else %}btn--ghost{% endif %}" href="{% qs level='error' page=None %}">Errors ({{ counts.error }})</a>
+  <a class="btn btn--sm {% if level == 'warning' %}btn--buy{% else %}btn--ghost{% endif %}" href="{% qs level='warning' page=None %}">Warnings ({{ counts.warning }})</a>
+  <form method="get" style="display:flex;gap:8px"><input type="hidden" name="level" value="{{ level }}"><input class="input" name="q" value="{{ q }}" placeholder="Search message or source" aria-label="Search"><button class="btn btn--ghost btn--sm">Search</button></form>
+  <a class="btn btn--ghost btn--sm" href="?download=1">Download file</a>
+  <form method="post" data-confirm="Clear the error log? This can't be undone.">{% csrf_token %}<input type="hidden" name="action" value="clear"><button class="btn btn--danger btn--sm">Clear log</button></form>
+</div>
+<div class="panel-box tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th>Level</th><th>Source</th><th>What happened</th></tr></thead><tbody>
+{% for e in page %}<tr>
+  <td style="white-space:nowrap">{{ e.when }}</td>
+  <td><span class="chip {% if e.level == 'ERROR' or e.level == 'CRITICAL' %}chip--red{% else %}chip--gold{% endif %}">{{ e.level }}</span></td>
+  <td><code>{{ e.logger }}</code></td>
+  <td style="min-width:0;max-width:720px">{{ e.message|truncatechars:300 }}{% if e.summary %}<br><b style="font-size:13px">{{ e.summary|truncatechars:300 }}</b>{% endif %}
+    {% if e.details %}<details style="margin-top:6px"><summary class="link" style="cursor:pointer;font-size:13px">Full details</summary><pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;max-height:420px;overflow:auto;background:var(--chandan);padding:10px;border-radius:10px">{{ e.message }}
+{{ e.details|join:"
+" }}</pre></details>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="4" class="muted">No errors logged. 🎉</td></tr>{% endfor %}</tbody></table></div>{% include "dashboard/_pager.html" %}{% endblock %}

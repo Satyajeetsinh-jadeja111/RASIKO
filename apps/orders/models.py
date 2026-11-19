@@ -161,13 +161,15 @@ class OrderLine(models.Model):
     sku = models.CharField(max_length=40)
     hsn_code = models.CharField(max_length=8)
     gst_rate = models.DecimalField(max_digits=4, decimal_places=2)
-    qty = models.PositiveIntegerField()
+    qty = models.PositiveIntegerField()  # boxes
+    units_per_box = models.PositiveSmallIntegerField(default=1)  # bottles per box when ordered (for restocking)
     unit_mrp = models.DecimalField(max_digits=9, decimal_places=2)
     unit_price = models.DecimalField(max_digits=9, decimal_places=2)
     unit_cost = models.DecimalField(max_digits=9, decimal_places=2, default=ZERO)
     line_total = models.DecimalField(max_digits=10, decimal_places=2)
     combo_name = models.CharField(max_length=80, blank=True)
     refunded_qty = models.PositiveIntegerField(default=0)
+    restocked_qty = models.PositiveIntegerField(default=0, editable=False)
 
     def __str__(self):
         return f"{self.qty} × {self.product_name} {self.variant_label}"

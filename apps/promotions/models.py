@@ -94,19 +94,19 @@ class Combo(TimeStamped):
 
     @property
     def in_stock(self):
-        return all(i.variant.in_stock and i.variant.available_qty >= i.qty for i in self.items.all())
+        return all(i.variant.in_stock and i.variant.available_boxes >= i.qty for i in self.items.all())
 
 
 class ComboItem(models.Model):
     combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name="items")
     variant = models.ForeignKey("catalog.ProductVariant", on_delete=models.CASCADE)
-    qty = models.PositiveSmallIntegerField(default=1)
+    qty = models.PositiveSmallIntegerField(_("Boxes"), default=1)
 
 
 class BulkPriceSlab(models.Model):
     variant = models.ForeignKey("catalog.ProductVariant", on_delete=models.CASCADE, related_name="bulk_slabs")
-    min_qty = models.PositiveIntegerField()
-    unit_price = models.DecimalField(max_digits=9, decimal_places=2)
+    min_qty = models.PositiveIntegerField(_("From boxes"))
+    unit_price = models.DecimalField(_("Price per box"), max_digits=9, decimal_places=2)
 
     class Meta:
         ordering = ["variant", "min_qty"]

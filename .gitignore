@@ -34,3 +34,16 @@ frontend/node_modules/
 dump.rdb
 .ccr-ca.crt
 *.mo
+logs/
+
+# Local database exports and SSH material
+local_backup.sql
+*.sql.gz
+*.dump
+ssh keys/
+
+# Generated local Android delivery artifacts
+/artifacts/
+
+# Project-local mobile build serialization
+/mobile/rasiko_rider/.rasiko-build.lock

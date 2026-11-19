@@ -7,27 +7,81 @@
 
   if (client.gateway === "razorpay") {
     const form = document.getElementById("rzp-return");
-    const open = () => {
-      const rzp = new window.Razorpay({
-        key: client.key_id,
-        order_id: client.order_id,
-        amount: client.amount,
-        currency: client.currency,
-        name: client.name,
-        description: client.description,
-        prefill: client.prefill,
-        theme: { color: "#2FA05A", backdrop_color: "#3E2723" },
-        handler: (resp) => {
-          form.razorpay_payment_id.value = resp.razorpay_payment_id;
-          form.razorpay_order_id.value = resp.razorpay_order_id;
-          form.razorpay_signature.value = resp.razorpay_signature;
-          form.submit();
-        },
-      });
-      rzp.open();
+    const button = document.getElementById("rzp-pay");
+    const box = document.getElementById("rzp-error");
+    const csrf = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+    const showError = (message) => {
+      box.textContent = message;
+      box.hidden = false;
     };
-    document.getElementById("rzp-pay").addEventListener("click", open);
-    open();
+    const post = async (url, data) => {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrf },
+        body: JSON.stringify(data),
+      });
+      let result;
+      try { result = await response.json(); }
+      catch { throw new Error("Could not read the payment response. Please sign in again or retry."); }
+      if (!response.ok) throw new Error(result.error || "Payment could not be confirmed.");
+      return result;
+    };
+    const open = async () => {
+      button.disabled = true;
+      box.hidden = true;
+      let verifying = false;
+      try {
+        if (typeof window.Razorpay !== "function") {
+          throw new Error("Payment checkout could not load. Check your connection and retry.");
+        }
+        const checkout = await post(form.dataset.create, {});
+        const rzp = new window.Razorpay({
+          key: checkout.key_id,
+          order_id: checkout.order_id,
+          amount: checkout.amount,
+          currency: checkout.currency,
+          name: checkout.name,
+          description: checkout.description,
+          prefill: checkout.prefill,
+          theme: { color: "#2FA05A", backdrop_color: "#3E2723" },
+          modal: {
+            ondismiss: () => {
+              if (!verifying) {
+                button.disabled = false;
+                showError("Checkout closed. You can retry while your items are reserved.");
+              }
+            },
+          },
+          handler: async (resp) => {
+            verifying = true;
+            try {
+              const result = await post(form.dataset.verify, {
+                razorpay_payment_id: resp.razorpay_payment_id,
+                razorpay_order_id: resp.razorpay_order_id,
+                razorpay_signature: resp.razorpay_signature,
+              });
+              window.location.assign(result.redirect_url);
+            } catch (error) {
+              showError(error.message + " If money was deducted, do not pay again; check your order or contact support.");
+              // Keep retry disabled after an uncertain verification to avoid a second payment.
+            }
+          },
+        });
+        rzp.on("payment.failed", (response) => {
+          // Display only diagnostic labels, never provider metadata or payment/account identifiers.
+          const labels = [response?.error?.code, response?.error?.reason]
+            .filter((value) => typeof value === "string" && /^[a-zA-Z0-9_]{1,80}$/.test(value));
+          const detail = labels.length ? " (" + labels.join(": ") + ")" : "";
+          showError("Payment failed" + detail + ". You can try another payment method in checkout.");
+        });
+        rzp.open();
+      } catch (error) {
+        button.disabled = false;
+        showError(error.message || "Could not open payment checkout. Please retry.");
+      }
+    };
+    button.addEventListener("click", open);
   }
 
   if (client.gateway === "stripe") {

@@ -5,12 +5,11 @@ from datetime import datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Sum
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from apps.catalog.models import Product
-from apps.core.integrations import is_enabled
 from apps.core.models import StoreSettings
 from apps.delivery.models import DeliverySettings
 from apps.delivery.services import delivery_cost, money
@@ -44,13 +43,15 @@ class CheckoutError(Exception):
     pass
 
 
-def payment_methods_for(user, total, pincode_obj=None):
+def payment_methods_for(user, total, pincode_obj=None, marketplace_groups=None):
     """[(value, label, available, reason)] shown at checkout; enforced again in place_order."""
     store = StoreSettings.load()
     dcfg = DeliverySettings.load()
     methods = []
-    gw = store.active_gateway
-    if gw in ("razorpay", "stripe") and is_enabled(gw):
+    from apps.payments.gateways import online_gateway
+
+    gw = online_gateway()
+    if gw:
         methods.append((gw, Order.PaymentMethod(gw).label, True, ""))
     reason = ""
     if not store.cod_enabled:
@@ -60,6 +61,10 @@ def payment_methods_for(user, total, pincode_obj=None):
     elif total > dcfg.cod_limit:
         reason = _("Cash on Delivery is available up to ₹%(v)s.") % {"v": dcfg.cod_limit}
     methods.append(("cod", Order.PaymentMethod.COD.label, not reason, reason))
+    if marketplace_groups:
+        from apps.marketplace.checkout import payment_methods
+
+        return payment_methods(methods, marketplace_groups)
     return methods
 
 
@@ -104,6 +109,10 @@ def place_order(
     existing = Order.objects.filter(checkout_token=checkout_token, user=user).first()
     if existing:
         return existing
+    if coupon_code:
+        from apps.promotions.models import Coupon
+
+        Coupon.objects.select_for_update().filter(code=coupon_code.strip().upper()).first()
     totals = price_cart(cart, user, coupon_code, use_coins, (address.lat, address.lng, address.pincode))
     if not totals.ok:
         raise CheckoutError(" ".join(totals.problems) or totals.delivery.message)
@@ -112,7 +121,7 @@ def place_order(
     from apps.delivery.models import ServicePincode
 
     pin = ServicePincode.objects.filter(code=address.pincode).first()
-    allowed = {m[0]: m for m in payment_methods_for(user, totals.total, pin)}
+    allowed = {m[0]: m for m in payment_methods_for(user, totals.total, pin, totals.marketplace_groups)}
     if payment_method not in allowed or not allowed[payment_method][2]:
         raise CheckoutError(allowed.get(payment_method, (0, 0, 0, _("Choose a payment method.")))[3])
     if payment_method == "cod" and not user.phone_verified:
@@ -168,7 +177,8 @@ def place_order(
             order=order,
             variant=variant,
             product_name=variant.product.name,
-            variant_label=variant.label,
+            variant_label=str(variant.box_label)[:40],
+            units_per_box=variant.units_per_box,
             sku=variant.sku,
             hsn_code=variant.hsn_code,
             gst_rate=variant.gst_rate,
@@ -184,6 +194,11 @@ def place_order(
     order.gst_total = money(gst * Decimal(ratio))
     order.save(update_fields=["gst_total"])
 
+    if totals.marketplace_groups:
+        from apps.marketplace.checkout import split_order
+
+        split_order(order, totals.marketplace_groups)
+
     if totals.coupon:
         CouponRedemption.objects.create(coupon=totals.coupon, user=user, order=order, amount=totals.discount)
     if totals.coins_used:
@@ -196,7 +211,7 @@ def place_order(
             stock.reserve_for_order(order)
     except stock.OutOfStock as exc:
         raise CheckoutError(
-            _("Sorry, only %(n)s left of %(item)s. Please update your cart.")
+            _("Sorry, only %(n)s boxes left of %(item)s. Please update your cart.")
             % {"n": exc.available, "item": exc.variant}
         ) from exc
 
@@ -246,18 +261,12 @@ def mark_paid(order, payment=None):
         return order  # idempotent (webhook + redirect both arrive)
     if order.status == S.PENDING_PAYMENT:
         stock.commit_reservations(order)
-    elif order.status == S.PAYMENT_FAILED:
-        # Payment arrived after the reservation expired: try to take stock now.
-        try:
-            stock.deduct_for_cod(order)
-        except stock.OutOfStock:
-            order.payment_status = Order.PaymentStatus.PAID
-            order.staff_note += "\nPaid after timeout but stock ran out: refund needed."
-            order.save(update_fields=["payment_status", "staff_note"])
-            notify.admin_event(
-                "payment_succeeded", {"order": order.number, "warning": "Paid late, out of stock: refund"}
-            )
-            return order
+    elif order.status in (S.PAYMENT_FAILED, S.CANCELLED):
+        order.payment_status = Order.PaymentStatus.PAID
+        order.staff_note += "\nPayment received after cancellation/timeout: refund required; do not fulfill."
+        order.save(update_fields=["payment_status", "staff_note"])
+        notify.admin_event("payment_succeeded", {"order": order.number, "warning": "Late payment requires refund"})
+        return order
     else:
         return order
     notify.admin_event("payment_succeeded", {"order": order.number, "amount": f"₹{order.total}"})
@@ -296,6 +305,17 @@ def set_status(order, new_status, by=None, note="", rider=None):
         return order
     if new_status not in ALLOWED.get(order.status, set()):
         raise ValueError(f"Cannot move order from {order.get_status_display()} to {new_status.label}")
+    children = order.fulfillments.exclude(policy__legacy=True)
+    if children.exists() and new_status in (S.OUT_FOR_DELIVERY, S.DELIVERED):
+        raise ValueError("Marketplace orders are fulfilled through their seller teams and rider assignments.")
+    if children.exists() and new_status == S.CANCELLED:
+        if children.filter(status__in=["picked_up", "delivered"]).exists():
+            raise ValueError("Resolve dispatched seller deliveries and refunds before cancelling this order.")
+        from apps.marketplace.models import DeliveryAssignment, DispatchOffer
+
+        children.update(status="cancelled")
+        DeliveryAssignment.objects.filter(fulfillment__order=order).update(active=False)
+        DispatchOffer.objects.filter(fulfillment__order=order, status="pending").update(status="expired")
     fields = ["status", "updated_at"]
     if rider is not None:
         order.rider = rider
@@ -332,21 +352,33 @@ def _undo_stock_and_perks(order, by):
     if order.status == S.PENDING_PAYMENT:
         stock.release_reservations(order)
     elif order.status != S.PAYMENT_FAILED:
-        qty = {line: line.qty - line.refunded_qty for line in order.lines.all()}
+        qty = {line: line.qty - line.restocked_qty for line in order.lines.all()}
         stock.restock_lines(order, qty, StockMovement.Reason.CANCEL_RESTOCK, user=by)
     refund_used_coins(order)
     reverse_order_coins(order)
     CouponRedemption.objects.filter(order=order).delete()
 
 
+@transaction.atomic
 def cancel_by_customer(order, reason=""):
+    order = Order.objects.select_for_update().get(pk=order.pk)
     if not order.can_cancel_by_customer:
         raise ValueError(_("This order can no longer be cancelled. Please contact us."))
     order = set_status(order, S.CANCELLED, by=order.user, note=reason or "Cancelled by customer")
-    if order.payment_status == Order.PaymentStatus.PAID:
-        from apps.payments.services import create_refund
+    if order.is_online and order.payment_status in (
+        Order.PaymentStatus.PAID,
+        Order.PaymentStatus.PARTIALLY_REFUNDED,
+    ):
+        from apps.payments.models import Refund
+        from apps.payments.services import RefundError, create_refund
 
-        create_refund(order, order.total, reason="Customer cancelled before dispatch", by=None)
+        reserved = order.refunds.exclude(status=Refund.Status.FAILED).aggregate(total=Sum("amount"))["total"] or ZERO
+        remaining = order.total - reserved
+        if remaining > ZERO:
+            try:
+                create_refund(order, remaining, reason="Customer cancelled before dispatch", by=None)
+            except RefundError as exc:
+                raise ValueError(str(exc)) from exc
     return order
 
 

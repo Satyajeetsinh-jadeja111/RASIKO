@@ -14,15 +14,16 @@
       </form>
       <script src="https://js.stripe.com/v3/"></script>
     {% else %}
-      <form id="rzp-return" method="post" action="{% url 'payments:razorpay_return' order.public_id %}">{% csrf_token %}
+      <form id="rzp-return" data-create="{% url 'payments:create_order' order.public_id %}" data-verify="{% url 'payments:verify_payment' order.public_id %}" method="post" action="{% url 'payments:razorpay_return' order.public_id %}">{% csrf_token %}
         <input type="hidden" name="razorpay_payment_id"><input type="hidden" name="razorpay_order_id"><input type="hidden" name="razorpay_signature">
       </form>
       <button class="btn btn--buy btn--block" id="rzp-pay" type="button">{% trans "Pay with UPI / card / netbanking" %}</button>
+      <div id="rzp-error" class="flash flash--error" role="alert" hidden></div>
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     {% endif %}
     <form method="post" action="{% url 'payments:cancel' order.public_id %}" style="margin-top:12px">{% csrf_token %}<button class="btn btn--ghost btn--sm">{% trans "Cancel payment" %}</button></form>
     <ul class="trust" style="justify-content:center;margin-top:14px"><li><svg class="icon"><use href="#i-lock"/></svg>{% trans "Card details never touch our servers" %}</li></ul>
   </div>
 </div>
-<script src="{% static 'js/pay.js' %}" defer></script>
+<script src="{% static 'js/pay.js' %}?v=3" defer></script>
 {% endblock %}

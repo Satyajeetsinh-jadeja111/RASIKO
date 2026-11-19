@@ -6,6 +6,7 @@
   <div class="checkout">
     <div>
       {% include "orders/_track_card.html" %}
+      {% for fulfillment in order.fulfillments.all %}<section class="box" style="margin-top:16px"><h2>{{ fulfillment.team.seller.name }} · {{ fulfillment.team.brand.name }}</h2><p><a href="{% url 'marketplace:case_create' fulfillment.pk %}">{% trans 'Contact seller support' %}</a> · <a href="{% url 'marketplace:invoice' fulfillment.pk %}">{% trans 'Download seller invoice' %}</a> · {{ fulfillment.get_status_display }} · {{ fulfillment.total|rupee }}</p>{% if fulfillment.buyer_delivery_code %}<p>{% trans "Delivery code" %}: <strong>{{ fulfillment.buyer_delivery_code }}</strong></p><p>{% trans "Share this code only when receiving this delivery." %}</p>{% endif %}</section>{% endfor %}
       {% if order.status == "pending_payment" %}<div class="box" style="margin-top:16px"><p>{% trans "This order is waiting for payment." %}</p><a class="btn btn--buy" href="{% url 'payments:pay' order.public_id %}">{% trans "Pay now" %}</a></div>{% endif %}
       <section class="box" style="margin-top:16px">
         <h2>{% trans "Items" %}</h2>
@@ -22,7 +23,7 @@
           <button class="btn btn--buy btn--sm">{% trans "Send complaint" %}</button></form></details>
       {% elif complaint %}<div class="flash flash--info" style="margin-top:16px">{% trans "Thandu guarantee" %}: {{ complaint.get_state_display }}{% if complaint.coupon %}: <b>{{ complaint.coupon.code }}</b>{% endif %}</div>{% endif %}
       <div class="btns" style="margin-top:16px">
-        {% if order.status not in "pending_payment payment_failed" %}<a class="btn btn--ghost btn--sm" href="{% url 'orders:invoice' order.public_id %}">{% trans "Download GST invoice" %}</a>{% endif %}
+        {% if not order.fulfillments.exists and order.status not in "pending_payment payment_failed" %}<a class="btn btn--ghost btn--sm" href="{% url 'orders:invoice' order.public_id %}">{% trans "Download GST invoice" %}</a>{% endif %}
         <form method="post" action="{% url 'orders:reorder' order.public_id %}">{% csrf_token %}<button class="btn btn--buy btn--sm"><svg class="icon" style="width:16px;height:16px"><use href="#i-repeat"/></svg>{% trans "Buy again" %}</button></form>
         {% if order.can_cancel_by_customer %}<form method="post" action="{% url 'orders:cancel' order.public_id %}" data-confirm="{% trans 'Cancel this order?' %}">{% csrf_token %}<button class="btn btn--danger btn--sm">{% trans "Cancel order" %}</button></form>{% endif %}
       </div>

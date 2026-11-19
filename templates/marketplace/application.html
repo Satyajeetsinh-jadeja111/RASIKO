@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% load i18n %}{% block content %}<section class="page"><h1>{% trans 'Sell with Rasiko' %}</h1><p>{% trans 'Apply for a seller account. Your store opens after admin approval and verification.' %}</p><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn--buy">{% trans 'Submit application' %}</button></form></section>{% endblock %}

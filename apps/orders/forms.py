@@ -63,11 +63,11 @@ class SubscriptionForm(StyledMixin, forms.ModelForm):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["address"].queryset = user.addresses.all()
+        self.fields["address"].queryset = user.addresses.filter(is_archived=False)
         self.fields["variant"].queryset = ProductVariant.objects.filter(
             is_active=True, product__is_active=True, product__deleted_at__isnull=True
         ).select_related("product")
-        self.fields["variant"].label_from_instance = lambda v: f"{v.product.name} · {v.label} · ₹{v.price}"
+        self.fields["variant"].label_from_instance = lambda v: f"{v.product.name} · {v.box_label} · ₹{v.price}"
 
     def clean(self):
         data = super().clean()

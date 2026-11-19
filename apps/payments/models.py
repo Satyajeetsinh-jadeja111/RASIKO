@@ -25,6 +25,10 @@ class Payment(TimeStamped):
     idempotency_key = models.CharField(max_length=64, unique=True, default=uuid.uuid4)
     failure_reason = models.CharField(max_length=300, blank=True)
     raw = models.JSONField(default=dict, blank=True)
+    creation_started_at = models.DateTimeField(null=True, blank=True)
+    creation_uncertain = models.BooleanField(default=False)
+    last_checked_at = models.DateTimeField(null=True, blank=True)
+    reconcile_attempts = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.gateway} {self.gateway_order_id} {self.status}"
@@ -54,6 +58,11 @@ class Refund(TimeStamped):
     gateway_refund_id = models.CharField(max_length=100, blank=True, db_index=True)
     idempotency_key = models.CharField(max_length=64, unique=True, default=uuid.uuid4)
     restock = models.BooleanField(default=False)
+    restocked = models.BooleanField(default=False)
+    submission_started_at = models.DateTimeField(null=True, blank=True)
+    submission_uncertain = models.BooleanField(default=False)
+    last_checked_at = models.DateTimeField(null=True, blank=True)
+    reconcile_attempts = models.PositiveIntegerField(default=0)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     failure_reason = models.CharField(max_length=300, blank=True)
 
@@ -71,6 +80,15 @@ class WebhookEvent(models.Model):
     event_id = models.CharField(max_length=120)
     event_type = models.CharField(max_length=80)
     received_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=12,
+        default="pending",
+        choices=[("pending", "Pending"), ("processed", "Processed"), ("rejected", "Rejected")],
+        db_index=True,
+    )
+    attempts = models.PositiveIntegerField(default=0)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.CharField(max_length=200, blank=True)
     payload = models.JSONField(default=dict)
 
     class Meta:

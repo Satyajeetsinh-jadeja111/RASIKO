@@ -50,3 +50,32 @@ def test_customer_sees_only_own_order(client, place, customer):
     assert client.get(o.get_absolute_url()).status_code == 404
     client.force_login(customer)
     assert client.get(o.get_absolute_url()).status_code == 200
+
+
+@pytest.mark.django_db
+def test_lockout_does_not_block_other_accounts_on_shared_ip(client, settings):
+    from axes.models import AccessAttempt
+
+    settings.AXES_ENABLED = True
+    settings.RATELIMIT_ENABLED = True
+    password = "Shared-Network-2026!"
+    first = User.objects.create_user(email="first@example.com", password=password)
+    second = User.objects.create_user(email="second@example.com", password=password)
+    for _ in range(settings.AXES_FAILURE_LIMIT):
+        client.post("/accounts/login/", {"username": first.email.upper(), "password": "wrong"})
+    blocked = client.post("/accounts/login/", {"username": first.email, "password": password})
+    assert blocked.status_code == 429
+    assert "_auth_user_id" not in client.session
+    allowed = client.post("/accounts/login/", {"username": second.email.upper(), "password": password})
+    assert allowed.status_code == 302
+    assert client.session["_auth_user_id"] == str(second.pk)
+    assert AccessAttempt.objects.filter(username=first.email).exists()
+
+
+@pytest.mark.django_db
+def test_login_accepts_legacy_mixed_case_email(client):
+    user = User.objects.create_user(email="legacy@example.com", password="Legacy-Login-2026!")
+    User.objects.filter(pk=user.pk).update(email="Legacy@Example.com")
+    response = client.post("/accounts/login/", {"username": "LEGACY@example.com", "password": "Legacy-Login-2026!"})
+    assert response.status_code == 302
+    assert client.session["_auth_user_id"] == str(user.pk)

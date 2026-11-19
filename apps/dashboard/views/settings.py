@@ -161,7 +161,28 @@ def _card(spec, row):
                 "masked": crypto.mask(value) if f.secret else "",
             }
         )
+    readiness = None
+    if spec.slug in ("razorpay", "stripe"):
+        from apps.payments.models import Payment, Refund, WebhookEvent
+
+        key = cfg.get("key_id" if spec.slug == "razorpay" else "secret_key", "")
+        webhook = WebhookEvent.objects.filter(gateway=spec.slug)
+        if row:
+            webhook = webhook.filter(received_at__gte=row.updated_at)
+        readiness = {
+            "mode": "TEST" if "_test_" in key else "LIVE" if "_live_" in key else "Unknown",
+            "https": dj_settings.SITE_URL.startswith("https://"),
+            "connection": bool(row and row.last_test_ok),
+            "webhook": webhook.exists(),
+            "capture": cfg.get("capture_confirmed") == "yes",
+            "pending_events": WebhookEvent.objects.filter(gateway=spec.slug, status="pending").count(),
+            "uncertain_payments": Payment.objects.filter(gateway=spec.slug, creation_uncertain=True).count(),
+            "uncertain_refunds": Refund.objects.filter(
+                payment__gateway=spec.slug, status="pending", submission_uncertain=True
+            ).count(),
+        }
     return {
+        "readiness": readiness,
         "spec": spec,
         "row": row,
         "fields": fields,
@@ -388,4 +409,50 @@ def audit_log(request):
         qs = qs.filter(Q(action__icontains=q) | Q(summary__icontains=q) | Q(user__email__icontains=q))
     return render(
         request, "dashboard/audit.html", {"page": Paginator(qs, 50).get_page(request.GET.get("page")), "q": q}
+    )
+
+
+@dash("owner")
+def error_log(request):
+    from apps.core.errorlog import log_path, read_entries
+
+    path = log_path()
+    if request.method == "POST" and request.POST.get("action") == "clear":
+        if path.exists():
+            path.write_text("", encoding="utf-8")
+        audit.log(request, "errorlog.clear", None, "Error log cleared")
+        messages.success(request, "Error log cleared.")
+        return redirect("dashboard:error_log")
+    if request.GET.get("download"):
+        from django.http import FileResponse, HttpResponse
+
+        if not path.exists():
+            return HttpResponse("", content_type="text/plain")
+        return FileResponse(path.open("rb"), as_attachment=True, filename="rasiko-errors.log")
+    entries = read_entries(path)
+    level = request.GET.get("level", "")
+    q = request.GET.get("q", "").strip()
+    counts = {
+        "all": len(entries),
+        "error": sum(e.level in ("ERROR", "CRITICAL") for e in entries),
+        "warning": sum(e.level == "WARNING" for e in entries),
+    }
+    if level == "error":
+        entries = [e for e in entries if e.level in ("ERROR", "CRITICAL")]
+    elif level == "warning":
+        entries = [e for e in entries if e.level == "WARNING"]
+    if q:
+        ql = q.lower()
+        entries = [e for e in entries if ql in f"{e.logger} {e.message} {' '.join(e.details)}".lower()]
+    return render(
+        request,
+        "dashboard/error_log.html",
+        {
+            "page": Paginator(entries, 50).get_page(request.GET.get("page")),
+            "q": q,
+            "level": level,
+            "counts": counts,
+            "path": path,
+            "size_kb": round(path.stat().st_size / 1024, 1) if path.exists() else 0,
+        },
     )

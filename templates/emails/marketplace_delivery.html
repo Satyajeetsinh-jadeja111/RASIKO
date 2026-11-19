@@ -1,0 +1,1 @@
+{% extends 'emails/_base.html' %}{% load i18n %}{% block body %}<h1>{% trans 'Delivery code' %}</h1><p>{{ brand }}</p><p style="font-size:30px;letter-spacing:6px">{{ code }}</p><p>{% trans 'Share this code only when receiving this delivery.' %}</p>{% endblock %}

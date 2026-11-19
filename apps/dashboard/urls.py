@@ -58,6 +58,7 @@ urlpatterns = [
     path("settings/emails/", settings.email_settings, name="email_settings"),
     path("settings/staff/", settings.staff, name="staff"),
     path("settings/audit/", settings.audit_log, name="audit"),
+    path("settings/errors/", settings.error_log, name="error_log"),
     # Simple tables
     path("c/<slug:slug>/", _crud(crud.crud_list), name="crud_list"),
     path("c/<slug:slug>/new/", _crud(crud.crud_edit), name="crud_new"),

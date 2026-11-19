@@ -119,7 +119,11 @@ def order_detail(request, number):
     order_flow = [s for s, _ in S.choices]
     nexts.sort(key=lambda x: order_flow.index(x[0]))
     refund_form = None
-    if can(request.user, "manager"):
+    if can(request.user, "manager") and order.payment_status in (
+        Order.PaymentStatus.PAID,
+        Order.PaymentStatus.COD_COLLECTED,
+        Order.PaymentStatus.PARTIALLY_REFUNDED,
+    ):
         refund_form = RefundForm(
             initial={
                 "amount": order.refundable_amount,

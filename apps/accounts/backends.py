@@ -11,7 +11,7 @@ class EmailBackend(ModelBackend):
             return None
         User = get_user_model()
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             User().set_password(password)  # equalise timing with the success path
             return None

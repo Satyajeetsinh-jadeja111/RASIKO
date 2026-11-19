@@ -17,7 +17,7 @@ class CouponError(Exception):
     pass
 
 
-def validate_coupon(code, user, subtotal: Decimal):
+def validate_coupon(code, user, subtotal: Decimal, *, marketplace_scope=False):
     code = (code or "").strip().upper()
     if not code:
         return None, ZERO
@@ -25,6 +25,8 @@ def validate_coupon(code, user, subtotal: Decimal):
     now = timezone.now()
     if coupon is None or coupon.starts_at > now or (coupon.expires_at and coupon.expires_at <= now):
         raise CouponError(_("This coupon is not valid."))
+    if hasattr(coupon, "head_campaign") and not marketplace_scope:
+        raise CouponError(_("This offer applies only to its seller teams."))
     if coupon.only_user_id and (not user.is_authenticated or coupon.only_user_id != user.pk):
         raise CouponError(_("This coupon is not valid."))
     if subtotal < coupon.min_order:

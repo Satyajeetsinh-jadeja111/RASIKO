@@ -4,6 +4,13 @@
   "use strict";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const filters = $(".filters-panel");
+  if (filters) {
+    const desktop = window.matchMedia("(min-width: 1000px)");
+    const syncFilters = () => { filters.open = desktop.matches; };
+    syncFilters();
+    desktop.addEventListener("change", syncFilters);
+  }
   const csrf = () => (document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/) || [])[1] || "";
   const post = (url, data) =>
     fetch(url, {
@@ -36,8 +43,8 @@
     countEl.classList.remove("bump"); void countEl.offsetWidth; countEl.classList.add("bump");
   };
   const stepper = (name, q) =>
-    `<div class="qty"><button type="button" data-d="-1" aria-label="Remove one ${esc(name)}">−</button><span aria-live="polite">${q}</span><button type="button" data-d="1" aria-label="Add one more ${esc(name)}">+</button></div>`;
-  const addBtn = (name) => `<button class="add" type="button" aria-label="Add ${esc(name)} to cart">Add</button>`;
+    `<div class="qty"><button type="button" data-d="-1" aria-label="Remove one box of ${esc(name)}">−</button><span aria-live="polite">${q}</span><button type="button" data-d="1" aria-label="Add one more box of ${esc(name)}">+</button></div>`;
+  const addBtn = (name) => `<button class="add" type="button" aria-label="Add a box of ${esc(name)} to cart">Add box</button>`;
   const renderCtl = (ctl) => {
     const q = cartState[ctl.dataset.key] || 0;
     if (ctl.dataset.reload !== undefined) return;
@@ -84,8 +91,10 @@
       const card = sel.closest(".card");
       const opt = sel.selectedOptions[0];
       const ctl = $(".buy__ctl", card);
-      $("[data-price]", card).textContent = opt.dataset.price;
-      const mrp = $("[data-mrp]", card);
+      $("span[data-price]", card).textContent = opt.dataset.price;
+      const per = $("div[data-per]", card);
+      if (per) per.textContent = opt.dataset.per ? `${opt.dataset.per} per bottle` : "";
+      const mrp = $("span[data-mrp]", card);
       if (mrp) mrp.textContent = opt.dataset.mrp || "";
       ctl.dataset.key = `v:${opt.value}`;
       if (opt.dataset.stock === "1") renderCtl(ctl);
@@ -115,12 +124,14 @@
       if (!r) return;
       $("[data-pdp-price]", pdp).textContent = r.dataset.price;
       $("[data-pdp-mrp]", pdp).textContent = r.dataset.mrp ? `MRP ${r.dataset.mrp}` : "";
+      const per = $("[data-pdp-per]", pdp);
+      if (per) per.textContent = r.dataset.per ? `${r.dataset.per} per bottle · ` : "";
       $("[data-pdp-save]", pdp).textContent = r.dataset.save ? `You save ${r.dataset.save} (Rasiko price vs MRP)` : "";
       const inStock = r.dataset.stock === "1";
       $$("button[type=submit]", pdp).forEach((b) => (b.disabled = !inStock));
       $("[data-pdp-stock]", pdp).innerHTML = !inStock
         ? '<span class="chip chip--red">Out of stock</span>'
-        : r.dataset.low ? `<span class="chip chip--orange">Only ${esc(r.dataset.low)} left</span>` : '<span class="chip chip--green">In stock</span>';
+        : r.dataset.low ? `<span class="chip chip--orange">Only ${esc(r.dataset.low)} boxes left</span>` : '<span class="chip chip--green">In stock</span>';
     };
     pdp.addEventListener("change", sync);
     pdp.addEventListener("submit", async (e) => {
@@ -290,3 +301,16 @@
   // PWA
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 })();
+
+// Shared progressive enhancement for result loading and disabled navigation.
+document.addEventListener("htmx:beforeRequest", (event) => {
+  const target = event.detail.target;
+  if (target) target.setAttribute("aria-busy", "true");
+});
+document.addEventListener("htmx:afterRequest", (event) => {
+  const target = event.detail.target;
+  if (target) target.setAttribute("aria-busy", "false");
+});
+document.addEventListener("click", (event) => {
+  if (event.target.closest('a[aria-disabled="true"]')) event.preventDefault();
+});
